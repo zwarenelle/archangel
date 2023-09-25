@@ -7,7 +7,6 @@ Assign lessons to timeslots and rooms to produce a better schedule for teachers 
 [source, shell]
 ----
 $ mvn clean install
-...
 $ java -jar target/hello-world-run.jar
 ----
 

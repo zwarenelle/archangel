@@ -9,19 +9,13 @@ public class Timeslot {
     private LocalTime startTime;
     private LocalTime endTime;
 
+    public Timeslot() {
+    }
+
     public Timeslot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
         this.endTime = endTime;
-    }
-
-    public Timeslot(DayOfWeek dayOfWeek, LocalTime startTime) {
-        this(dayOfWeek, startTime, startTime.plusMinutes(50));
-    }
-
-    @Override
-    public String toString() {
-        return dayOfWeek + " " + startTime;
     }
 
     public DayOfWeek getDayOfWeek() {
@@ -34,6 +28,11 @@ public class Timeslot {
 
     public LocalTime getEndTime() {
         return endTime;
+    }
+
+    @Override
+    public String toString() {
+        return dayOfWeek + " " + startTime;
     }
 
 }

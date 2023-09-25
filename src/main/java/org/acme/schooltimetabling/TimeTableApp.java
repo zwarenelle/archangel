@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.acme.schooltimetabling.domain.Lesson;
@@ -47,21 +46,19 @@ public class TimeTableApp {
 
     public static TimeTable generateDemoData() {
         List<Timeslot> timeslotList = new ArrayList<>(10);
-        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(8, 30), LocalTime.of(9, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(9, 30), LocalTime.of(10, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(10, 30), LocalTime.of(11, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(13, 30), LocalTime.of(14, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(14, 30), LocalTime.of(15, 30)));
+        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(8, 00), LocalTime.of(10, 00)));
+        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(10, 00), LocalTime.of(12, 00)));
+        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(12, 00), LocalTime.of(14, 00)));
+        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(14, 00), LocalTime.of(16, 00)));
 
-        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(8, 30), LocalTime.of(9, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(9, 30), LocalTime.of(10, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(10, 30), LocalTime.of(11, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(13, 30), LocalTime.of(14, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(14, 30), LocalTime.of(15, 30)));
+        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(8, 00), LocalTime.of(10, 00)));
+        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(10, 00), LocalTime.of(12, 00)));
+        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(12, 00), LocalTime.of(14, 00)));
+        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(14, 00), LocalTime.of(16, 00)));
 
         List<Room> roomList = new ArrayList<>(3);
         roomList.add(new Room("Ploeg A"));
-        roomList.add(new Room("Room B"));
+        roomList.add(new Room("Ploeg B"));
         roomList.add(new Room("Ploeg C"));
 
         List<Lesson> lessonList = new ArrayList<>();
@@ -70,21 +67,17 @@ public class TimeTableApp {
         lessonList.add(new Lesson(id++, "Math", "A. Turing", "9th grade"));
         lessonList.add(new Lesson(id++, "Physics", "M. Curie", "9th grade"));
         lessonList.add(new Lesson(id++, "Chemistry", "M. Curie", "9th grade"));
-        lessonList.add(new Lesson(id++, "Biology", "C. Darwin", "9th grade"));
         lessonList.add(new Lesson(id++, "History", "I. Jones", "9th grade"));
         lessonList.add(new Lesson(id++, "English", "I. Jones", "9th grade"));
         lessonList.add(new Lesson(id++, "English", "I. Jones", "9th grade"));
-        lessonList.add(new Lesson(id++, "Spanish", "P. Cruz", "9th grade"));
-        lessonList.add(new Lesson(id++, "Spanish", "P. Cruz", "9th grade"));
+        lessonList.add(new Lesson(id++, "Geography", "P. Cruz", "9th grade"));
 
         lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
         lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
         lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
         lessonList.add(new Lesson(id++, "Physics", "M. Curie", "10th grade"));
         lessonList.add(new Lesson(id++, "Chemistry", "M. Curie", "10th grade"));
-        lessonList.add(new Lesson(id++, "French", "M. Curie", "10th grade"));
         lessonList.add(new Lesson(id++, "Geography", "C. Darwin", "10th grade"));
-        lessonList.add(new Lesson(id++, "History", "I. Jones", "10th grade"));
         lessonList.add(new Lesson(id++, "English", "P. Cruz", "10th grade"));
         lessonList.add(new Lesson(id++, "Spanish", "P. Cruz", "10th grade"));
 
@@ -93,15 +86,15 @@ public class TimeTableApp {
 
     private static void printTimetable(TimeTable timeTable) {
         LOGGER.info("");
-        List<Room> roomList = timeTable.getRoomList();
-        List<Lesson> lessonList = timeTable.getLessonList();
+        List<Room> roomList = timeTable.getRooms();
+        List<Lesson> lessonList = timeTable.getLessons();
         Map<Timeslot, Map<Room, List<Lesson>>> lessonMap = lessonList.stream()
                 .filter(lesson -> lesson.getTimeslot() != null && lesson.getRoom() != null)
                 .collect(Collectors.groupingBy(Lesson::getTimeslot, Collectors.groupingBy(Lesson::getRoom)));
         LOGGER.info("|                      | " + roomList.stream()
                 .map(room -> String.format("%-20s", room.getName())).collect(Collectors.joining(" | ")) + " |");
         LOGGER.info("|" + "----------------------|".repeat(roomList.size() + 1));
-        for (Timeslot timeslot : timeTable.getTimeslotList()) {
+        for (Timeslot timeslot : timeTable.getTimeslots()) {
             List<List<Lesson>> cellList = roomList.stream()
                     .map(room -> {
                         Map<Room, List<Lesson>> byRoomMap = lessonMap.get(timeslot);
@@ -109,8 +102,12 @@ public class TimeTableApp {
                             return Collections.<Lesson>emptyList();
                         }
                         List<Lesson> cellLessonList = byRoomMap.get(room);
-                        return Objects.requireNonNullElse(cellLessonList, Collections.<Lesson>emptyList());
-                    }).toList();
+                        if (cellLessonList == null) {
+                            return Collections.<Lesson>emptyList();
+                        }
+                        return cellLessonList;
+                    })
+                    .collect(Collectors.toList());
 
             LOGGER.info("| " + String.format("%-20s",
                     timeslot.getDayOfWeek().toString().substring(0, 3) + " " + timeslot.getStartTime()) + " | "
@@ -132,7 +129,7 @@ public class TimeTableApp {
         }
         List<Lesson> unassignedLessons = lessonList.stream()
                 .filter(lesson -> lesson.getTimeslot() == null || lesson.getRoom() == null)
-                .toList();
+                .collect(Collectors.toList());
         if (!unassignedLessons.isEmpty()) {
             LOGGER.info("");
             LOGGER.info("Unassigned lessons");

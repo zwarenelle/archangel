@@ -12,38 +12,37 @@ import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 @PlanningSolution
 public class TimeTable {
 
-    @ProblemFactCollectionProperty
     @ValueRangeProvider
-    private List<Timeslot> timeslotList;
     @ProblemFactCollectionProperty
+    private List<Timeslot> timeslots;
     @ValueRangeProvider
-    private List<Room> roomList;
+    @ProblemFactCollectionProperty
+    private List<Room> rooms;
     @PlanningEntityCollectionProperty
-    private List<Lesson> lessonList;
+    private List<Lesson> lessons;
 
     @PlanningScore
     private HardSoftScore score;
 
-    // No-arg constructor required for Timefold
     public TimeTable() {
     }
 
-    public TimeTable(List<Timeslot> timeslotList, List<Room> roomList, List<Lesson> lessonList) {
-        this.timeslotList = timeslotList;
-        this.roomList = roomList;
-        this.lessonList = lessonList;
+    public TimeTable(List<Timeslot> timeslots, List<Room> rooms, List<Lesson> lessons) {
+        this.timeslots = timeslots;
+        this.rooms = rooms;
+        this.lessons = lessons;
     }
 
-    public List<Timeslot> getTimeslotList() {
-        return timeslotList;
+    public List<Timeslot> getTimeslots() {
+        return timeslots;
     }
 
-    public List<Room> getRoomList() {
-        return roomList;
+    public List<Room> getRooms() {
+        return rooms;
     }
 
-    public List<Lesson> getLessonList() {
-        return lessonList;
+    public List<Lesson> getLessons() {
+        return lessons;
     }
 
     public HardSoftScore getScore() {

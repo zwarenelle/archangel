@@ -4,16 +4,19 @@ public class Room {
 
     private String name;
 
+    public Room() {
+    }
+
     public Room(String name) {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
+    public String getName() {
         return name;
     }
 
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
     }
 

@@ -19,26 +19,14 @@ public class Lesson {
     @PlanningVariable
     private Room room;
 
-    // No-arg constructor required for Timefold
     public Lesson() {
     }
 
-    public Lesson(long id, String subject, String teacher, String studentGroup) {
+    public Lesson(Long id, String subject, String teacher, String studentGroup) {
         this.id = id;
         this.subject = subject;
         this.teacher = teacher;
         this.studentGroup = studentGroup;
-    }
-
-    public Lesson(long id, String subject, String teacher, String studentGroup, Timeslot timeslot, Room room) {
-        this(id, subject, teacher, studentGroup);
-        this.timeslot = timeslot;
-        this.room = room;
-    }
-
-    @Override
-    public String toString() {
-        return subject + "(" + id + ")";
     }
 
     public Long getId() {
@@ -71,6 +59,11 @@ public class Lesson {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    @Override
+    public String toString() {
+        return subject + "(" + id + ")";
     }
 
 }
