@@ -63,23 +63,26 @@ public class TimeTableApp {
 
         List<Lesson> lessonList = new ArrayList<>();
         long id = 0;
-        lessonList.add(new Lesson(id++, "Math", "A. Turing", "9th grade"));
-        lessonList.add(new Lesson(id++, "Math", "A. Turing", "9th grade"));
-        lessonList.add(new Lesson(id++, "Physics", "M. Curie", "9th grade"));
-        lessonList.add(new Lesson(id++, "Chemistry", "M. Curie", "9th grade"));
-        lessonList.add(new Lesson(id++, "History", "I. Jones", "9th grade"));
-        lessonList.add(new Lesson(id++, "English", "I. Jones", "9th grade"));
-        lessonList.add(new Lesson(id++, "English", "I. Jones", "9th grade"));
-        lessonList.add(new Lesson(id++, "Geography", "P. Cruz", "9th grade"));
+        lessonList.add(new Lesson(id++, "Math", "A. Turing", "Gas"));
+        lessonList.add(new Lesson(id++, "Math", "A. Turing", "Gas"));
+        lessonList.add(new Lesson(id++, "Physics", "M. Curie", "Gas"));
+        lessonList.add(new Lesson(id++, "Chemistry", "M. Curie", "Gas"));
+        lessonList.add(new Lesson(id++, "History", "I. Jones", "Gas"));
+        lessonList.add(new Lesson(id++, "English", "I. Jones", "Gas"));
+        lessonList.add(new Lesson(id++, "English", "I. Jones", "Gas"));
+        lessonList.add(new Lesson(id++, "Geography", "P. Cruz", "Gas"));
 
-        lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
-        lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
-        lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
-        lessonList.add(new Lesson(id++, "Physics", "M. Curie", "10th grade"));
-        lessonList.add(new Lesson(id++, "Chemistry", "M. Curie", "10th grade"));
-        lessonList.add(new Lesson(id++, "Geography", "C. Darwin", "10th grade"));
-        lessonList.add(new Lesson(id++, "English", "P. Cruz", "10th grade"));
-        lessonList.add(new Lesson(id++, "Spanish", "P. Cruz", "10th grade"));
+        lessonList.add(new Lesson(id++, "Math", "A. Turing", "Elektra"));
+        lessonList.add(new Lesson(id++, "Math", "A. Turing", "Elektra"));
+        lessonList.add(new Lesson(id++, "Math", "A. Turing", "Elektra"));
+        lessonList.add(new Lesson(id++, "Physics", "M. Curie", "Elektra"));
+        lessonList.add(new Lesson(id++, "Chemistry", "M. Curie", "Elektra"));
+        lessonList.add(new Lesson(id++, "Geography", "C. Darwin", "Elektra"));
+        lessonList.add(new Lesson(id++, "English", "P. Cruz", "Elektra"));
+        lessonList.add(new Lesson(id++, "Spanish", "P. Cruz", "Elektra"));
+
+        lessonList.add(new Lesson(id++, "ICT", "T. Slikker", "Water"));
+        lessonList.add(new Lesson(id++, "ICT", "T. Slikker", "Water"));
 
         return new TimeTable(timeslotList, roomList, lessonList);
     }
@@ -115,12 +118,12 @@ public class TimeTableApp {
                             cellLessonList.stream().map(Lesson::getSubject).collect(Collectors.joining(", "))))
                             .collect(Collectors.joining(" | "))
                     + " |");
-            LOGGER.info("|            | "
+            LOGGER.info("|                      | "
                     + cellList.stream().map(cellLessonList -> String.format("%-20s",
                             cellLessonList.stream().map(Lesson::getTeacher).collect(Collectors.joining(", "))))
                             .collect(Collectors.joining(" | "))
                     + " |");
-            LOGGER.info("|            | "
+            LOGGER.info("|                      | "
                     + cellList.stream().map(cellLessonList -> String.format("%-20s",
                             cellLessonList.stream().map(Lesson::getStudentGroup).collect(Collectors.joining(", "))))
                             .collect(Collectors.joining(" | "))

@@ -14,8 +14,8 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
         return new Constraint[] {
                 // Hard constraints
                 roomConflict(constraintFactory),
-                teacherConflict(constraintFactory),
-                studentGroupConflict(constraintFactory),
+                // teacherConflict(constraintFactory),
+                studentGroupConflict(constraintFactory)
                 // Soft constraints are only implemented in the timefold-quickstarts code
         };
     }
@@ -39,16 +39,16 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                 .asConstraint("Room conflict");
     }
 
-    private Constraint teacherConflict(ConstraintFactory constraintFactory) {
-        // A teacher can teach at most one lesson at the same time.
-        return constraintFactory.forEach(Lesson.class)
-                .join(Lesson.class,
-                        Joiners.equal(Lesson::getTimeslot),
-                        Joiners.equal(Lesson::getTeacher),
-                        Joiners.lessThan(Lesson::getId))
-                .penalize(HardSoftScore.ONE_HARD)
-                .asConstraint("Teacher conflict");
-    }
+//     private Constraint teacherConflict(ConstraintFactory constraintFactory) {
+//         // A teacher can teach at most one lesson at the same time.
+//         return constraintFactory.forEach(Lesson.class)
+//                 .join(Lesson.class,
+//                         Joiners.equal(Lesson::getTimeslot),
+//                         Joiners.equal(Lesson::getTeacher),
+//                         Joiners.lessThan(Lesson::getId))
+//                 .penalize(HardSoftScore.ONE_HARD)
+//                 .asConstraint("Teacher conflict");
+//     }
 
     private Constraint studentGroupConflict(ConstraintFactory constraintFactory) {
         // A student can attend at most one lesson at the same time.
