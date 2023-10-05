@@ -1,6 +1,5 @@
 package org.acme.maintenancescheduling.domain;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,8 +47,8 @@ public class MaintenanceSchedule {
                 // Skip weekends. Does not work for holidays.
                 // Keep in sync with EndDateUpdatingVariableListener.updateEndDate().
                 // To skip holidays too, cache all working days in WorkCalendar.
-                .filter(date -> date.getDayOfWeek() != DayOfWeek.SATURDAY
-                        && date.getDayOfWeek() != DayOfWeek.SUNDAY)
+                // .filter(date -> date.getDayOfWeek() != DayOfWeek.SATURDAY
+                //         && date.getDayOfWeek() != DayOfWeek.SUNDAY)
                 .collect(Collectors.toList());
     }
 

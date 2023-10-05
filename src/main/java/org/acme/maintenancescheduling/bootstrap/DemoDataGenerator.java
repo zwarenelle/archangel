@@ -49,13 +49,11 @@ public class DemoDataGenerator {
         }
 
         List<Crew> crewList = new ArrayList<>();
-        crewList.add(new Crew("Alpha crew"));
-        crewList.add(new Crew("Beta crew"));
-        crewList.add(new Crew("Gamma crew"));
-        if (demoData == DemoData.LARGE) {
-            crewList.add(new Crew("Delta crew"));
-            crewList.add(new Crew("Epsilon crew"));
-        }
+        crewList.add(new Crew("Ploeg Elektra 1"));
+        crewList.add(new Crew("Ploeg Elektra 2"));
+        crewList.add(new Crew("Ploeg Elektra 3"));
+        crewList.add(new Crew("Ploeg Gas 1"));
+        crewList.add(new Crew("Ploeg Gas 2"));
         crewRepository.persist(crewList);
 
         LocalDate fromDate = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
@@ -78,7 +76,7 @@ public class DemoDataGenerator {
             String jobArea = JOB_AREA_NAMES[i / jobAreaTargetLimit];
             String jobTarget = JOB_TARGET_NAMES[i % jobAreaTargetLimit];
             // 1 day to 2 workweeks (1 workweek on average)
-            int durationInDays = 1 + random.nextInt(10);
+            int durationInDays = 1 + random.nextInt(4);
             int readyDueBetweenWorkdays = durationInDays + 5 // at least 5 days of flexibility
                     + random.nextInt(workdayTotal - (durationInDays + 5));
             int readyWorkdayOffset = random.nextInt(workdayTotal - readyDueBetweenWorkdays + 1);

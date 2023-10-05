@@ -49,11 +49,14 @@ public class EndDateUpdatingVariableListener implements VariableListener<Mainten
         if (startDate == null) {
             return null;
         } else {
-            // Skip weekends. Does not work for holidays.
+            return startDate.plusDays(durationInDays);
+
+            // Skip weekends (does not work for holidays):
+            // int weekendPadding = 2 * ((durationInDays + (startDate.getDayOfWeek().getValue() - 1)) / 5);
+            // return startDate.plusDays(durationInDays + weekendPadding);
+
             // To skip holidays too, cache all working days in scoreDirector.getWorkingSolution().getWorkCalendar().
             // Keep in sync with MaintenanceSchedule.createStartDateList().
-            int weekendPadding = 2 * ((durationInDays + (startDate.getDayOfWeek().getValue() - 1)) / 5);
-            return startDate.plusDays(durationInDays + weekendPadding);
         }
     }
 

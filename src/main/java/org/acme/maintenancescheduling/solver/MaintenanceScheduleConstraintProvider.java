@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import java.time.DayOfWeek;
+import java.time.temporal.TemporalAdjusters;
+
 import static java.time.temporal.ChronoUnit.DAYS;
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
 import static ai.timefold.solver.core.api.score.stream.Joiners.filtering;
@@ -24,6 +27,8 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 crewConflict(constraintFactory),
                 readyDate(constraintFactory),
                 dueDate(constraintFactory),
+                noStartOnWeekend(constraintFactory),
+                noEndOnWeekend(constraintFactory),
                 // Soft constraints
                 beforeIdealEndDate(constraintFactory),
                 afterIdealEndDate(constraintFactory),
@@ -69,6 +74,28 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                         job -> DAYS.between(job.getDueDate(), job.getEndDate()))
                 .asConstraint("Due date");
     }
+
+        // A crew does not work on weekends
+        public Constraint noStartOnWeekend(ConstraintFactory constraintFactory) {
+                return constraintFactory.forEach(Job.class)
+                        .filter(job -> job.getStartDate() != null
+                                && (job.getStartDate().getDayOfWeek() == DayOfWeek.SATURDAY
+                                || job.getStartDate().getDayOfWeek() == DayOfWeek.SUNDAY))
+                        .penalizeLong(HardSoftLongScore.ONE_HARD,
+                        job -> job.getStartDate().getDayOfWeek().getValue() - 5)
+                        .asConstraint("No start on weekend");
+        }
+
+        public Constraint noEndOnWeekend(ConstraintFactory constraintFactory) {
+                return constraintFactory.forEach(Job.class)
+                        .filter(job -> job.getEndDate() != null
+                                && (job.getEndDate().getDayOfWeek() == DayOfWeek.SUNDAY
+                                || job.getEndDate().getDayOfWeek() == DayOfWeek.MONDAY))
+                        .penalizeLong(HardSoftLongScore.ONE_HARD,
+                        job -> DAYS.between(job.getEndDate(), job.getEndDate().with(TemporalAdjusters.next(DayOfWeek.TUESDAY))))
+                        .asConstraint("No end on weekend");
+    }
+
 
     // ************************************************************************
     // Soft constraints
