@@ -1,12 +1,7 @@
 package org.acme.maintenancescheduling.solver;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import static java.time.temporal.ChronoUnit.DAYS;
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
-import static ai.timefold.solver.core.api.score.stream.Joiners.filtering;
 import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
 import org.acme.maintenancescheduling.domain.Job;
@@ -74,14 +69,23 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
     }
 
         // A crew does not work on weekends
-        public Constraint noWeekends(ConstraintFactory constraintFactory) {
+    public Constraint noWeekends(ConstraintFactory constraintFactory) {
                         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getStartDate() != null
                         && (job.getStartDate().getDayOfWeek().getValue() + job.getDurationInDays() >= 7))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                 job -> ((job.getStartDate().getDayOfWeek().getValue() + job.getDurationInDays()) - 5))
                 .asConstraint("Overlaps weekend");
-        }
+    }
+
+    public Constraint tagConflict(ConstraintFactory constraintFactory) {
+        return constraintFactory.forEach(Job.class)
+                .filter(job -> job.getCrew() != null
+                        && job.getTagSet().contains(job.getCrew().getDiscipline()))
+                .rewardLong(HardSoftLongScore.ONE_HARD,
+                        job -> 1)
+                .asConstraint("Tag Conflict");
+    }
 
 
     // ************************************************************************
@@ -108,26 +112,4 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .asConstraint("After ideal end date");
     }
     
-    public Constraint tagConflict(ConstraintFactory constraintFactory) {
-        // Avoid overlapping maintenance jobs with the same tag (for example road maintenance in the same area).
-        return constraintFactory
-                .forEachUniquePair(Job.class,
-                        overlapping(Job::getStartDate, Job::getEndDate),
-                        // TODO Use intersecting() when available https://github.com/TimefoldAI/timefold-solver/issues/8
-                        filtering((job1, job2) -> !Collections.disjoint(
-                                job1.getTagSet(), job2.getTagSet())))
-                .penalizeLong(HardSoftLongScore.ofSoft(1_000),
-                        (job1, job2) -> {
-                            Set<String> intersection = new HashSet<>(job1.getTagSet());
-                            intersection.retainAll(job2.getTagSet());
-                            long overlap = DAYS.between(
-                                    job1.getStartDate().isAfter(job2.getStartDate())
-                                            ? job1.getStartDate()  : job2.getStartDate(),
-                                    job1.getEndDate().isBefore(job2.getEndDate())
-                                            ? job1.getEndDate() : job2.getEndDate());
-                            return intersection.size() * overlap;
-                        })
-                .asConstraint("Tag conflict");
-    }
-
 }

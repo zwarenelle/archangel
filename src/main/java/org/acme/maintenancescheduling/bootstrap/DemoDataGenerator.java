@@ -49,11 +49,11 @@ public class DemoDataGenerator {
         }
 
         List<Crew> crewList = new ArrayList<>();
-        crewList.add(new Crew("Ploeg Elektra 1", 0));
-        crewList.add(new Crew("Ploeg Elektra 2", 0));
-        crewList.add(new Crew("Ploeg Elektra 3", 0));
-        crewList.add(new Crew("Ploeg Gas 1", 1));
-        crewList.add(new Crew("Ploeg Gas 2", 1));
+        crewList.add(new Crew("Ploeg E1", "Elektra"));
+        crewList.add(new Crew("Ploeg E2", "Elektra"));
+        crewList.add(new Crew("Ploeg E3", "Elektra"));
+        crewList.add(new Crew("Ploeg G1", "Gas"));
+        crewList.add(new Crew("Ploeg G2", "Gas"));
         crewRepository.persist(crewList);
 
         LocalDate fromDate = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
@@ -84,7 +84,13 @@ public class DemoDataGenerator {
             LocalDate readyDate = EndDateUpdatingVariableListener.calculateEndDate(fromDate, readyWorkdayOffset);
             LocalDate dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays);
             LocalDate idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays);
-            Set<String> tagSet = random.nextDouble() < 0.1 ? Set.of(jobArea, "Subway") : Set.of(jobArea);
+            // Some have both tags
+            // Set<String> tagSet = random.nextDouble() < 0.1 ? Set.of("Gas", "Elektra") : 
+            //             random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
+            
+            // Single tag
+            Set<String> tagSet = random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
+            
             jobList.add(new Job(jobArea + " " + jobTarget, durationInDays, readyDate, dueDate, idealEndDate, tagSet));
         }
 
