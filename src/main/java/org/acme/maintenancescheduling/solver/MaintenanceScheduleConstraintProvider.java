@@ -68,9 +68,9 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .asConstraint("Due date");
     }
 
-        // A crew does not work on weekends
     public Constraint noWeekends(ConstraintFactory constraintFactory) {
-                        return constraintFactory.forEach(Job.class)
+        // A crew does not work on weekends
+        return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getStartDate() != null
                         && (job.getStartDate().getDayOfWeek().getValue() + job.getDurationInDays() >= 7))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
@@ -79,6 +79,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
     }
 
     public Constraint tagConflict(ConstraintFactory constraintFactory) {
+        // Discipline jobs and crews
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getCrew() != null
                         && job.getTagSet().contains(job.getCrew().getDiscipline()))

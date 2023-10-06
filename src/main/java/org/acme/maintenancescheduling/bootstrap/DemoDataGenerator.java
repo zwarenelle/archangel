@@ -51,7 +51,6 @@ public class DemoDataGenerator {
         List<Crew> crewList = new ArrayList<>();
         crewList.add(new Crew("Ploeg E1", "Elektra"));
         crewList.add(new Crew("Ploeg E2", "Elektra"));
-        crewList.add(new Crew("Ploeg E3", "Elektra"));
         crewList.add(new Crew("Ploeg G1", "Gas"));
         crewList.add(new Crew("Ploeg G2", "Gas"));
         crewRepository.persist(crewList);
@@ -63,10 +62,9 @@ public class DemoDataGenerator {
         int workdayTotal = weekListSize * 5;
 
         final String[] JOB_AREA_NAMES = {
-                "Downtown", "Uptown", "Park", "Airport", "Bay", "Hill", "Forest", "Station", "Hospital",
-                "Harbor", "Market", "Fort", "Beach", "Garden", "River", "Springs", "Tower", "Mountain"};
-        final String[] JOB_TARGET_NAMES = {"Street", "Bridge", "Tunnel", "Highway", "Boulevard", "Avenue",
-                "Square", "Plaza"};
+                "Spui", "Raamsteeg", "Rokin", "Damrak", "Kalverstraat", "Nieuwmarkt", "Nieuwmarkt", "Spooksteeg", "Oudezijds Voorburgwal",
+                "Geldersekade", "Kromme Waal", "Singel", "Keizersgracht", "Rozengracht", "Prinsengracht", "Halvemaansteeg", "Kerkstraat", "Korte Prinsengracht"};
+        final String[] JOB_TARGET_NAMES = {"Amsterdam", "Landsmeer", "Amstelveen"};
 
         List<Job> jobList = new ArrayList<>();
         int jobListSize = weekListSize * crewList.size() * 3 / 5;
