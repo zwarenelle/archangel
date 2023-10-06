@@ -13,15 +13,18 @@ public class Crew {
     @Id
     @GeneratedValue
     private Long id;
-
     private String name;
+
+    // 0 = Elektra, 1 = Gas
+    private int discipline;
 
     // No-arg constructor required for Hibernate
     public Crew() {
     }
 
-    public Crew(String name) {
+    public Crew(String name, int discipline) {
         this.name = name;
+        this.discipline = discipline;
     }
 
     public Crew(Long id, String name) {
@@ -44,6 +47,14 @@ public class Crew {
 
     public String getName() {
         return name;
+    }
+
+    public int getDiscipline() {
+        return discipline;
+    }
+
+    public void setDiscipline(int discipline) {
+        this.discipline = discipline;
     }
 
 }

@@ -49,11 +49,11 @@ public class DemoDataGenerator {
         }
 
         List<Crew> crewList = new ArrayList<>();
-        crewList.add(new Crew("Ploeg Elektra 1"));
-        crewList.add(new Crew("Ploeg Elektra 2"));
-        crewList.add(new Crew("Ploeg Elektra 3"));
-        crewList.add(new Crew("Ploeg Gas 1"));
-        crewList.add(new Crew("Ploeg Gas 2"));
+        crewList.add(new Crew("Ploeg Elektra 1", 0));
+        crewList.add(new Crew("Ploeg Elektra 2", 0));
+        crewList.add(new Crew("Ploeg Elektra 3", 0));
+        crewList.add(new Crew("Ploeg Gas 1", 1));
+        crewList.add(new Crew("Ploeg Gas 2", 1));
         crewRepository.persist(crewList);
 
         LocalDate fromDate = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
