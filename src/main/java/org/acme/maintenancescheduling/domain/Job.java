@@ -25,7 +25,6 @@ public class Job {
 
     private String name;
     private int durationInDays;
-    private int durationInHours;
     private LocalDate readyDate; // Inclusive
     private LocalDate dueDate; // Exclusive
     private LocalDate idealEndDate; // Exclusive
@@ -49,7 +48,6 @@ public class Job {
     public Job(String name, int durationInDays, LocalDate readyDate, LocalDate dueDate, LocalDate idealEndDate, Set<String> tagSet) {
         this.name = name;
         this.durationInDays = durationInDays;
-        this.durationInHours = (1 * 8);
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
@@ -61,7 +59,6 @@ public class Job {
         this.id = id;
         this.name = name;
         this.durationInDays = durationInDays;
-        this.durationInHours = (1 * 8);
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
@@ -92,11 +89,7 @@ public class Job {
     public int getDurationInDays() {
         return durationInDays;
     }
-
-    public int getDurationInHours() {
-        return durationInHours;
-    }
-
+    
     public LocalDate getReadyDate() {
         return readyDate;
     }

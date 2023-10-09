@@ -16,8 +16,6 @@ public class Crew{
     private String name;
     private String discipline;
 
-    public String test = "Panache";
-
     // No-arg constructor required for Hibernate
     public Crew() {
     }
