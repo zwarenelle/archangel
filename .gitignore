@@ -25,3 +25,4 @@ replay_pid*
 
 # Project specific exclusions
 target/
+src/main/resources/application.properties

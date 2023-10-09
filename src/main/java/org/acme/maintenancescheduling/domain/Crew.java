@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
 @Entity
-public class Crew {
+public class Crew{
 
     @PlanningId
     @Id
@@ -15,6 +15,8 @@ public class Crew {
     private Long id;
     private String name;
     private String discipline;
+
+    public String test = "Panache";
 
     // No-arg constructor required for Hibernate
     public Crew() {
