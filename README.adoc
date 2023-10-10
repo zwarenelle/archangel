@@ -1,12 +1,18 @@
-= Maintenance Scheduling (Java, Quarkus, Maven)
+= Teamplanning (Java, Quarkus, Maven)
 
-* <<run,Run the application>>
-* <<package,Run the packaged application>>
-* <<container,Run the application in a container>>
-* <<native,Run it native>>
+[[req]]
+== Requirements
+* Java
+* Mariadb
+* Maven
+
+Bewerk template (app.template) naar vereisten en schrijf naar:
+
+[source, shell]
+/src/main/resources/application.properties
 
 [[run]]
-== Run the application
+== Starten van de applicatie met Maven
 
 . Git clone:
 +
@@ -15,24 +21,25 @@
 $ git clone https://github.com/zwarenelle/archangel.git
 ----
 
-. Start the application with Maven:
+. Start de applicatie met Maven:
 +
 [source, shell]
 ----
 $ mvn quarkus:dev
 ----
 
-. Visit http://localhost:8080 in your browser.
+. Open http://localhost:8080 in een browser.
 
-. Click on the *Solve* button.
+. Kies *Solve* om het planningsprobleem op te lossen.
 
-Then try _live coding_:
+Probeer dan _live coderen_:
 
-. Make some changes in the source code.
-. Refresh your browser (F5).
+. Pas de source code aan.
+. Ververs de browser (F5).
 
-Notice that those changes are immediately in effect.
+De wijzigingen worden meteen zichtbaar.
 
+= Verdere mogelijkheden
 
 [[package]]
 == Run the packaged application
@@ -115,7 +122,3 @@ $ ./target/*-runner
 . Visit http://localhost:8080 in your browser.
 
 . Click on the *Solve* button.
-
-== More information
-
-Visit https://timefold.ai[timefold.ai].
