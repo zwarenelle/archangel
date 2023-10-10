@@ -1,6 +1,6 @@
 package org.acme.maintenancescheduling.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -12,14 +12,15 @@ public class WorkCalendar {
     @GeneratedValue
     private Long id;
 
-    private LocalDate fromDate; // Inclusive
-    private LocalDate toDate; // Exclusive
+    private LocalDateTime fromDate; // Inclusive
+    private LocalDateTime toDate; // Exclusive
 
     // No-arg constructor required for Hibernate
     public WorkCalendar() {
+        
     }
 
-    public WorkCalendar(LocalDate fromDate, LocalDate toDate) {
+    public WorkCalendar(LocalDateTime fromDate, LocalDateTime toDate) {
         this.fromDate = fromDate;
         this.toDate = toDate;
     }
@@ -37,11 +38,11 @@ public class WorkCalendar {
         return id;
     }
 
-    public LocalDate getFromDate() {
+    public LocalDateTime getFromDate() {
         return fromDate;
     }
 
-    public LocalDate getToDate() {
+    public LocalDateTime getToDate() {
         return toDate;
     }
 

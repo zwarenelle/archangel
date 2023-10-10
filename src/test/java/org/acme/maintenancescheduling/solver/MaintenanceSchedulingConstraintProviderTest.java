@@ -1,6 +1,8 @@
 package org.acme.maintenancescheduling.solver;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Set;
 import jakarta.inject.Inject;
 
@@ -17,9 +19,9 @@ public class MaintenanceSchedulingConstraintProviderTest {
 
     private static final Crew ALPHA_CREW = new Crew(1L, "Alpha crew");
     private static final Crew BETA_CREW = new Crew(2L, "Beta crew");
-    private static final LocalDate DAY_1 = LocalDate.of(2023, 10, 1);
-    private static final LocalDate DAY_2 = LocalDate.of(2023, 10, 2);
-    private static final LocalDate DAY_3 = LocalDate.of(2023, 10, 3);
+    private static final LocalDateTime DAY_1 = LocalDateTime.of(LocalDate.of(2023, 10, 1), LocalTime.of(12, 0, 0));
+    private static final LocalDateTime DAY_2 = LocalDateTime.of(LocalDate.of(2023, 10, 2), LocalTime.of(12, 0, 0));
+    private static final LocalDateTime DAY_3 = LocalDateTime.of(LocalDate.of(2023, 10, 3), LocalTime.of(12, 0, 0));
 
     @Inject
     ConstraintVerifier<MaintenanceScheduleConstraintProvider, MaintenanceSchedule> constraintVerifier;

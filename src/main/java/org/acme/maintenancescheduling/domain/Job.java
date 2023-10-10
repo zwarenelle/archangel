@@ -1,6 +1,6 @@
 package org.acme.maintenancescheduling.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -25,9 +25,9 @@ public class Job {
 
     private String name;
     private int durationInDays;
-    private LocalDate readyDate; // Inclusive
-    private LocalDate dueDate; // Exclusive
-    private LocalDate idealEndDate; // Exclusive
+    private LocalDateTime readyDate; // Inclusive
+    private LocalDateTime dueDate; // Exclusive
+    private LocalDateTime idealEndDate; // Exclusive
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> tagSet;
@@ -37,15 +37,15 @@ public class Job {
     private Crew crew;
     // Follows the TimeGrain Design Pattern
     @PlanningVariable
-    private LocalDate startDate; // Inclusive
+    private LocalDateTime startDate; // Inclusive
     @ShadowVariable(variableListenerClass = EndDateUpdatingVariableListener.class, sourceVariableName = "startDate")
-    private LocalDate endDate; // Exclusive
+    private LocalDateTime endDate; // Exclusive
 
     // No-arg constructor required for Hibernate and Timefold
     public Job() {
     }
 
-    public Job(String name, int durationInDays, LocalDate readyDate, LocalDate dueDate, LocalDate idealEndDate, Set<String> tagSet) {
+    public Job(String name, int durationInDays, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet) {
         this.name = name;
         this.durationInDays = durationInDays;
         this.readyDate = readyDate;
@@ -54,8 +54,8 @@ public class Job {
         this.tagSet = tagSet;
     }
 
-    public Job(Long id, String name, int durationInDays, LocalDate readyDate, LocalDate dueDate, LocalDate idealEndDate, Set<String> tagSet,
-            Crew crew, LocalDate startDate) {
+    public Job(Long id, String name, int durationInDays, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet,
+            Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.name = name;
         this.durationInDays = durationInDays;
@@ -90,15 +90,15 @@ public class Job {
         return durationInDays;
     }
     
-    public LocalDate getReadyDate() {
+    public LocalDateTime getReadyDate() {
         return readyDate;
     }
 
-    public LocalDate getDueDate() {
+    public LocalDateTime getDueDate() {
         return dueDate;
     }
 
-    public LocalDate getIdealEndDate() {
+    public LocalDateTime getIdealEndDate() {
         return idealEndDate;
     }
 
@@ -114,19 +114,19 @@ public class Job {
         this.crew = crew;
     }
 
-    public LocalDate getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 }

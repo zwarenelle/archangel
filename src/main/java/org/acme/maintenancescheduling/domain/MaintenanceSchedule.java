@@ -1,14 +1,16 @@
 package org.acme.maintenancescheduling.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactProperty;
+import ai.timefold.solver.core.api.domain.valuerange.CountableValueRange;
+import ai.timefold.solver.core.api.domain.valuerange.ValueRangeFactory;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardsoftlong.HardSoftLongScore;
 import ai.timefold.solver.core.api.solver.SolverStatus;
@@ -41,16 +43,24 @@ public class MaintenanceSchedule {
         this.jobList = jobList;
     }
 
-    @ValueRangeProvider
-    public List<LocalDate> createStartDateList() {
-        return workCalendar.getFromDate().datesUntil(workCalendar.getToDate())
-                // Skip weekends. Does not work for holidays.
-                // Keep in sync with EndDateUpdatingVariableListener.updateEndDate().
-                // To skip holidays too, cache all working days in WorkCalendar.
-                // .filter(date -> date.getDayOfWeek() != DayOfWeek.SATURDAY
-                //         && date.getDayOfWeek() != DayOfWeek.SUNDAY)
-                .collect(Collectors.toList());
-    }
+    // @ValueRangeProvider
+    // public List<LocalDate> createStartDateList() {
+    //     return workCalendar.getFromDate().toLocalDate().datesUntil(workCalendar.getToDate().toLocalDate())
+    //             // Skip weekends. Does not work for holidays.
+    //             // Keep in sync with EndDateUpdatingVariableListener.updateEndDate().
+    //             // To skip holidays too, cache all working days in WorkCalendar.
+    //             // .filter(date -> date.getDayOfWeek() != DayOfWeek.SATURDAY
+    //             //         && date.getDayOfWeek() != DayOfWeek.SUNDAY)
+    //             .collect(Collectors.toList());
+    // }
+
+        @ValueRangeProvider
+        public CountableValueRange<LocalDateTime> createStartDateList() {
+            return ValueRangeFactory.createLocalDateTimeValueRange(
+                workCalendar.getFromDate(), workCalendar.getToDate(),
+                1, ChronoUnit.DAYS);
+        }
+
 
     // ************************************************************************
     // Getters and setters

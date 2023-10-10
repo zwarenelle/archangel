@@ -1,6 +1,6 @@
 package org.acme.maintenancescheduling.solver;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
@@ -45,7 +45,7 @@ public class EndDateUpdatingVariableListener implements VariableListener<Mainten
         scoreDirector.afterVariableChanged(job, "endDate");
     }
 
-    public static LocalDate calculateEndDate(LocalDate startDate, int durationInDays) {
+    public static LocalDateTime calculateEndDate(LocalDateTime startDate, int durationInDays) {
         if (startDate == null) {
             return null;
         } else {

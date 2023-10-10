@@ -1,7 +1,8 @@
 package org.acme.maintenancescheduling.bootstrap;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,9 +56,9 @@ public class DemoDataGenerator {
         crewList.add(new Crew("Ploeg G2", "Gas"));
         crewRepository.persist(crewList);
 
-        LocalDate fromDate = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        LocalDateTime fromDate = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.of(0, 0, 0, 0));
         int weekListSize = (demoData == DemoData.LARGE) ? 16 : 8;
-        LocalDate toDate = fromDate.plusWeeks(weekListSize);
+        LocalDateTime toDate = fromDate.plusWeeks(weekListSize);
         workCalendarRepository.persist(new WorkCalendar(fromDate, toDate));
         int workdayTotal = weekListSize * 5;
 
@@ -79,9 +80,9 @@ public class DemoDataGenerator {
                     + random.nextInt(workdayTotal - (durationInDays + 5));
             int readyWorkdayOffset = random.nextInt(workdayTotal - readyDueBetweenWorkdays + 1);
             int readyIdealEndBetweenWorkdays = readyDueBetweenWorkdays - 1 - random.nextInt(4);
-            LocalDate readyDate = EndDateUpdatingVariableListener.calculateEndDate(fromDate, readyWorkdayOffset);
-            LocalDate dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays);
-            LocalDate idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays);
+            LocalDateTime readyDate = EndDateUpdatingVariableListener.calculateEndDate(fromDate, readyWorkdayOffset);
+            LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays);
+            LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays);
             // Some have both tags
             // Set<String> tagSet = random.nextDouble() < 0.1 ? Set.of("Gas", "Elektra") : 
             //             random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");

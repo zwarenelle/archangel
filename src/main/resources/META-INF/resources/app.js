@@ -2,7 +2,7 @@ var autoRefreshIntervalId = null;
 
 const byCrewPanel = document.getElementById("byCrewPanel");
 const byCrewTimelineOptions = {
-    timeAxis: {scale: "day"},
+    timeAxis: {scale: "hour", step: 12},
     orientation: {axis: "top"},
     stack: false,
     xss: {disabled: true}, // Items are XSS safe through JQuery
@@ -14,11 +14,10 @@ var byCrewTimeline = new vis.Timeline(byCrewPanel, byCrewItemDataSet, byCrewGrou
 
 const byJobPanel = document.getElementById("byJobPanel");
 const byJobTimelineOptions = {
-    timeAxis: {scale: "day"},
+    timeAxis: {scale: "hour", step: 12},
     orientation: {axis: "top"},
     xss: {disabled: true}, // Items are XSS safe through JQuery
-    zoomMin: 3 * 1000 * 60 * 60 * 24, // Three day in milliseconds
-    timeAxis: {scale: 'minute', step: 30}
+    zoomMin: 3 * 1000 * 60 * 60 * 24 // Three day in milliseconds
 };
 var byJobGroupDataSet = new vis.DataSet();
 var byJobItemDataSet = new vis.DataSet();
