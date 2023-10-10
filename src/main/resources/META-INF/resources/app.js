@@ -17,7 +17,8 @@ const byJobTimelineOptions = {
     timeAxis: {scale: "day"},
     orientation: {axis: "top"},
     xss: {disabled: true}, // Items are XSS safe through JQuery
-    zoomMin: 3 * 1000 * 60 * 60 * 24 // Three day in milliseconds
+    zoomMin: 3 * 1000 * 60 * 60 * 24, // Three day in milliseconds
+    timeAxis: {scale: 'minute', step: 30}
 };
 var byJobGroupDataSet = new vis.DataSet();
 var byJobItemDataSet = new vis.DataSet();

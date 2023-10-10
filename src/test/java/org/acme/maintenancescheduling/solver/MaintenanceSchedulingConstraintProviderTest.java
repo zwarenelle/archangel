@@ -17,9 +17,9 @@ public class MaintenanceSchedulingConstraintProviderTest {
 
     private static final Crew ALPHA_CREW = new Crew(1L, "Alpha crew");
     private static final Crew BETA_CREW = new Crew(2L, "Beta crew");
-    private static final LocalDate DAY_1 = LocalDate.of(2021, 2, 1);
-    private static final LocalDate DAY_2 = LocalDate.of(2021, 2, 2);
-    private static final LocalDate DAY_3 = LocalDate.of(2021, 2, 3);
+    private static final LocalDate DAY_1 = LocalDate.of(2023, 10, 1);
+    private static final LocalDate DAY_2 = LocalDate.of(2023, 10, 2);
+    private static final LocalDate DAY_3 = LocalDate.of(2023, 10, 3);
 
     @Inject
     ConstraintVerifier<MaintenanceScheduleConstraintProvider, MaintenanceSchedule> constraintVerifier;
