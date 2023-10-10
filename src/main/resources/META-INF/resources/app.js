@@ -108,12 +108,12 @@ function refreshSchedule() {
                 byJobItemDataSet.add({
                     id : job.id, group: job.id,
                     content: byJobJobElement.html(),
-                    start: job.readyDate, end: JSJoda.LocalDate.parse(job.readyDate).plusDays(job.durationInDays).toString(),
+                    start: job.readyDate, end: JSJoda.LocalDateTime.parse(job.readyDate).plusDays(job.durationInDays).toString(),
                     style: "background-color: #EF292999"
                 });
             } else {
-                const beforeReady = JSJoda.LocalDate.parse(job.startDate).isBefore(JSJoda.LocalDate.parse(job.readyDate));
-                const afterDue = JSJoda.LocalDate.parse(job.endDate).isAfter(JSJoda.LocalDate.parse(job.dueDate));
+                const beforeReady = JSJoda.LocalDateTime.parse(job.startDate).isBefore(JSJoda.LocalDateTime.parse(job.readyDate));
+                const afterDue = JSJoda.LocalDateTime.parse(job.endDate).isAfter(JSJoda.LocalDateTime.parse(job.dueDate));
                 const byCrewJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.name))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInDays} workdays`));
