@@ -131,7 +131,18 @@ function refreshSchedule() {
                 const byJobJobElement = $(`<div/>`)
                   .append($(`<h5 class="card-title mb-1"/>`).text(`Unassigned`));
                 $.each(job.tagSet, (index, tag) => {
-                    const color = "#333333";
+                    if (tag.toString() == "Gas")
+                    {
+                        color = "#FEB900";
+                    }
+                    else if (tag.toString() == "Elektra")
+                    {
+                        color = "#ED5353";
+                    }
+                    else
+                    {
+                        color = "#003366";
+                    }
                     unassignedJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag));
                     byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag));
                 });
@@ -159,7 +170,18 @@ function refreshSchedule() {
                     byJobJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`After due (too late)`));
                 }
                 $.each(job.tagSet, (index, tag) => {
-                    const color = "#003366";
+                    if (tag.toString() == "Gas")
+                    {
+                        color = "#FEB900";
+                    }
+                    else if (tag.toString() == "Elektra")
+                    {
+                        color = "#ED5353";
+                    }
+                    else
+                    {
+                        color = "#003366";
+                    }
                     byCrewJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag));
                     byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag));
                 });
