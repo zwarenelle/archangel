@@ -1,6 +1,7 @@
 package org.acme.maintenancescheduling.solver;
 
-import static java.time.temporal.ChronoUnit.DAYS;
+import java.time.temporal.ChronoUnit;
+
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
 import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
@@ -20,12 +21,11 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 readyDate(constraintFactory),
                 dueDate(constraintFactory),
                 noWeekends(constraintFactory),
-                // noStartOnWeekend(constraintFactory),
-                // noEndOnWeekend(constraintFactory),
+                tagConflict(constraintFactory),
+
                 // Soft constraints
                 beforeIdealEndDate(constraintFactory),
-                afterIdealEndDate(constraintFactory),
-                tagConflict(constraintFactory),
+                afterIdealEndDate(constraintFactory)
         };
     }
 
@@ -40,11 +40,12 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                         equal(Job::getCrew),
                         overlapping(Job::getStartDate, Job::getEndDate))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
-                        (job1, job2) -> DAYS.between(
+                        (job1, job2) -> ChronoUnit.HOURS.between(
                                 job1.getStartDate().isAfter(job2.getStartDate())
                                         ? job1.getStartDate() : job2.getStartDate(),
                                 job1.getEndDate().isBefore(job2.getEndDate())
-                                        ? job1.getEndDate() : job2.getEndDate()))
+                                        ? job1.getEndDate() : job2.getEndDate())
+                        )
                 .asConstraint("Crew conflict");
     }
 
@@ -54,7 +55,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .filter(job -> job.getReadyDate() != null
                         && job.getStartDate().isBefore(job.getReadyDate()))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
-                        job -> DAYS.between(job.getStartDate(), job.getReadyDate()))
+                        job -> ChronoUnit.HOURS.between(job.getStartDate(), job.getReadyDate()))
                 .asConstraint("Ready date");
     }
 
@@ -64,7 +65,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .filter(job -> job.getDueDate() != null
                         && job.getEndDate().isAfter(job.getDueDate()))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
-                        job -> DAYS.between(job.getDueDate(), job.getEndDate()))
+                        job -> ChronoUnit.HOURS.between(job.getDueDate(), job.getEndDate()))
                 .asConstraint("Due date");
     }
 
@@ -83,11 +84,10 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getCrew() != null
                         && job.getTagSet().contains(job.getCrew().getDiscipline()))
-                .rewardLong(HardSoftLongScore.ONE_HARD,
-                        job -> 1)
+                .penalizeLong(HardSoftLongScore.ONE_HARD,
+                        job -> 10L)
                 .asConstraint("Tag Conflict");
     }
-
 
     // ************************************************************************
     // Soft constraints
@@ -99,7 +99,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .filter(job -> job.getIdealEndDate() != null
                         && job.getEndDate().isBefore(job.getIdealEndDate()))
                 .penalizeLong(HardSoftLongScore.ofSoft(1),
-                        job -> DAYS.between(job.getEndDate(), job.getIdealEndDate()))
+                        job -> ChronoUnit.HOURS.between(job.getEndDate(), job.getIdealEndDate()))
                 .asConstraint("Before ideal end date");
     }
 
@@ -108,9 +108,8 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getIdealEndDate() != null
                         && job.getEndDate().isAfter(job.getIdealEndDate()))
-                .penalizeLong(HardSoftLongScore.ofSoft(1_000_000),
-                        job -> DAYS.between(job.getIdealEndDate(), job.getEndDate()))
+                .penalizeLong(HardSoftLongScore.ofSoft(10),
+                        job -> ChronoUnit.HOURS.between(job.getIdealEndDate(), job.getEndDate()))
                 .asConstraint("After ideal end date");
     }
-    
 }

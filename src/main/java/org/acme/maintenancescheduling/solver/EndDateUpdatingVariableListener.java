@@ -41,23 +41,15 @@ public class EndDateUpdatingVariableListener implements VariableListener<Mainten
 
     protected void updateEndDate(ScoreDirector<MaintenanceSchedule> scoreDirector, Job job) {
         scoreDirector.beforeVariableChanged(job, "endDate");
-        job.setEndDate(calculateEndDate(job.getStartDate(), job.getDurationInDays()));
+        job.setEndDate(calculateEndDate(job.getStartDate(), job.getDuurInUren()));
         scoreDirector.afterVariableChanged(job, "endDate");
     }
 
-    public static LocalDateTime calculateEndDate(LocalDateTime startDate, int durationInDays) {
+    public static LocalDateTime calculateEndDate(LocalDateTime startDate, int duurInUren) {
         if (startDate == null) {
             return null;
         } else {
-            return startDate.plusDays(durationInDays);
-
-            // Skip weekends (does not work for holidays):
-            // int weekendPadding = 2 * ((durationInDays + (startDate.getDayOfWeek().getValue() - 1)) / 5);
-            // return startDate.plusDays(durationInDays + weekendPadding);
-
-            // To skip holidays too, cache all working days in scoreDirector.getWorkingSolution().getWorkCalendar().
-            // Keep in sync with MaintenanceSchedule.createStartDateList().
+            return startDate.plusHours(duurInUren);
         }
     }
-
 }

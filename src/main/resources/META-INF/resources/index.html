@@ -2,7 +2,7 @@
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="width=device-width, initial-scale=1" name="viewport">
-    <title>Heijmans scheduling - Timefold Quarkus</title>
+    <title>Heijmans Teamplanning</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vis-timeline@7.7.2/styles/vis-timeline-graph2d.min.css"
           integrity="sha256-svzNasPg1yR5gvEaRei2jg+n4Pc3sVyMUWeS6xRAh6U=" crossorigin="anonymous">
@@ -25,28 +25,28 @@
     <div class="sticky-top d-flex justify-content-center align-items-center" aria-live="polite" aria-atomic="true">
         <div id="notificationPanel" style="position: absolute; top: .5rem;"></div>
     </div>
-    <h1>Heijmans</h1>
+    <h1>Teamplanning - Timefold Quarkus</h1>
     <p>Genereren planning op basis van opdrachten en teams</p>
 
     <div class="mb-2">
         <button id="refreshButton" type="button" class="btn btn-secondary">
-            <span class="fas fa-refresh"></span> Refresh
+            <span class="fas fa-refresh"></span> Ververs
         </button>
         <button id="solveButton" type="button" class="btn btn-success">
-            <span class="fas fa-play"></span> Solve
+            <span class="fas fa-play"></span> Oplossen
         </button>
         <button id="stopSolvingButton" type="button" class="btn btn-danger">
-            <span class="fas fa-stop"></span> Stop solving
+            <span class="fas fa-stop"></span> Stop
         </button>
         <span id="score" class="score ms-2 align-middle fw-bold">Score: ?</span>
 
         <div class="float-end">
             <ul class="nav nav-pills" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="byCrewTab" data-bs-toggle="tab" data-bs-target="#byCrewPanel" type="button" role="tab" aria-controls="byCrewPanel" aria-selected="true">By crew</button>
+                    <button class="nav-link active" id="byCrewTab" data-bs-toggle="tab" data-bs-target="#byCrewPanel" type="button" role="tab" aria-controls="byCrewPanel" aria-selected="true">Per ploeg</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="byJobTab" data-bs-toggle="tab" data-bs-target="#byJobPanel" type="button" role="tab" aria-controls="byJobPanel" aria-selected="false">By job</button>
+                    <button class="nav-link" id="byJobTab" data-bs-toggle="tab" data-bs-target="#byJobPanel" type="button" role="tab" aria-controls="byJobPanel" aria-selected="false">Per opdracht</button>
                 </li>
             </ul>
         </div>
@@ -60,7 +60,7 @@
         </div>
     </div>
 
-    <h2>Unassigned jobs</h2>
+    <h2>Te plannen opdrachten</h2>
     <div id="unassignedJobs" class="row row-cols-3 g-3 mb-4"></div>
 </div>
 <footer id="timefold-auto-footer"></footer>

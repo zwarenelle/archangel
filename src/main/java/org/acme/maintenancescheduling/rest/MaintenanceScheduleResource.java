@@ -73,7 +73,7 @@ public class MaintenanceScheduleResource {
         return new MaintenanceSchedule(
                 workCalendarRepository.listAll().get(0),
                 crewRepository.listAll(Sort.by("name").and("id")),
-                jobRepository.listAll(Sort.by("dueDate").and("readyDate").and("name").and("id")));
+                jobRepository.listAll(Sort.by("dueDate").and("readyDate").and("adres").and("id")));
     }
 
     @Transactional

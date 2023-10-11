@@ -55,33 +55,33 @@ public class DemoDataGenerator {
         crewList.add(new Crew("Ploeg G2", "Gas"));
         crewRepository.persist(crewList);
 
+        final String[] JOB_AREA_NAMES = {
+                "Spui", "Raamsteeg", "Rokin", "Damrak", "Kalverstraat", "Nieuwmarkt", "Nieuwmarkt", "Spooksteeg", "Oudezijds Voorburgwal",
+                "Geldersekade", "Kromme Waal", "Singel", "Keizersgracht", "Rozengracht", "Prinsengracht", "Halvemaansteeg", "Kerkstraat", "Korte Prinsengracht"};
+
         LocalDateTime fromDate = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.of(0, 0, 0, 0));
-        int weekListSize = 8;
+        int weekListSize = 4;
         LocalDateTime toDate = fromDate.plusWeeks(weekListSize);
         workCalendarRepository.persist(new WorkCalendar(fromDate, toDate));
         int workdayTotal = weekListSize * 5;
 
-        final String[] JOB_AREA_NAMES = {
-                "Spui", "Raamsteeg", "Rokin", "Damrak", "Kalverstraat", "Nieuwmarkt", "Nieuwmarkt", "Spooksteeg", "Oudezijds Voorburgwal",
-                "Geldersekade", "Kromme Waal", "Singel", "Keizersgracht", "Rozengracht", "Prinsengracht", "Halvemaansteeg", "Kerkstraat", "Korte Prinsengracht"};
-        final String[] JOB_TARGET_NAMES = {"Amsterdam", "Landsmeer", "Amstelveen"};
-
         List<Job> jobList = new ArrayList<>();
-        int jobListSize = weekListSize * crewList.size() * 3 / 5;
-        int jobAreaTargetLimit = Math.min(JOB_TARGET_NAMES.length, crewList.size() * 2);
+        int jobListSize = crewList.size() * 15;
+
         Random random = new Random(17);
         for (int i = 0; i < jobListSize; i++) {
-            String jobArea = JOB_AREA_NAMES[i / jobAreaTargetLimit];
-            String jobTarget = JOB_TARGET_NAMES[i % jobAreaTargetLimit];
-            // 1 day to 2 workweeks (1 workweek on average)
-            int durationInDays = 1 + random.nextInt(4);
+            String jobArea = JOB_AREA_NAMES[random.nextInt(JOB_AREA_NAMES.length)];
+
+            int durationInDays = 1;
+            int duurInUren = 10;
+            
             int readyDueBetweenWorkdays = durationInDays + 5 // at least 5 days of flexibility
                     + random.nextInt(workdayTotal - (durationInDays + 5));
             int readyWorkdayOffset = random.nextInt(workdayTotal - readyDueBetweenWorkdays + 1);
-            int readyIdealEndBetweenWorkdays = readyDueBetweenWorkdays - 1 - random.nextInt(4);
-            LocalDateTime readyDate = EndDateUpdatingVariableListener.calculateEndDate(fromDate, readyWorkdayOffset);
-            LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays);
-            LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays);
+            int readyIdealEndBetweenWorkdays = readyDueBetweenWorkdays - 1 - random.nextInt(2);
+            LocalDateTime readyDate = EndDateUpdatingVariableListener.calculateEndDate(fromDate, readyWorkdayOffset * 24);
+            LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays * 24);
+            LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays * 24);
             // Some have both tags
             // Set<String> tagSet = random.nextDouble() < 0.1 ? Set.of("Gas", "Elektra") : 
             //             random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
@@ -89,7 +89,7 @@ public class DemoDataGenerator {
             // Single tag
             Set<String> tagSet = random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
             
-            jobList.add(new Job(jobArea + " " + jobTarget, durationInDays, readyDate, dueDate, idealEndDate, tagSet));
+            jobList.add(new Job(jobArea, durationInDays, duurInUren, readyDate, dueDate, idealEndDate, tagSet));
         }
 
         jobRepository.persist(jobList);

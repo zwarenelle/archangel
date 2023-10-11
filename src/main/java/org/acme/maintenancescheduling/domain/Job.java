@@ -23,8 +23,9 @@ public class Job {
     @GeneratedValue
     private Long id;
 
-    private String name;
+    private String adres;
     private int durationInDays;
+    private int duurInUren;
     private LocalDateTime readyDate; // Inclusive
     private LocalDateTime dueDate; // Exclusive
     private LocalDateTime idealEndDate; // Exclusive
@@ -45,32 +46,34 @@ public class Job {
     public Job() {
     }
 
-    public Job(String name, int durationInDays, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet) {
-        this.name = name;
+    public Job(String adres, int durationInDays, int duurInUren, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet) {
+        this.adres = adres;
         this.durationInDays = durationInDays;
+        this.duurInUren = duurInUren;
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
         this.tagSet = tagSet;
     }
 
-    public Job(Long id, String name, int durationInDays, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet,
+    public Job(Long id, String adres, int durationInDays, int duurInUren, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
-        this.name = name;
+        this.adres = adres;
         this.durationInDays = durationInDays;
+        this.duurInUren = duurInUren;
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
         this.tagSet = tagSet;
         this.crew = crew;
         this.startDate = startDate;
-        this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInDays);
+        this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, duurInUren);
     }
 
     @Override
     public String toString() {
-        return name + "(" + id + ")";
+        return adres + "(" + id + ")";
     }
 
     // ************************************************************************
@@ -82,12 +85,16 @@ public class Job {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getAdres() {
+        return adres;
     }
 
     public int getDurationInDays() {
         return durationInDays;
+    }
+
+    public int getDuurInUren() {
+        return duurInUren;
     }
     
     public LocalDateTime getReadyDate() {

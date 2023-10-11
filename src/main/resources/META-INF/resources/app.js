@@ -102,7 +102,7 @@ function refreshSchedule() {
 
         $.each(schedule.jobList, (index, job) => {
             const jobGroupElement = $(`<div/>`)
-              .append($(`<h5 class="card-title mb-1"/>`).text(job.name))
+              .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
               .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInDays} workdays`));
             byJobGroupDataSet.add({
                 id : job.id,
@@ -124,7 +124,7 @@ function refreshSchedule() {
             if (job.crew == null || job.startDate == null) {
                 unassignedJobsCount++;
                 const unassignedJobElement = $(`<div class="card-body p-2"/>`)
-                    .append($(`<h5 class="card-title mb-1"/>`).text(job.name))
+                    .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInDays} workdays`))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Ready: ${job.readyDate}`))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Due: ${job.dueDate}`));
@@ -157,7 +157,7 @@ function refreshSchedule() {
                 const beforeReady = JSJoda.LocalDateTime.parse(job.startDate).isBefore(JSJoda.LocalDateTime.parse(job.readyDate));
                 const afterDue = JSJoda.LocalDateTime.parse(job.endDate).isAfter(JSJoda.LocalDateTime.parse(job.dueDate));
                 const byCrewJobElement = $(`<div/>`)
-                    .append($(`<h5 class="card-title mb-1"/>`).text(job.name))
+                    .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInDays} workdays`));
                 const byJobJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.crew.name));

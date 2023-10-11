@@ -11,8 +11,8 @@ quarkus.http.cors.origins=/http://localhost:.*/
 # Demo properties
 ########################
 
-# The demo dataset size: NONE, SMALL, LARGE
-# schedule.demoData=NONE
+# Toggle demo data: TRUE, FALSE (keep in sync with quarkus.hibernate-orm.database.generation)
+schedule.demoData=FALSE
 
 ########################
 # Timefold properties
@@ -21,7 +21,7 @@ quarkus.http.cors.origins=/http://localhost:.*/
 # The solver runs for 30 seconds. To run for 5 minutes use "5m" and for 2 hours use "2h".
 quarkus.timefold.solver.termination.spent-limit=30s
 
-# To change how many solvers to run in parallel
+# To change how many solvers to run in parallel (Timefold Enterprise only)
 # timefold.solver-manager.parallel-solver-count=4
 # To run increase CPU cores usage per solver
 # quarkus.timefold.solver.move-thread-count=2
@@ -47,7 +47,7 @@ quarkus.datasource.username = <<USERNAME>>
 quarkus.datasource.password = <<PASSWORD>>
 quarkus.datasource.jdbc.url = jdbc:mariadb://localhost:<<PORT>>/<<DATABASE>>
 
-# drop and create the database at startup (use `update` to only update the schema)
+# drop and create the database at startup (use `update` to only update the schema, 'drop-and-create' to generate DemoData again)
 quarkus.hibernate-orm.database.generation = drop-and-create
 
 ########################
