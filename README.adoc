@@ -2,9 +2,9 @@
 
 [[req]]
 == Requirements
-* Java
+* JDK 17+
 * Mariadb
-* Maven
+* Apache Maven
 
 Bewerk template (app.template) naar vereisten en schrijf naar:
 
