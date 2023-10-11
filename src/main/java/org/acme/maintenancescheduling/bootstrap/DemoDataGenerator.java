@@ -27,13 +27,12 @@ import io.quarkus.runtime.StartupEvent;
 @ApplicationScoped
 public class DemoDataGenerator {
 
-    @ConfigProperty(name = "schedule.demoData", defaultValue = "SMALL")
+    @ConfigProperty(name = "schedule.demoData", defaultValue = "TRUE")
     public DemoData demoData;
 
     public enum DemoData {
-        NONE,
-        SMALL,
-        LARGE
+        FALSE,
+        TRUE
     }
 
     @Inject
@@ -45,7 +44,7 @@ public class DemoDataGenerator {
 
     @Transactional
     public void generateDemoData(@Observes StartupEvent startupEvent) {
-        if (demoData == DemoData.NONE) {
+        if (demoData == DemoData.FALSE) {
             return;
         }
 
@@ -57,7 +56,7 @@ public class DemoDataGenerator {
         crewRepository.persist(crewList);
 
         LocalDateTime fromDate = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.of(0, 0, 0, 0));
-        int weekListSize = (demoData == DemoData.LARGE) ? 16 : 8;
+        int weekListSize = 8;
         LocalDateTime toDate = fromDate.plusWeeks(weekListSize);
         workCalendarRepository.persist(new WorkCalendar(fromDate, toDate));
         int workdayTotal = weekListSize * 5;

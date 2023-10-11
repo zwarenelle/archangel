@@ -1,4 +1,29 @@
 var autoRefreshIntervalId = null;
+var formattingOptions = 
+{
+    minorLabels: {
+        millisecond:'',
+        second:     '',
+        minute:     'HH:mm',
+        hour:       'HH:mm',
+        weekday:    '',
+        day:        '',
+        week:       '',
+        month:      '',
+        year:       ''        
+    },
+    majorLabels: {
+        millisecond:'',
+        second:     '',
+        minute:     '',
+        hour:       'dd D-MM',
+        weekday:    'MMMM YYYY',
+        day:        'MMMM YYYY',
+        week:       'MMMM YYYY',
+        month:      'YYYY',
+        year:       ''        
+    }
+  };
 
 const byCrewPanel = document.getElementById("byCrewPanel");
 const byCrewTimelineOptions = {
@@ -6,8 +31,11 @@ const byCrewTimelineOptions = {
     orientation: {axis: "top"},
     stack: false,
     xss: {disabled: true}, // Items are XSS safe through JQuery
-    zoomMin: 3 * 1000 * 60 * 60 * 24 // Three day in milliseconds
+    zoomMin: 3 * 1000 * 60 * 60 * 24, // Three day in milliseconds
+    locale: 'nl',
+    format: formattingOptions
 };
+
 var byCrewGroupDataSet = new vis.DataSet();
 var byCrewItemDataSet = new vis.DataSet();
 var byCrewTimeline = new vis.Timeline(byCrewPanel, byCrewItemDataSet, byCrewGroupDataSet, byCrewTimelineOptions);
@@ -17,8 +45,11 @@ const byJobTimelineOptions = {
     timeAxis: {scale: "hour", step: 12},
     orientation: {axis: "top"},
     xss: {disabled: true}, // Items are XSS safe through JQuery
-    zoomMin: 3 * 1000 * 60 * 60 * 24 // Three day in milliseconds
+    zoomMin: 3 * 1000 * 60 * 60 * 24, // Three day in milliseconds
+    locale: 'nl',
+    format: formattingOptions
 };
+
 var byJobGroupDataSet = new vis.DataSet();
 var byJobItemDataSet = new vis.DataSet();
 var byJobTimeline = new vis.Timeline(byJobPanel, byJobItemDataSet, byJobGroupDataSet, byJobTimelineOptions);
