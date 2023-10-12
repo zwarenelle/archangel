@@ -25,7 +25,7 @@ public class Job {
 
     private String adres;
     private int durationInDays;
-    private int duurInUren;
+    private int durationInHours;
     private LocalDateTime readyDate; // Inclusive
     private LocalDateTime dueDate; // Exclusive
     private LocalDateTime idealEndDate; // Exclusive
@@ -46,29 +46,29 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, int durationInDays, int duurInUren, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet) {
+    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet) {
         this.adres = adres;
         this.durationInDays = durationInDays;
-        this.duurInUren = duurInUren;
+        this.durationInHours = durationInHours;
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
         this.tagSet = tagSet;
     }
 
-    public Job(Long id, String adres, int durationInDays, int duurInUren, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet,
+    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
         this.durationInDays = durationInDays;
-        this.duurInUren = duurInUren;
+        this.durationInHours = durationInHours;
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
         this.tagSet = tagSet;
         this.crew = crew;
         this.startDate = startDate;
-        this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, duurInUren);
+        this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInHours);
     }
 
     @Override
@@ -93,8 +93,8 @@ public class Job {
         return durationInDays;
     }
 
-    public int getDuurInUren() {
-        return duurInUren;
+    public int getdurationInHours() {
+        return durationInHours;
     }
     
     public LocalDateTime getReadyDate() {

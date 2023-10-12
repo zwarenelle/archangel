@@ -73,7 +73,7 @@ public class DemoDataGenerator {
             String jobArea = JOB_AREA_NAMES[random.nextInt(JOB_AREA_NAMES.length)];
 
             int durationInDays = 1;
-            int duurInUren = 10;
+            int durationInHours = 4;
             
             int readyDueBetweenWorkdays = durationInDays + 5 // at least 5 days of flexibility
                     + random.nextInt(workdayTotal - (durationInDays + 5));
@@ -89,7 +89,7 @@ public class DemoDataGenerator {
             // Single tag
             Set<String> tagSet = random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
             
-            jobList.add(new Job(jobArea, durationInDays, duurInUren, readyDate, dueDate, idealEndDate, tagSet));
+            jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, tagSet));
         }
 
         jobRepository.persist(jobList);
