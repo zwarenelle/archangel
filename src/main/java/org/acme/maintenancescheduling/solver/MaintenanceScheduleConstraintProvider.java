@@ -26,7 +26,6 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
 
                 // Soft constraints
                 insideWorkHours(constraintFactory),
-                // beforeDayEnd(constraintFactory),
                 beforeIdealEndDate(constraintFactory),
                 afterIdealEndDate(constraintFactory)
         };
@@ -97,38 +96,28 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
     // ************************************************************************
 
     public Constraint insideWorkHours(ConstraintFactory constraintFactory) {
+        // Preferably only work between 7AM en 4PM
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getStartDate().toLocalTime() != null
-                                && ((job.getStartDate().toLocalTime().isBefore(LocalTime.of(7, 0, 0))
+                        &&
+                                // Don't start the job before 7AM or after 4PM
+                                ((job.getStartDate().toLocalTime().isBefore(LocalTime.of(7, 0, 0))
                                 || job.getStartDate().toLocalTime().isAfter(LocalTime.of(16, 0, 0)))
                         ||
+                                // Don't end it after 4PM or before 7AM
                                 (job.getEndDate().toLocalTime().isAfter(LocalTime.of(16, 0, 0))
                                 || job.getEndDate().toLocalTime().isBefore(LocalTime.of(7, 0, 0))))
                         )
-
-                // TODO: Fix penalize score
-
-                // .penalizeLong(HardSoftLongScore.ONE_HARD,
-                //         job -> job.getStartDate().toLocalTime().compareTo(LocalTime.of(7, 0, 0)) < 0
-                //         // && job.getStartDate().toLocalTime().compareTo(LocalTime.of(7, 0, 0)) == 1
-                //         ? ChronoUnit.MINUTES.between(job.getStartDate().toLocalTime(), LocalTime.of(7, 0, 0))
-                //         : ChronoUnit.MINUTES.between(LocalTime.of(16, 0, 0), job.getEndDate().toLocalTime())
-                //         )
-                .penalizeLong(HardSoftLongScore.ONE_HARD,
-                job -> 10L)
+                .penalizeLong(HardSoftLongScore.ONE_SOFT,
+                        job -> job.getStartDate().toLocalTime().compareTo(LocalTime.of(7, 0, 0)) < 0
+                                ? ChronoUnit.MINUTES.between(job.getStartDate().toLocalTime(), LocalTime.of(7, 0, 0))
+                                : job.getEndDate().toLocalTime().compareTo(LocalTime.of(16, 0, 0)) > 0
+                                        ? ChronoUnit.MINUTES.between(LocalTime.of(16, 0, 0), job.getEndDate().toLocalTime())
+                                        : ChronoUnit.MINUTES.between(job.getEndDate().toLocalTime(), LocalTime.of(7, 0, 0))
+                        )
                 .asConstraint("Before work hours");
     }
 
-//     public Constraint beforeDayEnd(ConstraintFactory constraintFactory) {
-//         return constraintFactory.forEach(Job.class)
-//                 .filter(job -> job.getStartDate().toLocalTime() != null
-//                         && job.getEndDate().toLocalTime().isAfter(LocalTime.of(16, 0,0))
-//                         )
-//                 .penalizeLong(HardSoftLongScore.ONE_SOFT,
-//                         job -> ChronoUnit.MINUTES.between(LocalTime.of(16, 0, 0), job.getEndDate().toLocalTime()))
-//                 .asConstraint("After work hours");
-//     }
-    
     public Constraint beforeIdealEndDate(ConstraintFactory constraintFactory) {
         // Early maintenance is expensive because the sooner maintenance is done, the sooner it needs to happen again.
         return constraintFactory.forEach(Job.class)

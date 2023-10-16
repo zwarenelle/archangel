@@ -27,7 +27,7 @@ var formattingOptions =
 
 const byCrewPanel = document.getElementById("byCrewPanel");
 const byCrewTimelineOptions = {
-    timeAxis: {scale: "hour", step: 12},
+    timeAxis: {scale: "hour", step: 6},
     orientation: {axis: "top"},
     stack: false,
     xss: {disabled: true}, // Items are XSS safe through JQuery
@@ -42,7 +42,7 @@ var byCrewTimeline = new vis.Timeline(byCrewPanel, byCrewItemDataSet, byCrewGrou
 
 const byJobPanel = document.getElementById("byJobPanel");
 const byJobTimelineOptions = {
-    timeAxis: {scale: "hour", step: 12},
+    timeAxis: {scale: "hour", step: 6},
     orientation: {axis: "top"},
     xss: {disabled: true}, // Items are XSS safe through JQuery
     zoomMin: 3 * 1000 * 60 * 60 * 24, // Three day in milliseconds
