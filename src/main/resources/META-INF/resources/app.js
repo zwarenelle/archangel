@@ -130,7 +130,7 @@ function refreshSchedule() {
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Due: ${job.dueDate}`));
                 const byJobJobElement = $(`<div/>`)
                   .append($(`<h5 class="card-title mb-1"/>`).text(`Unassigned`));
-                $.each(job.tagSet, (index, tag) => {
+                $.each(job.requiredSkills, (index, tag) => {
                     if (tag.toString() == "Gas")
                     {
                         color = "#FEB900";
@@ -169,7 +169,7 @@ function refreshSchedule() {
                     byCrewJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`After due (too late)`));
                     byJobJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`After due (too late)`));
                 }
-                $.each(job.tagSet, (index, tag) => {
+                $.each(job.requiredSkills, (index, tag) => {
                     if (tag.toString() == "Gas")
                     {
                         color = "#FEB900";

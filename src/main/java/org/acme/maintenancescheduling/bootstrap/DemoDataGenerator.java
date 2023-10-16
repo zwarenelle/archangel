@@ -83,13 +83,13 @@ public class DemoDataGenerator {
             LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays * 24);
             LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays * 24);
             // Some have both tags
-            // Set<String> tagSet = random.nextDouble() < 0.1 ? Set.of("Gas", "Elektra") : 
+            // Set<String> requiredSkills = random.nextDouble() < 0.1 ? Set.of("Gas", "Elektra") : 
             //             random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
             
             // Single tag
-            Set<String> tagSet = random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
+            Set<String> requiredSkills = random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
             
-            jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, tagSet));
+            jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills));
         }
 
         jobRepository.persist(jobList);
