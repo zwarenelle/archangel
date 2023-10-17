@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
+import org.acme.maintenancescheduling.domain.SkillSet;
 import org.acme.maintenancescheduling.domain.WorkCalendar;
 import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
@@ -41,6 +42,7 @@ public class DemoDataGenerator {
     @Inject
     JobRepository jobRepository;
 
+
     @Transactional
     public void generateDemoData(@Observes StartupEvent startupEvent) {
         if (demoData == DemoData.FALSE) {
@@ -48,11 +50,10 @@ public class DemoDataGenerator {
         }
 
         List<Crew> crewList = new ArrayList<>();
-        crewList.add(new Crew("Ploeg COMBI", List.of("Elektra", "Gas")));
-        crewList.add(new Crew("Ploeg E1", List.of("Elektra")));
-        crewList.add(new Crew("Ploeg E2", List.of("Elektra")));
-        crewList.add(new Crew("Ploeg G1", List.of("Gas")));
-        crewList.add(new Crew("Ploeg G2", List.of("Gas")));
+        crewList.add(new Crew("Ploeg E1", new SkillSet("Elektra")));
+        crewList.add(new Crew("Ploeg E2", new SkillSet("Elektra")));
+        crewList.add(new Crew("Ploeg G1", new SkillSet("Gas")));
+        crewList.add(new Crew("Ploeg G2", new SkillSet("Gas")));
         crewRepository.persist(crewList);
 
         final String[] JOB_AREA_NAMES = {
@@ -87,7 +88,7 @@ public class DemoDataGenerator {
             //             random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
             
             // Single tag
-            List<String> requiredSkills = random.nextInt(2) < 1 ? List.of("Elektra") : List.of("Gas");
+            SkillSet requiredSkills = random.nextInt(2) < 1 ? new SkillSet("Elektra") : new SkillSet("Gas");
             
             jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills));
         }
