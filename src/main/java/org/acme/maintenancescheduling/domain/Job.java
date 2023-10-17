@@ -24,7 +24,7 @@ public class Job {
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private SkillSet skills;
+    private SkillSet requiredSkills;
 
     private String adres;
     private int durationInDays;
@@ -46,17 +46,17 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, SkillSet skills) {
+    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, SkillSet requiredSkills) {
         this.adres = adres;
         this.durationInDays = durationInDays;
         this.durationInHours = durationInHours;
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
-        this.skills = skills;
+        this.requiredSkills = requiredSkills;
     }
 
-    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, SkillSet skills,
+    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, SkillSet requiredSkills,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
@@ -65,7 +65,7 @@ public class Job {
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
-        this.skills = skills;
+        this.requiredSkills = requiredSkills;
         this.crew = crew;
         this.startDate = startDate;
         this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInHours);
@@ -109,8 +109,8 @@ public class Job {
         return idealEndDate;
     }
 
-    public SkillSet getSkills() {
-        return skills;
+    public SkillSet getRequiredSkills() {
+        return requiredSkills;
     }
 
     public Crew getCrew() {
