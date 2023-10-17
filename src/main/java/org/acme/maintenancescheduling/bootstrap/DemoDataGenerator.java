@@ -7,7 +7,6 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -15,6 +14,7 @@ import jakarta.transaction.Transactional;
 
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
+import org.acme.maintenancescheduling.domain.SkillSet;
 import org.acme.maintenancescheduling.domain.WorkCalendar;
 import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
@@ -42,6 +42,7 @@ public class DemoDataGenerator {
     @Inject
     JobRepository jobRepository;
 
+
     @Transactional
     public void generateDemoData(@Observes StartupEvent startupEvent) {
         if (demoData == DemoData.FALSE) {
@@ -49,10 +50,10 @@ public class DemoDataGenerator {
         }
 
         List<Crew> crewList = new ArrayList<>();
-        crewList.add(new Crew("Ploeg E1", "Elektra"));
-        crewList.add(new Crew("Ploeg E2", "Elektra"));
-        crewList.add(new Crew("Ploeg G1", "Gas"));
-        crewList.add(new Crew("Ploeg G2", "Gas"));
+        crewList.add(new Crew("Ploeg E1", new SkillSet("Elektra")));
+        crewList.add(new Crew("Ploeg E2", new SkillSet("Elektra")));
+        crewList.add(new Crew("Ploeg G1", new SkillSet("Gas")));
+        crewList.add(new Crew("Ploeg G2", new SkillSet("Gas")));
         crewRepository.persist(crewList);
 
         final String[] JOB_AREA_NAMES = {
@@ -83,13 +84,13 @@ public class DemoDataGenerator {
             LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays * 24);
             LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays * 24);
             // Some have both tags
-            // Set<String> tagSet = random.nextDouble() < 0.1 ? Set.of("Gas", "Elektra") : 
+            // Set<String> requiredSkills = random.nextDouble() < 0.1 ? Set.of("Gas", "Elektra") : 
             //             random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
             
             // Single tag
-            Set<String> tagSet = random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
+            SkillSet requiredSkills = random.nextInt(2) < 1 ? new SkillSet("Elektra") : new SkillSet("Gas");
             
-            jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, tagSet));
+            jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills));
         }
 
         jobRepository.persist(jobList);

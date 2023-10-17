@@ -1,13 +1,13 @@
 package org.acme.maintenancescheduling.domain;
 
 import java.time.LocalDateTime;
-import java.util.Set;
-import jakarta.persistence.ElementCollection;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
 import org.acme.maintenancescheduling.solver.EndDateUpdatingVariableListener;
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
@@ -23,15 +23,15 @@ public class Job {
     @GeneratedValue
     private Long id;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private SkillSet skills;
+
     private String adres;
     private int durationInDays;
     private int durationInHours;
     private LocalDateTime readyDate; // Inclusive
     private LocalDateTime dueDate; // Exclusive
     private LocalDateTime idealEndDate; // Exclusive
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> tagSet;
 
     @PlanningVariable
     @ManyToOne
@@ -46,17 +46,17 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet) {
+    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, SkillSet skills) {
         this.adres = adres;
         this.durationInDays = durationInDays;
         this.durationInHours = durationInHours;
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
-        this.tagSet = tagSet;
+        this.skills = skills;
     }
 
-    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> tagSet,
+    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, SkillSet skills,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
@@ -65,7 +65,7 @@ public class Job {
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
-        this.tagSet = tagSet;
+        this.skills = skills;
         this.crew = crew;
         this.startDate = startDate;
         this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInHours);
@@ -109,8 +109,8 @@ public class Job {
         return idealEndDate;
     }
 
-    public Set<String> getTagSet() {
-        return tagSet;
+    public SkillSet getSkills() {
+        return skills;
     }
 
     public Crew getCrew() {
