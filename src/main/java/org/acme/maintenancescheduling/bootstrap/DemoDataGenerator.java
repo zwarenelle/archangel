@@ -14,7 +14,7 @@ import jakarta.transaction.Transactional;
 
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
-import org.acme.maintenancescheduling.domain.SkillSet;
+import org.acme.maintenancescheduling.domain.Skill;
 import org.acme.maintenancescheduling.domain.WorkCalendar;
 import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
@@ -50,10 +50,10 @@ public class DemoDataGenerator {
         }
 
         List<Crew> crewList = new ArrayList<>();
-        crewList.add(new Crew("Ploeg E1", new SkillSet("Elektra")));
-        crewList.add(new Crew("Ploeg E2", new SkillSet("Elektra")));
-        crewList.add(new Crew("Ploeg G1", new SkillSet("Gas")));
-        crewList.add(new Crew("Ploeg G2", new SkillSet("Gas")));
+        crewList.add(new Crew("Ploeg E1", new Skill("Elektra")));
+        crewList.add(new Crew("Ploeg E2", new Skill("Elektra")));
+        crewList.add(new Crew("Ploeg G1", new Skill("Gas")));
+        crewList.add(new Crew("Ploeg G2", new Skill("Gas")));
         crewRepository.persist(crewList);
 
         final String[] JOB_AREA_NAMES = {
@@ -88,7 +88,7 @@ public class DemoDataGenerator {
             //             random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
             
             // Single tag
-            SkillSet requiredSkills = random.nextInt(2) < 1 ? new SkillSet("Elektra") : new SkillSet("Gas");
+            Skill requiredSkills = random.nextInt(2) < 1 ? new Skill("Elektra") : new Skill("Gas");
             
             jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills));
         }

@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 @Entity
-public class SkillSet{
+public class Skill{
 
     @Id
     @GeneratedValue
@@ -13,9 +13,9 @@ public class SkillSet{
 
     private String bestekcode;
 
-    public SkillSet() { }
+    public Skill() { }
 
-    public SkillSet(String bestekcode)
+    public Skill(String bestekcode)
     {
         this.bestekcode = bestekcode;
     }

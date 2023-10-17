@@ -24,7 +24,7 @@ public class Job {
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private SkillSet requiredSkills;
+    private Skill requiredSkills;
 
     private String adres;
     private int durationInDays;
@@ -46,7 +46,7 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, SkillSet requiredSkills) {
+    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Skill requiredSkills) {
         this.adres = adres;
         this.durationInDays = durationInDays;
         this.durationInHours = durationInHours;
@@ -56,7 +56,7 @@ public class Job {
         this.requiredSkills = requiredSkills;
     }
 
-    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, SkillSet requiredSkills,
+    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Skill requiredSkills,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
@@ -109,7 +109,7 @@ public class Job {
         return idealEndDate;
     }
 
-    public SkillSet getRequiredSkills() {
+    public Skill getRequiredSkills() {
         return requiredSkills;
     }
 

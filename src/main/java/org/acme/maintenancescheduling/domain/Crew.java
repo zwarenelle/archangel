@@ -17,13 +17,13 @@ public class Crew{
     private String name;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private SkillSet skills;
+    private Skill skills;
 
     // No-arg constructor required for Hibernate
     public Crew() {
     }
 
-    public Crew(String name, SkillSet skills) {
+    public Crew(String name, Skill skills) {
         this.name = name;
         this.skills = skills;
     }
@@ -50,11 +50,11 @@ public class Crew{
         return name;
     }
 
-    public SkillSet getSkills() {
+    public Skill getSkills() {
         return skills;
     }
 
-    public void setSkillSet(SkillSet skills) {
+    public void setSkillSet(Skill skills) {
         this.skills = skills;
     }
 
