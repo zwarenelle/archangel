@@ -85,7 +85,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
         // Match skills jobs and crews
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getCrew() != null
-                        && job.getRequiredSkills().getBestekcode() != job.getCrew().getSkills().getBestekcode())
+                        && (job.getRequiredSkills().getTypenummer() != job.getCrew().getSkills().getTypenummer()))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> 100L)
                 .asConstraint("Skill Conflict");

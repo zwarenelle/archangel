@@ -131,11 +131,11 @@ function refreshSchedule() {
                 const byJobJobElement = $(`<div/>`)
                   .append($(`<h5 class="card-title mb-1"/>`).text(`Unassigned`));
                 $.each(job.requiredSkills, (index) => {
-                    if (job.requiredSkills.bestekcode.toString() == "Gas")
+                    if (job.requiredSkills.typenummer.toString() == "Gas")
                     {
                         color = "#FEB900";
                     }
-                    else if (job.requiredSkills.bestekcode.toString() == "Elektra")
+                    else if (job.requiredSkills.typenummer.toString() == "Elektra")
                     {
                         color = "#ED5353";
                     }
@@ -143,8 +143,8 @@ function refreshSchedule() {
                     {
                         color = "#003366";
                     }
-                    unassignedJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(job.requiredSkills.bestekcode));
-                    byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(job.requiredSkills.bestekcode));
+                    unassignedJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(job.requiredSkills.typenummer));
+                    byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(job.requiredSkills.typenummer));
                 });
                 unassignedJobs.append($(`<div class="col"/>`).append($(`<div class="card"/>`).append(unassignedJobElement)));
                 byJobItemDataSet.add({
@@ -170,11 +170,11 @@ function refreshSchedule() {
                     byJobJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`After due (too late)`));
                 }
                 $.each(job.requiredSkills, (index) => {
-                    if (job.requiredSkills.bestekcode.toString() == "Gas")
+                    if (job.requiredSkills.typenummer.toString() == "Gas")
                     {
                         color = "#FEB900";
                     }
-                    else if (job.requiredSkills.bestekcode.toString() == "Elektra")
+                    else if (job.requiredSkills.typenummer.toString() == "Elektra")
                     {
                         color = "#ED5353";
                     }
@@ -182,8 +182,8 @@ function refreshSchedule() {
                     {
                         color = "#003366";
                     }
-                    byCrewJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(job.requiredSkills.bestekcode));
-                    byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(job.requiredSkills.bestekcode));
+                    byCrewJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(job.requiredSkills.typenummer));
+                    byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(job.requiredSkills.typenummer));
                 });
                 byCrewItemDataSet.add({
                     id : job.id, group: job.crew.id,

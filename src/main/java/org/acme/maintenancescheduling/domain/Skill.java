@@ -11,23 +11,45 @@ public class Skill{
     @GeneratedValue
     private Long id;
 
-    private String bestekcode;
+    private String typenummer;
+    private int aantal;
+    private String omschrijving;
 
     public Skill() { }
 
-    public Skill(String bestekcode)
+    public Skill(String typenummer)
     {
-        this.bestekcode = bestekcode;
+        this.typenummer = typenummer;
     }
 
-    public void setBestekcode(String bestekcode)
+    public void setAantal(int aantal)
     {
-        this.bestekcode = bestekcode;
+        this.aantal = aantal;
     }
 
-    public String getBestekcode()
+    public int getAantal()
     {
-        return this.bestekcode;
+        return this.aantal;
+    }
+
+    public void setTypenummer(String typenummer)
+    {
+        this.typenummer = typenummer;
+    }
+
+    public String getTypenummer()
+    {
+        return this.typenummer;
+    }
+
+    public void setOmschrijving(String omschrijving)
+    {
+        this.omschrijving = omschrijving;
+    }
+
+    public String GetOmschrijving()
+    {
+        return this.omschrijving;
     }
 
 }
