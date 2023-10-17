@@ -1,6 +1,10 @@
 package org.acme.maintenancescheduling.domain;
 
+import java.util.List;
+
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
@@ -14,15 +18,17 @@ public class Crew{
     @GeneratedValue
     private Long id;
     private String name;
-    private String discipline;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> skillSet;
 
     // No-arg constructor required for Hibernate
     public Crew() {
     }
 
-    public Crew(String name, String discipline) {
+    public Crew(String name, List<String> skillSet) {
         this.name = name;
-        this.discipline = discipline;
+        this.skillSet = skillSet;
     }
 
     public Crew(Long id, String name) {
@@ -47,12 +53,12 @@ public class Crew{
         return name;
     }
 
-    public String getDiscipline() {
-        return discipline;
+    public List<String> getSkillSet() {
+        return skillSet;
     }
 
-    public void setDiscipline(String discipline) {
-        this.discipline = discipline;
+    public void setSkillSet(List<String> skillSet) {
+        this.skillSet = skillSet;
     }
 
 }

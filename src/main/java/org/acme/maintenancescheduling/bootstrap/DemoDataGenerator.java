@@ -7,7 +7,6 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -49,10 +48,11 @@ public class DemoDataGenerator {
         }
 
         List<Crew> crewList = new ArrayList<>();
-        crewList.add(new Crew("Ploeg E1", "Elektra"));
-        crewList.add(new Crew("Ploeg E2", "Elektra"));
-        crewList.add(new Crew("Ploeg G1", "Gas"));
-        crewList.add(new Crew("Ploeg G2", "Gas"));
+        crewList.add(new Crew("Ploeg COMBI", List.of("Elektra", "Gas")));
+        crewList.add(new Crew("Ploeg E1", List.of("Elektra")));
+        crewList.add(new Crew("Ploeg E2", List.of("Elektra")));
+        crewList.add(new Crew("Ploeg G1", List.of("Gas")));
+        crewList.add(new Crew("Ploeg G2", List.of("Gas")));
         crewRepository.persist(crewList);
 
         final String[] JOB_AREA_NAMES = {
@@ -87,7 +87,7 @@ public class DemoDataGenerator {
             //             random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
             
             // Single tag
-            Set<String> requiredSkills = random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
+            List<String> requiredSkills = random.nextInt(2) < 1 ? List.of("Elektra") : List.of("Gas");
             
             jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills));
         }

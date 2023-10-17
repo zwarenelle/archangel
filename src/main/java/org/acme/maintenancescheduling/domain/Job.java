@@ -1,7 +1,8 @@
 package org.acme.maintenancescheduling.domain;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
+
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,7 +32,7 @@ public class Job {
     private LocalDateTime idealEndDate; // Exclusive
 
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> requiredSkills;
+    private List<String> requiredSkills;
 
     @PlanningVariable
     @ManyToOne
@@ -46,7 +47,7 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> requiredSkills) {
+    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, List<String> requiredSkills) {
         this.adres = adres;
         this.durationInDays = durationInDays;
         this.durationInHours = durationInHours;
@@ -56,7 +57,7 @@ public class Job {
         this.requiredSkills = requiredSkills;
     }
 
-    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> requiredSkills,
+    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, List<String> requiredSkills,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
@@ -109,7 +110,7 @@ public class Job {
         return idealEndDate;
     }
 
-    public Set<String> getRequiredSkills() {
+    public List<String> getRequiredSkills() {
         return requiredSkills;
     }
 
