@@ -1,10 +1,9 @@
 package org.acme.maintenancescheduling.domain;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
 @Entity
@@ -15,17 +14,15 @@ public class Crew{
     @GeneratedValue
     private Long id;
     private String name;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    private Skill skills;
+    private String discipline;
 
     // No-arg constructor required for Hibernate
     public Crew() {
     }
 
-    public Crew(String name, Skill skills) {
+    public Crew(String name, String discipline) {
         this.name = name;
-        this.skills = skills;
+        this.discipline = discipline;
     }
 
     public Crew(Long id, String name) {
@@ -50,12 +47,12 @@ public class Crew{
         return name;
     }
 
-    public Skill getSkills() {
-        return skills;
+    public String getDiscipline() {
+        return discipline;
     }
 
-    public void setSkillSet(Skill skills) {
-        this.skills = skills;
+    public void setDiscipline(String discipline) {
+        this.discipline = discipline;
     }
 
 }

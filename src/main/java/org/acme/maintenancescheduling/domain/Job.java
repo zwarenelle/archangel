@@ -1,13 +1,13 @@
 package org.acme.maintenancescheduling.domain;
 
 import java.time.LocalDateTime;
-
-import jakarta.persistence.CascadeType;
+import java.util.Set;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 
 import org.acme.maintenancescheduling.solver.EndDateUpdatingVariableListener;
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
@@ -23,15 +23,15 @@ public class Job {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private Skill requiredSkills;
-
     private String adres;
     private int durationInDays;
     private int durationInHours;
     private LocalDateTime readyDate; // Inclusive
     private LocalDateTime dueDate; // Exclusive
     private LocalDateTime idealEndDate; // Exclusive
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> requiredSkills;
 
     @PlanningVariable
     @ManyToOne
@@ -46,7 +46,7 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Skill requiredSkills) {
+    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> requiredSkills) {
         this.adres = adres;
         this.durationInDays = durationInDays;
         this.durationInHours = durationInHours;
@@ -56,7 +56,7 @@ public class Job {
         this.requiredSkills = requiredSkills;
     }
 
-    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Skill requiredSkills,
+    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> requiredSkills,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
@@ -109,7 +109,7 @@ public class Job {
         return idealEndDate;
     }
 
-    public Skill getRequiredSkills() {
+    public Set<String> getRequiredSkills() {
         return requiredSkills;
     }
 
