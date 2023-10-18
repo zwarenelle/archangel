@@ -22,7 +22,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 readyDate(constraintFactory),
                 dueDate(constraintFactory),
                 noWeekends(constraintFactory),
-                tagConflict(constraintFactory),
+                skillConflict(constraintFactory),
 
                 // Soft constraints
                 insideWorkHours(constraintFactory),
@@ -81,14 +81,14 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .asConstraint("Overlaps weekend");
     }
 
-    public Constraint tagConflict(ConstraintFactory constraintFactory) {
+    public Constraint skillConflict(ConstraintFactory constraintFactory) {
         // Discipline jobs and crews
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getCrew() != null
-                        && job.getRequiredSkills().contains(job.getCrew().getDiscipline()))
+                        && !(job.getRequiredSkills().contains(job.getCrew().getDiscipline())))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> 10L)
-                .asConstraint("Tag Conflict");
+                .asConstraint("Skill Conflict");
     }
 
     // ************************************************************************
