@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import org.jboss.logging.Logger;
+
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
@@ -18,11 +20,15 @@ import ai.timefold.solver.core.api.solver.SolverStatus;
 @PlanningSolution
 public class MaintenanceSchedule {
 
+private static final Logger LOG = Logger.getLogger(MaintenanceSchedule.class);
+
     @ProblemFactProperty
     private WorkCalendar workCalendar;
     @ProblemFactCollectionProperty
     @ValueRangeProvider
     private List<Crew> crewList;
+    @ProblemFactCollectionProperty
+    private List<Skill> skillList;
     @PlanningEntityCollectionProperty
     private List<Job> jobList;
 
@@ -37,9 +43,10 @@ public class MaintenanceSchedule {
     }
 
     public MaintenanceSchedule(WorkCalendar workCalendar,
-            List<Crew> crewList, List<Job> jobList) {
+            List<Crew> crewList, List<Skill> skillList, List<Job> jobList) {
         this.workCalendar = workCalendar;
         this.crewList = crewList;
+        this.skillList = skillList;
         this.jobList = jobList;
     }
 
@@ -64,7 +71,15 @@ public class MaintenanceSchedule {
     }
 
     public List<Job> getJobList() {
+        // LOG.info(jobList);
         return jobList;
+    }
+
+    public List<Skill> getSkillList() {
+        // for (Skill sl : skillList) {
+        //     LOG.info(sl.getOmschrijving());
+        // }
+        return skillList;
     }
 
     public HardSoftLongScore getScore() {

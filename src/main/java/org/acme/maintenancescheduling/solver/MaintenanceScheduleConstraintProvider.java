@@ -2,11 +2,14 @@ package org.acme.maintenancescheduling.solver;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Set;
 
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
 import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
 import org.acme.maintenancescheduling.domain.Job;
+import org.acme.maintenancescheduling.domain.Skill;
+
 import ai.timefold.solver.core.api.score.buildin.hardsoftlong.HardSoftLongScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
@@ -83,9 +86,10 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
 
     public Constraint skillConflict(ConstraintFactory constraintFactory) {
         // Discipline jobs and crews
+
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getCrew() != null
-                        && !(job.getRequiredSkills().contains(job.getCrew().getDiscipline())))
+                        && job.getSkillTest().iterator().next().getTypenummer() == job.getCrew().getDiscipline())
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> 10L)
                 .asConstraint("Skill Conflict");

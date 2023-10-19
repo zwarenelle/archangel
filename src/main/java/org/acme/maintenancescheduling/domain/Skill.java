@@ -11,13 +11,44 @@ public class Skill{
     @GeneratedValue
     private Long id;
 
-    private String typenummer;
+    private int typenummer;
     private int aantal;
     private String omschrijving;
 
     public Skill() { }
 
-    public Skill(String typenummer)
+    public Skill(int typenummer, int aantal, String omschrijving)
+    {
+        this.typenummer = typenummer;
+        this.aantal = aantal;
+        this.omschrijving = omschrijving;
+    }
+
+    @Override
+    public String toString() {
+        return omschrijving;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public int getTypenummer()
+    {
+        return this.typenummer;
+    }
+
+    public int getAantal()
+    {
+        return this.aantal;
+    }
+
+    public String getOmschrijving()
+    {
+        return this.omschrijving;
+    }
+
+    public void setTypenummer(int typenummer)
     {
         this.typenummer = typenummer;
     }
@@ -27,29 +58,9 @@ public class Skill{
         this.aantal = aantal;
     }
 
-    public int getAantal()
-    {
-        return this.aantal;
-    }
-
-    public void setTypenummer(String typenummer)
-    {
-        this.typenummer = typenummer;
-    }
-
-    public String getTypenummer()
-    {
-        return this.typenummer;
-    }
-
     public void setOmschrijving(String omschrijving)
     {
         this.omschrijving = omschrijving;
-    }
-
-    public String GetOmschrijving()
-    {
-        return this.omschrijving;
     }
 
 }

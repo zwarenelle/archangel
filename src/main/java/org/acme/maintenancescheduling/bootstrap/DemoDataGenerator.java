@@ -15,9 +15,11 @@ import jakarta.transaction.Transactional;
 
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
+import org.acme.maintenancescheduling.domain.Skill;
 import org.acme.maintenancescheduling.domain.WorkCalendar;
 import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
+import org.acme.maintenancescheduling.persistence.SkillRepository;
 import org.acme.maintenancescheduling.persistence.WorkCalendarRepository;
 import org.acme.maintenancescheduling.solver.EndDateUpdatingVariableListener;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -41,6 +43,8 @@ public class DemoDataGenerator {
     CrewRepository crewRepository;
     @Inject
     JobRepository jobRepository;
+    @Inject
+    SkillRepository skillRepository;
 
     @Transactional
     public void generateDemoData(@Observes StartupEvent startupEvent) {
@@ -49,10 +53,10 @@ public class DemoDataGenerator {
         }
 
         List<Crew> crewList = new ArrayList<>();
-        crewList.add(new Crew("Ploeg E1", "Elektra"));
-        crewList.add(new Crew("Ploeg E2", "Elektra"));
-        crewList.add(new Crew("Ploeg G1", "Gas"));
-        crewList.add(new Crew("Ploeg G2", "Gas"));
+        crewList.add(new Crew("Ploeg E1", 1));
+        crewList.add(new Crew("Ploeg E2", 1));
+        crewList.add(new Crew("Ploeg G1", 2));
+        crewList.add(new Crew("Ploeg G2", 2));
         crewRepository.persist(crewList);
 
         final String[] JOB_AREA_NAMES = {
@@ -88,8 +92,11 @@ public class DemoDataGenerator {
             
             // Single tag
             Set<String> requiredSkills = random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
-            
-            jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills));
+            Skill requirement = random.nextInt(2) < 1 ? new Skill(1, 1, "Elektra") : new Skill(2, 1, "Gas");
+            skillRepository.persist(requirement);
+            Set<Skill> skillTest = Set.of(requirement);
+
+            jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills, skillTest));
         }
 
         jobRepository.persist(jobList);
