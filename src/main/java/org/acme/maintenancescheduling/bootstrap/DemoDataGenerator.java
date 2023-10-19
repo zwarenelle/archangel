@@ -53,6 +53,7 @@ public class DemoDataGenerator {
         }
 
         List<Crew> crewList = new ArrayList<>();
+        // crewList.add(new Crew("Ploeg COMBI", 1));
         crewList.add(new Crew("Ploeg E1", 1));
         crewList.add(new Crew("Ploeg E2", 1));
         crewList.add(new Crew("Ploeg G1", 2));
@@ -87,16 +88,15 @@ public class DemoDataGenerator {
             LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays * 24);
             LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays * 24);
             // Some have both tags
-            // Set<String> requiredSkills = random.nextDouble() < 0.1 ? Set.of("Gas", "Elektra") : 
+            // Set<String> requirement = random.nextDouble() < 0.1 ? Set.of("Gas", "Elektra") : 
             //             random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
             
             // Single tag
-            Set<String> requiredSkills = random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
             Skill requirement = random.nextInt(2) < 1 ? new Skill(1, 1, "Elektra") : new Skill(2, 1, "Gas");
             skillRepository.persist(requirement);
-            Set<Skill> skillTest = Set.of(requirement);
+            Set<Skill> requiredSkills = Set.of(requirement);
 
-            jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills, skillTest));
+            jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills));
         }
 
         jobRepository.persist(jobList);

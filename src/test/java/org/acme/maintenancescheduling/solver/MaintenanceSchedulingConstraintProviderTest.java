@@ -2,12 +2,14 @@ package org.acme.maintenancescheduling.solver;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 import java.time.LocalDateTime;
 import jakarta.inject.Inject;
 
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
+import org.acme.maintenancescheduling.domain.Skill;
 import org.junit.jupiter.api.Test;
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
 
@@ -81,65 +83,65 @@ public class MaintenanceSchedulingConstraintProviderTest {
                 .penalizesBy(2);
     }
 
-//     @Test
-//     public void beforeIdealEndDate() {
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::beforeIdealEndDate)
-//                 .given(new Job(1L, "Downtown tunnel", 4, 0, null, null, DAY_2, null, ALPHA_CREW, DAY_2))
-//                 .penalizesBy(0);
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::beforeIdealEndDate)
-//                 .given(new Job(1L, "Downtown tunnel", 4, 0, null, null, DAY_1, null, ALPHA_CREW, DAY_3))
-//                 .penalizesBy(0);
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::beforeIdealEndDate)
-//                 .given(new Job(1L, "Downtown tunnel", 4, 0, null, null, DAY_3, null, ALPHA_CREW, DAY_1))
-//                 .penalizesBy(2);
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::beforeIdealEndDate)
-//                 .given(new Job(1L, "Downtown tunnel", 4, 0, null, null, DAY_3, null, ALPHA_CREW, DAY_1))
-//                 .penalizesBy(2);
-//     }
+    @Test
+    public void beforeIdealEndDate() {
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::beforeIdealEndDate)
+                .given(new Job(1L, "Downtown tunnel", 4, 0, null, null, DAY_2, null, ALPHA_CREW, DAY_2))
+                .penalizesBy(0);
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::beforeIdealEndDate)
+                .given(new Job(1L, "Downtown tunnel", 4, 0, null, null, DAY_1, null, ALPHA_CREW, DAY_3))
+                .penalizesBy(0);
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::beforeIdealEndDate)
+                .given(new Job(1L, "Downtown tunnel", 4, 0, null, null, DAY_3, null, ALPHA_CREW, DAY_1))
+                .penalizesBy(2);
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::beforeIdealEndDate)
+                .given(new Job(1L, "Downtown tunnel", 4, 0, null, null, DAY_3, null, ALPHA_CREW, DAY_1))
+                .penalizesBy(2);
+    }
 
-//     @Test
-//     public void afterIdealEndDate() {
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::afterIdealEndDate)
-//                 .given(new Job(1L, "Downtown tunnel", 4, 1, null, null, DAY_2, null, ALPHA_CREW, DAY_2))
-//                 .penalizesBy(1);
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::afterIdealEndDate)
-//                 .given(new Job(1L, "Downtown tunnel", 4, 1, null, null, DAY_1, null, ALPHA_CREW, DAY_3))
-//                 .penalizesBy(3);
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::afterIdealEndDate)
-//                 .given(new Job(1L, "Downtown tunnel", 4, 1, null, null, DAY_3, null, ALPHA_CREW, DAY_1))
-//                 .penalizesBy(0);
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::afterIdealEndDate)
-//                 .given(new Job(1L, "Downtown tunnel", 4, 4, null, null, DAY_3, null, ALPHA_CREW, DAY_1))
-//                 .penalizesBy(2);
-//     }
+    @Test
+    public void afterIdealEndDate() {
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::afterIdealEndDate)
+                .given(new Job(1L, "Downtown tunnel", 4, 1, null, null, DAY_2, null, ALPHA_CREW, DAY_2))
+                .penalizesBy(1);
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::afterIdealEndDate)
+                .given(new Job(1L, "Downtown tunnel", 4, 1, null, null, DAY_1, null, ALPHA_CREW, DAY_3))
+                .penalizesBy(3);
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::afterIdealEndDate)
+                .given(new Job(1L, "Downtown tunnel", 4, 1, null, null, DAY_3, null, ALPHA_CREW, DAY_1))
+                .penalizesBy(0);
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::afterIdealEndDate)
+                .given(new Job(1L, "Downtown tunnel", 4, 4, null, null, DAY_3, null, ALPHA_CREW, DAY_1))
+                .penalizesBy(2);
+    }
 
-//     @Test
-//     public void tagConflict() {
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::tagConflict)
-//                 .given(
-//                         new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of("Gas"), ALPHA_CREW, DAY_1),
-//                         new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of("Gas", "Elektra"), ALPHA_CREW, DAY_3))
-//                 .penalizesBy(0);
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::tagConflict)
-//                 .given(
-//                         new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of("Gas"), ALPHA_CREW, DAY_1),
-//                         new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of("Gas", "Elektra"), ALPHA_CREW, DAY_1))
-//                 .penalizesBy(1);
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::tagConflict)
-//                 .given(
-//                         new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of("Gas"), ALPHA_CREW, DAY_1),
-//                         new Job(2L, "Uptown bridge", 1, 4, null, null, null, Set.of("Uptown", "Elektra"), ALPHA_CREW, DAY_1))
-//                 .penalizesBy(0);
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::tagConflict)
-//                 .given(
-//                         new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of("Gas", "Elektra"), ALPHA_CREW, DAY_2),
-//                         new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of("Gas", "Elektra"), ALPHA_CREW, DAY_2))
-//                 .penalizesBy(2);
-//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::tagConflict)
-//                 .given(
-//                         new Job(1L, "Downtown tunnel", 5, 4, null, null, null, Set.of("Gas", "Elektra"), ALPHA_CREW, DAY_1),
-//                         new Job(2L, "Downtown bridge", 3, 4, null, null, null, Set.of("Gas", "Elektra"), ALPHA_CREW, DAY_2))
-//                 .penalizesBy(2 * 3);
-//     }
+    @Test
+    public void tagConflict() {
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
+                .given(
+                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new Skill(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
+                        new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of(new Skill(2, 1, "Gas")), ALPHA_CREW, DAY_3))
+                .penalizesBy(0);
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
+                .given(
+                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new Skill(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
+                        new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of(new Skill(2, 1, "Gas")), ALPHA_CREW, DAY_1))
+                .penalizesBy(1);
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
+                .given(
+                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new Skill(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
+                        new Job(2L, "Uptown bridge", 1, 4, null, null, null, Set.of(new Skill(2, 1, "Gas")), ALPHA_CREW, DAY_1))
+                .penalizesBy(0);
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
+                .given(
+                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new Skill(1, 1, "Elektra")), ALPHA_CREW, DAY_2),
+                        new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of(new Skill(2, 1, "Elektra")), ALPHA_CREW, DAY_2))
+                .penalizesBy(2);
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
+                .given(
+                        new Job(1L, "Downtown tunnel", 5, 4, null, null, null, Set.of(new Skill(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
+                        new Job(2L, "Downtown bridge", 3, 4, null, null, null, Set.of(new Skill(2, 1, "Gas")), ALPHA_CREW, DAY_2))
+                .penalizesBy(2 * 3);
+    }
 
 }

@@ -2,13 +2,13 @@ package org.acme.maintenancescheduling.solver;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
 import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
 import org.acme.maintenancescheduling.domain.Job;
-import org.acme.maintenancescheduling.domain.Skill;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoftlong.HardSoftLongScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
@@ -84,14 +84,32 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .asConstraint("Overlaps weekend");
     }
 
+//     public Constraint skillConflict(ConstraintFactory constraintFactory) {
+//         // Discipline jobs and crews
+
+//         return constraintFactory.forEach(Job.class)
+//                 .filter(job -> job.getCrew() != null
+//                         && job.getrequiredSkills().iterator().next().getTypenummer() == job.getCrew().getDiscipline())
+//                 .penalizeLong(HardSoftLongScore.ONE_HARD,
+//                         job -> 10L)
+//                 .asConstraint("Skill Conflict");
+//     }
+
+
     public Constraint skillConflict(ConstraintFactory constraintFactory) {
         // Discipline jobs and crews
 
         return constraintFactory.forEach(Job.class)
-                .filter(job -> job.getCrew() != null
-                        && job.getSkillTest().iterator().next().getTypenummer() == job.getCrew().getDiscipline())
-                .penalizeLong(HardSoftLongScore.ONE_HARD,
-                        job -> 10L)
+                .filter(job -> job.getCrew() != null &&
+                        (job.getrequiredSkills().stream()
+                                .filter(skill -> Objects.equals(skill.getTypenummer(), job.getCrew().getDiscipline()))
+                                .collect(Collectors.toList()))
+                        .size() > 0)
+                .rewardLong(HardSoftLongScore.ONE_HARD,
+                        job -> 10L * ((job.getrequiredSkills().stream()
+                                .filter(skill -> Objects.equals(skill.getTypenummer(), job.getCrew().getDiscipline()))
+                                .collect(Collectors.toList()))
+                        .size()))
                 .asConstraint("Skill Conflict");
     }
 

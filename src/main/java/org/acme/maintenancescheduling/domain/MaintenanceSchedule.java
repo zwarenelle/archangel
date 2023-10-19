@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import org.jboss.logging.Logger;
-
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
@@ -19,8 +17,6 @@ import ai.timefold.solver.core.api.solver.SolverStatus;
 
 @PlanningSolution
 public class MaintenanceSchedule {
-
-private static final Logger LOG = Logger.getLogger(MaintenanceSchedule.class);
 
     @ProblemFactProperty
     private WorkCalendar workCalendar;
@@ -71,14 +67,10 @@ private static final Logger LOG = Logger.getLogger(MaintenanceSchedule.class);
     }
 
     public List<Job> getJobList() {
-        // LOG.info(jobList);
         return jobList;
     }
 
     public List<Skill> getSkillList() {
-        // for (Skill sl : skillList) {
-        //     LOG.info(sl.getOmschrijving());
-        // }
         return skillList;
     }
 

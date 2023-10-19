@@ -3,7 +3,6 @@ package org.acme.maintenancescheduling.domain;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -34,12 +33,9 @@ public class Job {
     private LocalDateTime dueDate; // Exclusive
     private LocalDateTime idealEndDate; // Exclusive
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> requiredSkills;
-
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval=true)
     @JoinColumn(name="JOB_ID")
-    private Set<Skill> skillTest;
+    private Set<Skill> requiredSkills;
 
     @PlanningVariable
     @ManyToOne
@@ -54,7 +50,7 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> requiredSkills, Set<Skill> skillTest) {
+    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<Skill> requiredSkills) {
         this.adres = adres;
         this.durationInDays = durationInDays;
         this.durationInHours = durationInHours;
@@ -62,10 +58,9 @@ public class Job {
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
         this.requiredSkills = requiredSkills;
-        this.skillTest = skillTest;
     }
 
-    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<String> requiredSkills,
+    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<Skill> requiredSkills,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
@@ -118,12 +113,8 @@ public class Job {
         return idealEndDate;
     }
 
-    public Set<String> getRequiredSkills() {
-        return requiredSkills;
-    }
-
-    public Set<Skill> getSkillTest() {
-        return this.skillTest;
+    public Set<Skill> getrequiredSkills() {
+        return this.requiredSkills;
     }
 
     public Crew getCrew() {
@@ -142,8 +133,8 @@ public class Job {
         this.crew = crew;
     }
 
-    public void setSkillTest(Set<Skill> skillTest) {
-        this.skillTest = skillTest;
+    public void setrequiredSkills(Set<Skill> requiredSkills) {
+        this.requiredSkills = requiredSkills;
     }
 
     public void setStartDate(LocalDateTime startDate) {
