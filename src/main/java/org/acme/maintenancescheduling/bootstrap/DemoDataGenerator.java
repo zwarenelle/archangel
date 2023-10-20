@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -53,12 +54,21 @@ public class DemoDataGenerator {
         }
 
         List<Crew> crewList = new ArrayList<>();
-        // crewList.add(new Crew("Ploeg COMBI", 1));
-        crewList.add(new Crew("Ploeg E1", 1));
-        crewList.add(new Crew("Ploeg E2", 1));
-        crewList.add(new Crew("Ploeg G1", 2));
-        crewList.add(new Crew("Ploeg G2", 2));
+
+        // E = new Skill(1, 1, "Elektra")
+        //     Set.of(new Skill(1, 1, "Elektra"))
+        // G = new Skill(2, 1, "Gas")
+        //     Set.of(new Skill(2, 1, "Gas"))
+        // Set<Skill> testE = Set.of(new Skill(1, 1, "Elektra"));
+
+        Set<Skill> crewSkills = Set.of(new Skill(1, 1, "Elektra"));
+        
+        crewList.add(new Crew("Ploeg E1", 1, crewSkills));
+        crewList.add(new Crew("Ploeg E2", 1, crewSkills));
+        crewList.add(new Crew("Ploeg G1", 2, Set.of(new Skill(2, 1, "Gas"))));
+        crewList.add(new Crew("Ploeg G2", 2, Set.of(new Skill(2, 1, "Gas"))));
         crewRepository.persist(crewList);
+
 
         final String[] JOB_AREA_NAMES = {
                 "Spui", "Raamsteeg", "Rokin", "Damrak", "Kalverstraat", "Nieuwmarkt", "Nieuwmarkt", "Spooksteeg", "Oudezijds Voorburgwal",
@@ -87,14 +97,16 @@ public class DemoDataGenerator {
             LocalDateTime readyDate = EndDateUpdatingVariableListener.calculateEndDate(fromDate, readyWorkdayOffset * 24);
             LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays * 24);
             LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays * 24);
-            // Some have both tags
-            // Set<String> requirement = random.nextDouble() < 0.1 ? Set.of("Gas", "Elektra") : 
-            //             random.nextInt(2) < 1 ? Set.of("Elektra") : Set.of("Gas");
-            
-            // Single tag
-            Skill requirement = random.nextInt(2) < 1 ? new Skill(1, 1, "Elektra") : new Skill(2, 1, "Gas");
-            skillRepository.persist(requirement);
-            Set<Skill> requiredSkills = Set.of(requirement);
+            // Some have both skills, else, it's one ore the other
+            // Set<Skill> requiredSkills = random.nextDouble() < 0.1 ? Set.of(new Skill(1, 1, "Elektra"), new Skill(2, 1, "Gas")) : 
+            //             random.nextInt(2) < 1 ? Set.of(new Skill(1, 1, "Elektra")) : Set.of(new Skill(2, 1, "Gas"));
+
+            Set<Skill> requiredSkills = random.nextDouble() < 0.1 ?
+                Set.of(new Skill(1, 1, "Elektra"), new Skill(2, 1, "Gas")) : 
+                random.nextInt(2) < 1 ?
+                Set.of(new Skill(1, 1, "Elektra")) :
+                Set.of(new Skill(2, 1, "Gas"));
+
 
             jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills));
         }

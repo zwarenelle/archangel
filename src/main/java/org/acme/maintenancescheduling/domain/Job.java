@@ -3,6 +3,7 @@ package org.acme.maintenancescheduling.domain;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +34,7 @@ public class Job {
     private LocalDateTime dueDate; // Exclusive
     private LocalDateTime idealEndDate; // Exclusive
 
-    @OneToMany(fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="JOB_ID")
     private Set<Skill> requiredSkills;
 

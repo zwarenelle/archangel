@@ -18,8 +18,8 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 public class MaintenanceSchedulingConstraintProviderTest {
 
-    private static final Crew ALPHA_CREW = new Crew(1L, "Alpha crew");
-    private static final Crew BETA_CREW = new Crew(2L, "Beta crew");
+    private static final Crew ALPHA_CREW = new Crew("Alpha crew", 1, Set.of(new Skill(1, 1, "Elektra")));
+    private static final Crew BETA_CREW = new Crew("Beta crew", 2, Set.of(new Skill(2, 1, "Gas")));
     private static final LocalDateTime DAY_1 = LocalDateTime.of(LocalDate.of(2023, 10, 1), LocalTime.of(12, 0, 0));
     private static final LocalDateTime DAY_2 = LocalDateTime.of(LocalDate.of(2023, 10, 2), LocalTime.of(12, 0, 0));
     private static final LocalDateTime DAY_3 = LocalDateTime.of(LocalDate.of(2023, 10, 3), LocalTime.of(12, 0, 0));

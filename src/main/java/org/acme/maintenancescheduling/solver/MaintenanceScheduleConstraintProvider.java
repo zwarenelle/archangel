@@ -84,18 +84,6 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .asConstraint("Overlaps weekend");
     }
 
-//     public Constraint skillConflict(ConstraintFactory constraintFactory) {
-//         // Discipline jobs and crews
-
-//         return constraintFactory.forEach(Job.class)
-//                 .filter(job -> job.getCrew() != null
-//                         && job.getrequiredSkills().iterator().next().getTypenummer() == job.getCrew().getDiscipline())
-//                 .penalizeLong(HardSoftLongScore.ONE_HARD,
-//                         job -> 10L)
-//                 .asConstraint("Skill Conflict");
-//     }
-
-
     public Constraint skillConflict(ConstraintFactory constraintFactory) {
         // Discipline jobs and crews
 
