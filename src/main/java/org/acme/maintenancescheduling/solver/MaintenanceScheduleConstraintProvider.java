@@ -2,11 +2,15 @@ package org.acme.maintenancescheduling.solver;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.stream.Collectors;
 
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
 import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
+import org.acme.maintenancescheduling.domain.CrewSkills;
 import org.acme.maintenancescheduling.domain.Job;
+import org.acme.maintenancescheduling.domain.JobRequirement;
+
 import ai.timefold.solver.core.api.score.buildin.hardsoftlong.HardSoftLongScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
@@ -22,7 +26,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 readyDate(constraintFactory),
                 dueDate(constraintFactory),
                 noWeekends(constraintFactory),
-                tagConflict(constraintFactory),
+                skillConflict(constraintFactory),
 
                 // Soft constraints
                 insideWorkHours(constraintFactory),
@@ -81,14 +85,18 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .asConstraint("Overlaps weekend");
     }
 
-    public Constraint tagConflict(ConstraintFactory constraintFactory) {
+    public Constraint skillConflict(ConstraintFactory constraintFactory) {
         // Discipline jobs and crews
+
         return constraintFactory.forEach(Job.class)
-                .filter(job -> job.getCrew() != null
-                        && job.getRequiredSkills().contains(job.getCrew().getDiscipline()))
+                .filter(job -> job.getCrew() != null &&
+                        !(job.getrequiredSkills().stream()
+                        .map(JobRequirement::getTypenummer).collect(Collectors.toSet())).containsAll(
+                        job.getCrew().getCrewSkills().stream()
+                        .map(CrewSkills::getTypenummer).collect(Collectors.toSet())))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> 10L)
-                .asConstraint("Tag Conflict");
+                .asConstraint("Skill Conflict");
     }
 
     // ************************************************************************

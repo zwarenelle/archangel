@@ -1,8 +1,14 @@
 package org.acme.maintenancescheduling.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+
+import java.util.Set;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
@@ -14,20 +20,18 @@ public class Crew{
     @GeneratedValue
     private Long id;
     private String name;
-    private String discipline;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
+    @JoinColumn(name="CREW_ID")
+    private Set<CrewSkills> crewSkills;
 
     // No-arg constructor required for Hibernate
     public Crew() {
     }
 
-    public Crew(String name, String discipline) {
+    public Crew(String name, Set<CrewSkills> crewSkills) {
         this.name = name;
-        this.discipline = discipline;
-    }
-
-    public Crew(Long id, String name) {
-        this.id = id;
-        this.name = name;
+        this.crewSkills = crewSkills;
     }
 
     @Override
@@ -47,12 +51,12 @@ public class Crew{
         return name;
     }
 
-    public String getDiscipline() {
-        return discipline;
+    public Set<CrewSkills> getCrewSkills() {
+        return this.crewSkills;
     }
 
-    public void setDiscipline(String discipline) {
-        this.discipline = discipline;
+    public void setCrewSkills(Set<CrewSkills> crewSkills) {
+        this.crewSkills = crewSkills;
     }
 
 }

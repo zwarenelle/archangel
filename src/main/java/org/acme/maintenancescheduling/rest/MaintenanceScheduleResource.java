@@ -9,7 +9,9 @@ import jakarta.ws.rs.Path;
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
 import org.acme.maintenancescheduling.persistence.CrewRepository;
+import org.acme.maintenancescheduling.persistence.CrewSkillsRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
+import org.acme.maintenancescheduling.persistence.JobRequirementRepository;
 import org.acme.maintenancescheduling.persistence.WorkCalendarRepository;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.solver.SolutionManager;
@@ -27,6 +29,10 @@ public class MaintenanceScheduleResource {
     WorkCalendarRepository workCalendarRepository;
     @Inject
     CrewRepository crewRepository;
+    @Inject
+    JobRequirementRepository jobRequirementRepository;
+    @Inject
+    CrewSkillsRepository crewSkillsRepository;
     @Inject
     JobRepository jobRepository;
 
@@ -73,7 +79,10 @@ public class MaintenanceScheduleResource {
         return new MaintenanceSchedule(
                 workCalendarRepository.listAll().get(0),
                 crewRepository.listAll(Sort.by("name").and("id")),
-                jobRepository.listAll(Sort.by("dueDate").and("readyDate").and("adres").and("id")));
+                jobRequirementRepository.listAll(Sort.by("id")),
+                crewSkillsRepository.listAll(Sort.by("id")),
+                jobRepository.listAll(Sort.by("dueDate").and("readyDate").and("adres").and("id"))
+                );
     }
 
     @Transactional
