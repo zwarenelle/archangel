@@ -8,8 +8,9 @@ import jakarta.inject.Inject;
 
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
+import org.acme.maintenancescheduling.domain.JobRequirement;
+import org.acme.maintenancescheduling.domain.CrewSkills;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
-import org.acme.maintenancescheduling.domain.Skill;
 import org.junit.jupiter.api.Test;
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
 
@@ -18,8 +19,8 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 public class MaintenanceSchedulingConstraintProviderTest {
 
-    private static final Crew ALPHA_CREW = new Crew("Alpha crew", 1, Set.of(new Skill(1, 1, "Elektra")));
-    private static final Crew BETA_CREW = new Crew("Beta crew", 2, Set.of(new Skill(2, 1, "Gas")));
+    private static final Crew ALPHA_CREW = new Crew("Alpha crew", Set.of(new CrewSkills(1, 1, "Elektra")));
+    private static final Crew BETA_CREW = new Crew("Beta crew", Set.of(new CrewSkills(2, 1, "Gas")));
     private static final LocalDateTime DAY_1 = LocalDateTime.of(LocalDate.of(2023, 10, 1), LocalTime.of(12, 0, 0));
     private static final LocalDateTime DAY_2 = LocalDateTime.of(LocalDate.of(2023, 10, 2), LocalTime.of(12, 0, 0));
     private static final LocalDateTime DAY_3 = LocalDateTime.of(LocalDate.of(2023, 10, 3), LocalTime.of(12, 0, 0));
@@ -119,28 +120,28 @@ public class MaintenanceSchedulingConstraintProviderTest {
     public void tagConflict() {
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
                 .given(
-                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new Skill(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
-                        new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of(new Skill(2, 1, "Gas")), ALPHA_CREW, DAY_3))
+                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new JobRequirement(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
+                        new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of(new JobRequirement(2, 1, "Gas")), ALPHA_CREW, DAY_3))
                 .penalizesBy(0);
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
                 .given(
-                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new Skill(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
-                        new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of(new Skill(2, 1, "Gas")), ALPHA_CREW, DAY_1))
+                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new JobRequirement(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
+                        new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of(new JobRequirement(2, 1, "Gas")), ALPHA_CREW, DAY_1))
                 .penalizesBy(1);
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
                 .given(
-                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new Skill(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
-                        new Job(2L, "Uptown bridge", 1, 4, null, null, null, Set.of(new Skill(2, 1, "Gas")), ALPHA_CREW, DAY_1))
+                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new JobRequirement(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
+                        new Job(2L, "Uptown bridge", 1, 4, null, null, null, Set.of(new JobRequirement(2, 1, "Gas")), ALPHA_CREW, DAY_1))
                 .penalizesBy(0);
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
                 .given(
-                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new Skill(1, 1, "Elektra")), ALPHA_CREW, DAY_2),
-                        new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of(new Skill(2, 1, "Elektra")), ALPHA_CREW, DAY_2))
+                        new Job(1L, "Downtown tunnel", 1, 4, null, null, null, Set.of(new JobRequirement(1, 1, "Elektra")), ALPHA_CREW, DAY_2),
+                        new Job(2L, "Downtown bridge", 1, 4, null, null, null, Set.of(new JobRequirement(2, 1, "Elektra")), ALPHA_CREW, DAY_2))
                 .penalizesBy(2);
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
                 .given(
-                        new Job(1L, "Downtown tunnel", 5, 4, null, null, null, Set.of(new Skill(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
-                        new Job(2L, "Downtown bridge", 3, 4, null, null, null, Set.of(new Skill(2, 1, "Gas")), ALPHA_CREW, DAY_2))
+                        new Job(1L, "Downtown tunnel", 5, 4, null, null, null, Set.of(new JobRequirement(1, 1, "Elektra")), ALPHA_CREW, DAY_1),
+                        new Job(2L, "Downtown bridge", 3, 4, null, null, null, Set.of(new JobRequirement(2, 1, "Gas")), ALPHA_CREW, DAY_2))
                 .penalizesBy(2 * 3);
     }
 

@@ -36,7 +36,7 @@ public class Job {
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="JOB_ID")
-    private Set<Skill> requiredSkills;
+    private Set<JobRequirement> requiredSkills;
 
     @PlanningVariable
     @ManyToOne
@@ -51,7 +51,7 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<Skill> requiredSkills) {
+    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<JobRequirement> requiredSkills) {
         this.adres = adres;
         this.durationInDays = durationInDays;
         this.durationInHours = durationInHours;
@@ -61,7 +61,7 @@ public class Job {
         this.requiredSkills = requiredSkills;
     }
 
-    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<Skill> requiredSkills,
+    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<JobRequirement> requiredSkills,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
@@ -114,7 +114,7 @@ public class Job {
         return idealEndDate;
     }
 
-    public Set<Skill> getrequiredSkills() {
+    public Set<JobRequirement> getrequiredSkills() {
         return this.requiredSkills;
     }
 
@@ -134,7 +134,7 @@ public class Job {
         this.crew = crew;
     }
 
-    public void setrequiredSkills(Set<Skill> requiredSkills) {
+    public void setrequiredSkills(Set<JobRequirement> requiredSkills) {
         this.requiredSkills = requiredSkills;
     }
 

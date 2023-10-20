@@ -20,31 +20,19 @@ public class Crew{
     @GeneratedValue
     private Long id;
     private String name;
-    private int discipline;
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="CREW_ID")
-    private Set<Skill> possessedSkills;
+    private Set<CrewSkills> crewSkills;
 
     // No-arg constructor required for Hibernate
     public Crew() {
     }
 
-    // public Crew(String name, int discipline) {
-    //     this.name = name;
-    //     this.discipline = discipline;
-    // }
-
-    public Crew(String name, int discipline, Set<Skill> possessedSkills) {
+    public Crew(String name, Set<CrewSkills> crewSkills) {
         this.name = name;
-        this.discipline = discipline;
-        // this.possessedSkills = possessedSkills;
+        this.crewSkills = crewSkills;
     }
-
-    // public Crew(Long id, String name) {
-    //     this.id = id;
-    //     this.name = name;
-    // }
 
     @Override
     public String toString() {
@@ -63,20 +51,12 @@ public class Crew{
         return name;
     }
 
-    public int getDiscipline() {
-        return discipline;
+    public Set<CrewSkills> getCrewSkills() {
+        return this.crewSkills;
     }
 
-    public Set<Skill> getPossessedSkills() {
-        return this.possessedSkills;
-    }
-
-    public void setPossessedSkills(Set<Skill> possessedSkills) {
-        this.possessedSkills = possessedSkills;
-    }
-
-    public void setDiscipline(int discipline) {
-        this.discipline = discipline;
+    public void setCrewSkills(Set<CrewSkills> crewSkills) {
+        this.crewSkills = crewSkills;
     }
 
 }

@@ -2,13 +2,14 @@ package org.acme.maintenancescheduling.solver;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
 import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
+import org.acme.maintenancescheduling.domain.CrewSkills;
 import org.acme.maintenancescheduling.domain.Job;
+import org.acme.maintenancescheduling.domain.JobRequirement;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoftlong.HardSoftLongScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
@@ -89,15 +90,12 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
 
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getCrew() != null &&
-                        (job.getrequiredSkills().stream()
-                                .filter(skill -> Objects.equals(skill.getTypenummer(), job.getCrew().getDiscipline()))
-                                .collect(Collectors.toList()))
-                        .size() > 0)
-                .rewardLong(HardSoftLongScore.ONE_HARD,
-                        job -> 10L * ((job.getrequiredSkills().stream()
-                                .filter(skill -> Objects.equals(skill.getTypenummer(), job.getCrew().getDiscipline()))
-                                .collect(Collectors.toList()))
-                        .size()))
+                        !(job.getrequiredSkills().stream()
+                        .map(JobRequirement::getTypenummer).collect(Collectors.toSet())).containsAll(
+                        job.getCrew().getCrewSkills().stream()
+                        .map(CrewSkills::getTypenummer).collect(Collectors.toSet())))
+                .penalizeLong(HardSoftLongScore.ONE_HARD,
+                        job -> 10L)
                 .asConstraint("Skill Conflict");
     }
 
