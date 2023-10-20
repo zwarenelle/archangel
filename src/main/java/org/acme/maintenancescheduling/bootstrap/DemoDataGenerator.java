@@ -9,11 +9,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
-import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.CrewSkills;
 import org.acme.maintenancescheduling.domain.Job;
@@ -24,9 +19,14 @@ import org.acme.maintenancescheduling.persistence.JobRepository;
 import org.acme.maintenancescheduling.persistence.JobRequirementRepository;
 import org.acme.maintenancescheduling.persistence.WorkCalendarRepository;
 import org.acme.maintenancescheduling.solver.EndDateUpdatingVariableListener;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import io.quarkus.runtime.StartupEvent;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class DemoDataGenerator {
@@ -55,20 +55,14 @@ public class DemoDataGenerator {
         }
 
         List<Crew> crewList = new ArrayList<>();
-
-        // E = new Skill(1, 1, "Elektra")
-        //     Set.of(new Skill(1, 1, "Elektra"))
-        // G = new Skill(2, 1, "Gas")
-        //     Set.of(new Skill(2, 1, "Gas"))
-        // Set<Skill> testE = Set.of(new Skill(1, 1, "Elektra"));
         
         crewList.add(new Crew("Ploeg COMBI", Set.of(new CrewSkills(1, 1, "Elektra"), new CrewSkills(2, 1, "Gas"))));
         crewList.add(new Crew("Ploeg E1", Set.of(new CrewSkills(1, 1, "Elektra"))));
         crewList.add(new Crew("Ploeg E2", Set.of(new CrewSkills(1, 1, "Elektra"))));
         crewList.add(new Crew("Ploeg G1", Set.of(new CrewSkills(2, 1, "Gas"))));
         crewList.add(new Crew("Ploeg G2", Set.of(new CrewSkills(2, 1, "Gas"))));
+        
         crewRepository.persist(crewList);
-
 
         final String[] JOB_AREA_NAMES = {
                 "Spui", "Raamsteeg", "Rokin", "Damrak", "Kalverstraat", "Nieuwmarkt", "Nieuwmarkt", "Spooksteeg", "Oudezijds Voorburgwal",
@@ -97,9 +91,6 @@ public class DemoDataGenerator {
             LocalDateTime readyDate = EndDateUpdatingVariableListener.calculateEndDate(fromDate, readyWorkdayOffset * 24);
             LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays * 24);
             LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays * 24);
-            // Some have both skills, else, it's one ore the other
-            // Set<Skill> requiredSkills = random.nextDouble() < 0.1 ? Set.of(new Skill(1, 1, "Elektra"), new Skill(2, 1, "Gas")) : 
-            //             random.nextInt(2) < 1 ? Set.of(new Skill(1, 1, "Elektra")) : Set.of(new Skill(2, 1, "Gas"));
 
             Set<JobRequirement> requiredSkills = random.nextDouble() < 0.1 ?
                 Set.of(new JobRequirement(1, 1, "Elektra"), new JobRequirement(2, 1, "Gas")) : 
@@ -108,7 +99,7 @@ public class DemoDataGenerator {
                 Set.of(new JobRequirement(2, 1, "Gas"));
 
 
-            jobList.add(new Job(jobArea, durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills));
+            jobList.add(new Job(jobArea, "E0001", durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills));
         }
 
         jobRepository.persist(jobList);

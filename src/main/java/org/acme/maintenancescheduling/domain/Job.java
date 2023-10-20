@@ -28,6 +28,7 @@ public class Job {
     private Long id;
 
     private String adres;
+    private String bestekcode;
     private int durationInDays;
     private int durationInHours;
     private LocalDateTime readyDate; // Inclusive
@@ -51,8 +52,9 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<JobRequirement> requiredSkills) {
+    public Job(String adres, String bestekcode, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<JobRequirement> requiredSkills) {
         this.adres = adres;
+        this.bestekcode = bestekcode;
         this.durationInDays = durationInDays;
         this.durationInHours = durationInHours;
         this.readyDate = readyDate;
@@ -61,10 +63,11 @@ public class Job {
         this.requiredSkills = requiredSkills;
     }
 
-    public Job(Long id, String adres, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<JobRequirement> requiredSkills,
+    public Job(Long id, String adres, String bestekcode, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<JobRequirement> requiredSkills,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
+        this.bestekcode = bestekcode;
         this.durationInDays = durationInDays;
         this.durationInHours = durationInHours;
         this.readyDate = readyDate;
@@ -92,6 +95,10 @@ public class Job {
 
     public String getAdres() {
         return adres;
+    }
+
+    public String getBestekcode() {
+        return bestekcode;
     }
 
     public int getDurationInDays() {
@@ -144,6 +151,10 @@ public class Job {
 
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
+    }
+
+    public void setBestekcode(String bestekcode) {
+        this.bestekcode = bestekcode;
     }
 
 }

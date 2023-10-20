@@ -86,14 +86,17 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
     }
 
     public Constraint skillConflict(ConstraintFactory constraintFactory) {
-        // Discipline jobs and crews
+        // Match crewSkills to JobRequirements
 
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getCrew() != null &&
-                        !(job.getrequiredSkills().stream()
-                        .map(JobRequirement::getTypenummer).collect(Collectors.toSet())).containsAll(
-                        job.getCrew().getCrewSkills().stream()
-                        .map(CrewSkills::getTypenummer).collect(Collectors.toSet())))
+                        !(job.getCrew().getCrewSkills().stream()
+                                .map(CrewSkills::getTypenummer)
+                                .collect(Collectors.toSet())
+                        .containsAll(job.getrequiredSkills().stream()
+                                .map(JobRequirement::getTypenummer)
+                                .collect(Collectors.toSet())))
+                        )
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> 10L)
                 .asConstraint("Skill Conflict");
