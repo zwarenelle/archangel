@@ -1,7 +1,7 @@
 package org.acme.maintenancescheduling.domain;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -37,12 +37,12 @@ public class Job {
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="JOB_ID")
-    private Set<JobRequirement> requiredSkills;
+    private List<JobRequirement> requiredSkills;
 
     @PlanningVariable
     @ManyToOne
     private Crew crew;
-    // Follows the TimeGrain Design Pattern
+    
     @PlanningVariable
     private LocalDateTime startDate; // Inclusive
     @ShadowVariable(variableListenerClass = EndDateUpdatingVariableListener.class, sourceVariableName = "startDate")
@@ -52,7 +52,7 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, String bestekcode, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<JobRequirement> requiredSkills) {
+    public Job(String adres, String bestekcode, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, List<JobRequirement> requiredSkills) {
         this.adres = adres;
         this.bestekcode = bestekcode;
         this.durationInDays = durationInDays;
@@ -63,7 +63,7 @@ public class Job {
         this.requiredSkills = requiredSkills;
     }
 
-    public Job(Long id, String adres, String bestekcode, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Set<JobRequirement> requiredSkills,
+    public Job(Long id, String adres, String bestekcode, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, List<JobRequirement> requiredSkills,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
@@ -121,7 +121,7 @@ public class Job {
         return idealEndDate;
     }
 
-    public Set<JobRequirement> getrequiredSkills() {
+    public List<JobRequirement> getrequiredSkills() {
         return this.requiredSkills;
     }
 
@@ -141,7 +141,7 @@ public class Job {
         this.crew = crew;
     }
 
-    public void setrequiredSkills(Set<JobRequirement> requiredSkills) {
+    public void setrequiredSkills(List<JobRequirement> requiredSkills) {
         this.requiredSkills = requiredSkills;
     }
 

@@ -31,7 +31,7 @@ const byCrewTimelineOptions = {
     orientation: {axis: "top"},
     stack: false,
     xss: {disabled: true}, // Items are XSS safe through JQuery
-    zoomMin: 3 * 1000 * 60 * 60 * 24, // Three day in milliseconds
+    zoomMin: 1000 * 60 * 60 * 24, // One day in milliseconds
     locale: 'nl',
     format: formattingOptions
 };
@@ -45,7 +45,7 @@ const byJobTimelineOptions = {
     timeAxis: {scale: "hour", step: 6},
     orientation: {axis: "top"},
     xss: {disabled: true}, // Items are XSS safe through JQuery
-    zoomMin: 3 * 1000 * 60 * 60 * 24, // Three day in milliseconds
+    zoomMin: 1000 * 60 * 60 * 24, // One day in milliseconds
     locale: 'nl',
     format: formattingOptions
 };

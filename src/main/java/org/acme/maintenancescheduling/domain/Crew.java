@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 
-import java.util.Set;
+import java.util.List;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
@@ -23,13 +23,13 @@ public class Crew{
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="CREW_ID")
-    private Set<CrewSkills> crewSkills;
+    private List<CrewSkills> crewSkills;
 
     // No-arg constructor required for Hibernate
     public Crew() {
     }
 
-    public Crew(String name, Set<CrewSkills> crewSkills) {
+    public Crew(String name, List<CrewSkills> crewSkills) {
         this.name = name;
         this.crewSkills = crewSkills;
     }
@@ -51,11 +51,11 @@ public class Crew{
         return name;
     }
 
-    public Set<CrewSkills> getCrewSkills() {
+    public List<CrewSkills> getCrewSkills() {
         return this.crewSkills;
     }
 
-    public void setCrewSkills(Set<CrewSkills> crewSkills) {
+    public void setCrewSkills(List<CrewSkills> crewSkills) {
         this.crewSkills = crewSkills;
     }
 

@@ -7,7 +7,6 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.CrewSkills;
@@ -56,11 +55,11 @@ public class DemoDataGenerator {
 
         List<Crew> crewList = new ArrayList<>();
         
-        crewList.add(new Crew("Ploeg COMBI", Set.of(new CrewSkills(1, 1, "Elektra"), new CrewSkills(2, 1, "Gas"))));
-        crewList.add(new Crew("Ploeg E1", Set.of(new CrewSkills(1, 1, "Elektra"))));
-        crewList.add(new Crew("Ploeg E2", Set.of(new CrewSkills(1, 1, "Elektra"))));
-        crewList.add(new Crew("Ploeg G1", Set.of(new CrewSkills(2, 1, "Gas"))));
-        crewList.add(new Crew("Ploeg G2", Set.of(new CrewSkills(2, 1, "Gas"))));
+        crewList.add(new Crew("Ploeg COMBI", List.of(new CrewSkills(4, 1, "BEI VP"), new CrewSkills(6, 1, "BEI VOP"), new CrewSkills(1, 1, "VIAG VP"), new CrewSkills(3, 1, "VIAG VOP"))));
+        crewList.add(new Crew("Ploeg E1", List.of(new CrewSkills(4, 1, "BEI VP"), new CrewSkills(6, 1, "BEI VOP"))));
+        crewList.add(new Crew("Ploeg E2", List.of(new CrewSkills(4, 1, "BEI VP"), new CrewSkills(6, 1, "BEI VOP"))));
+        crewList.add(new Crew("Ploeg G1", List.of(new CrewSkills(1, 1, "VIAG VP"), new CrewSkills(3, 1, "VIAG VOP"))));
+        crewList.add(new Crew("Ploeg G2", List.of(new CrewSkills(1, 1, "VIAG VP"), new CrewSkills(3, 1, "VIAG VOP"))));
         
         crewRepository.persist(crewList);
 
@@ -92,13 +91,15 @@ public class DemoDataGenerator {
             LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays * 24);
             LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays * 24);
 
-            Set<JobRequirement> requiredSkills = random.nextDouble() < 0.1 ?
-                Set.of(new JobRequirement(1, 1, "Elektra"), new JobRequirement(2, 1, "Gas")) : 
+            List<JobRequirement> requiredSkills = random.nextDouble() < 0.1 ?
+                List.of(new JobRequirement(4, 1, "BEI VP"), new JobRequirement(6, 1, "BEI VOP"), new JobRequirement(1, 1, "VIAG VP")) : 
                 random.nextInt(2) < 1 ?
-                Set.of(new JobRequirement(1, 1, "Elektra")) :
-                Set.of(new JobRequirement(2, 1, "Gas"));
+                List.of(new JobRequirement(4, 1, "BEI VP"), new JobRequirement(6, 1, "BEI VOP")) :
+                List.of(new JobRequirement(1, 1, "VIAG VP"), new JobRequirement(3, 1, "VIAG VOP"));
 
-
+            if (requiredSkills.size() > 2) {
+                jobArea += " C";
+            }
             jobList.add(new Job(jobArea, "E0001", durationInDays, durationInHours, readyDate, dueDate, idealEndDate, requiredSkills));
         }
 

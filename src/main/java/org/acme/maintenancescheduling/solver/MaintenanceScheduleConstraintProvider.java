@@ -2,14 +2,11 @@ package org.acme.maintenancescheduling.solver;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.stream.Collectors;
 
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
 import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
-import org.acme.maintenancescheduling.domain.CrewSkills;
 import org.acme.maintenancescheduling.domain.Job;
-import org.acme.maintenancescheduling.domain.JobRequirement;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoftlong.HardSoftLongScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
@@ -87,16 +84,13 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
 
     public Constraint skillConflict(ConstraintFactory constraintFactory) {
         // Match crewSkills to JobRequirements
-
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getCrew() != null &&
-                        !(job.getCrew().getCrewSkills().stream()
-                                .map(CrewSkills::getTypenummer)
-                                .collect(Collectors.toSet())
-                        .containsAll(job.getrequiredSkills().stream()
-                                .map(JobRequirement::getTypenummer)
-                                .collect(Collectors.toSet())))
-                        )
+                        !(job.getrequiredSkills().stream()
+                        .allMatch(crewskill -> job.getCrew().getCrewSkills().stream()
+                        .anyMatch(jobreq -> crewskill.getTypenummer() == jobreq.getTypenummer() &&
+                        crewskill.getAantal() >= jobreq.getAantal())))
+                )        
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> 10L)
                 .asConstraint("Skill Conflict");
@@ -148,4 +142,5 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                         job -> ChronoUnit.HOURS.between(job.getIdealEndDate(), job.getEndDate()))
                 .asConstraint("After ideal end date");
     }
+
 }
