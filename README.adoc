@@ -6,11 +6,6 @@
 * Mariadb
 * Apache Maven
 
-Bewerk template (app.template) naar vereisten en schrijf naar:
-
-[source, shell]
-/src/main/resources/application.properties
-
 [[run]]
 == Starten van de applicatie met Maven
 
@@ -20,6 +15,11 @@ Bewerk template (app.template) naar vereisten en schrijf naar:
 ----
 $ git clone https://github.com/zwarenelle/archangel.git
 ----
+
+/Bewerk template (app.template) naar vereisten en schrijf naar:
+
+[source, shell]
+src/main/resources/application.properties
 
 . Start de applicatie met Maven:
 +

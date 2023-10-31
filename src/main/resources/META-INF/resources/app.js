@@ -131,11 +131,11 @@ function refreshSchedule() {
                 const byJobJobElement = $(`<div/>`)
                   .append($(`<h5 class="card-title mb-1"/>`).text(`Unassigned`));
                 $.each(job.requiredSkills, (index, tag) => {
-                    if (tag.omschrijving.toString() == "Gas")
+                    if (tag.omschrijving.toString().startsWith("VIAG"))
                     {
                         color = "#FEB900";
                     }
-                    else if (tag.omschrijving.toString() == "Elektra")
+                    else if (tag.omschrijving.startsWith("BEI"))
                     {
                         color = "#ED5353";
                     }
@@ -170,11 +170,11 @@ function refreshSchedule() {
                     byJobJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`After due (too late)`));
                 }
                 $.each(job.requiredSkills, (index, tag) => {
-                    if (tag.omschrijving.toString() == "Gas")
+                    if (tag.omschrijving.toString().startsWith("VIAG"))
                     {
                         color = "#FEB900";
                     }
-                    else if (tag.omschrijving.toString() == "Elektra")
+                    else if (tag.omschrijving.toString().startsWith("BEI"))
                     {
                         color = "#ED5353";
                     }
