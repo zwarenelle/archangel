@@ -76,20 +76,23 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
         // A crew does not work on weekends
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getStartDate() != null
-                        && (job.getStartDate().getDayOfWeek().getValue() + job.getDurationInDays() >= 7))
+                        && (job.getStartDate().getDayOfWeek().getValue() > 5)
+                        || (job.getEndDate().getDayOfWeek().getValue() > 5)
+                        )
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
-                job -> ((job.getStartDate().getDayOfWeek().getValue() + job.getDurationInDays()) - 5))
+                job -> Long.valueOf(Math.max((job.getStartDate().getDayOfWeek().getValue() - 5), (job.getEndDate().getDayOfWeek().getValue() - 5))))
                 .asConstraint("Overlaps weekend");
     }
 
     public Constraint skillConflict(ConstraintFactory constraintFactory) {
+        // TODO: Put in a dynamic penalize function based on count of missing skills
         // Match crewSkills to JobRequirements
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getCrew() != null &&
                         !(job.getrequiredSkills().stream()
                         .allMatch(crewskill -> job.getCrew().getCrewSkills().stream()
                         .anyMatch(jobreq -> crewskill.getTypenummer() == jobreq.getTypenummer() &&
-                        crewskill.getAantal() >= jobreq.getAantal())))
+                        crewskill.getAantal() <= jobreq.getAantal())))
                 )        
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> 10L)

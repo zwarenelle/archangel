@@ -22,14 +22,13 @@ import ai.timefold.solver.core.api.domain.variable.ShadowVariable;
 @PlanningEntity
 @Entity
 public class Job {
-    
+
     @Id
     @GeneratedValue
     private Long id;
 
     private String adres;
     private String bestekcode;
-    private int durationInDays;
     private int durationInHours;
     private LocalDateTime readyDate; // Inclusive
     private LocalDateTime dueDate; // Exclusive
@@ -52,28 +51,28 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, String bestekcode, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, List<JobRequirement> requiredSkills) {
+    public Job(String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, List<JobRequirement> requiredSkills) {
         this.adres = adres;
         this.bestekcode = bestekcode;
-        this.durationInDays = durationInDays;
-        this.durationInHours = durationInHours;
+        this.requiredSkills = requiredSkills;
+        this.durationInHours = requiredSkills.stream()
+        .mapToInt(skill -> skill.getDuur()).sum();
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
-        this.requiredSkills = requiredSkills;
     }
 
-    public Job(Long id, String adres, String bestekcode, int durationInDays, int durationInHours, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, List<JobRequirement> requiredSkills,
+    public Job(Long id, String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, List<JobRequirement> requiredSkills,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
         this.bestekcode = bestekcode;
-        this.durationInDays = durationInDays;
-        this.durationInHours = durationInHours;
+        this.requiredSkills = requiredSkills;
+        this.durationInHours = requiredSkills.stream()
+        .mapToInt(skill -> skill.getDuur()).sum();
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
-        this.requiredSkills = requiredSkills;
         this.crew = crew;
         this.startDate = startDate;
         this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInHours);
@@ -100,11 +99,6 @@ public class Job {
     public String getBestekcode() {
         return bestekcode;
     }
-
-    public int getDurationInDays() {
-        return durationInDays;
-    }
-
     public int getdurationInHours() {
         return durationInHours;
     }

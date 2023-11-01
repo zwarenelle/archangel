@@ -112,7 +112,7 @@ function refreshSchedule() {
         $.each(schedule.jobList, (index, job) => {
             const jobGroupElement = $(`<div/>`)
               .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
-              .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInDays} workdays`));
+              .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uren`));
             byJobGroupDataSet.add({
                 id : job.id,
                 content: jobGroupElement.html()
@@ -134,9 +134,9 @@ function refreshSchedule() {
                 unassignedJobsCount++;
                 const unassignedJobElement = $(`<div class="card-body p-2"/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInDays} workdays`))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Ready: ${job.readyDate}`))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Due: ${job.dueDate}`));
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uren`))
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Voorbereiding gereed: ${job.readyDate}`))
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Uiterlijke einddatum: ${job.dueDate}`));
                 const byJobJobElement = $(`<div/>`)
                   .append($(`<h5 class="card-title mb-1"/>`).text(`Unassigned`));
                 $.each(job.requiredSkills, (index, tag) => {
@@ -159,7 +159,7 @@ function refreshSchedule() {
                 byJobItemDataSet.add({
                     id : job.id, group: job.id,
                     content: byJobJobElement.html(),
-                    start: job.readyDate, end: JSJoda.LocalDateTime.parse(job.readyDate).plusDays(job.durationInDays).toString(),
+                    start: job.readyDate, end: JSJoda.LocalDateTime.parse(job.readyDate).plusDays(job.durationInHours).toString(),
                     style: "background-color: #EF292999"
                 });
             } else {
@@ -167,7 +167,7 @@ function refreshSchedule() {
                 const afterDue = JSJoda.LocalDateTime.parse(job.endDate).isAfter(JSJoda.LocalDateTime.parse(job.dueDate));
                 const byCrewJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInDays} workdays`));
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uren`));
                 const byJobJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.crew.name));
                 if (beforeReady) {
