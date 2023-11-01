@@ -15,15 +15,13 @@ public class Skill{
     private Long id;
 
     private int typenummer;
-    private int aantal;
     private String omschrijving;
 
     public Skill() { }
 
-    public Skill(int typenummer, int aantal, String omschrijving)
+    public Skill(int typenummer, String omschrijving)
     {
         this.typenummer = typenummer;
-        this.aantal = aantal;
         this.omschrijving = omschrijving;
     }
 
@@ -41,11 +39,6 @@ public class Skill{
         return this.typenummer;
     }
 
-    public int getAantal()
-    {
-        return this.aantal;
-    }
-
     public String getOmschrijving()
     {
         return this.omschrijving;
@@ -54,11 +47,6 @@ public class Skill{
     public void setTypenummer(int typenummer)
     {
         this.typenummer = typenummer;
-    }
-
-    public void setAantal(int aantal)
-    {
-        this.aantal = aantal;
     }
 
     public void setOmschrijving(String omschrijving)

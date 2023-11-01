@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 @Entity
 public class JobRequirement extends Skill{
 
+    private int aantal;
+
     public JobRequirement()
     {
 
@@ -12,7 +14,16 @@ public class JobRequirement extends Skill{
 
     public JobRequirement(int typenummer, int aantal, String omschrijving)
     {
-        super(typenummer, aantal, omschrijving);
+        super(typenummer, omschrijving);
+        this.aantal = aantal;
+    }
+    
+    public int getAantal() {
+        return aantal;
+    }
+
+    public void setAantal(int aantal) {
+        this.aantal = aantal;
     }
 
 }

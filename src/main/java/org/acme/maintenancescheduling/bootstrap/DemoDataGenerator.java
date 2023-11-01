@@ -9,13 +9,15 @@ import java.util.List;
 import java.util.Random;
 
 import org.acme.maintenancescheduling.domain.Crew;
-import org.acme.maintenancescheduling.domain.CrewSkills;
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.JobRequirement;
+import org.acme.maintenancescheduling.domain.Monteur;
+import org.acme.maintenancescheduling.domain.Skill;
 import org.acme.maintenancescheduling.domain.WorkCalendar;
 import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
 import org.acme.maintenancescheduling.persistence.JobRequirementRepository;
+import org.acme.maintenancescheduling.persistence.MonteurRepository;
 import org.acme.maintenancescheduling.persistence.WorkCalendarRepository;
 import org.acme.maintenancescheduling.solver.EndDateUpdatingVariableListener;
 
@@ -46,20 +48,33 @@ public class DemoDataGenerator {
     JobRepository jobRepository;
     @Inject
     JobRequirementRepository skillRepository;
+    @Inject
+    MonteurRepository monteurRepository;
 
     @Transactional
     public void generateDemoData(@Observes StartupEvent startupEvent) {
         if (demoData == DemoData.FALSE) {
             return;
         }
+        
+        // Ploeg COMBI
+        // new Monteur("Paul", new Skill(1, "VIAG VP")), new Monteur("Robbert", new Skill(3, "VIAG VOP")), new Monteur("Marichelle", new Skill(4, "BEI VP")), new Monteur("Fons", new Skill(6, "BEI VOP"))
 
+        // Ploeg E 1+2
+        // new Monteur("Emiel", new Skill(4, "BEI VP")), new Monteur("Mark", new Skill(6, "BEI VOP"))
+        // new Monteur("Gijs", new Skill(4, "BEI VP")), new Monteur("Dave", new Skill(6, "BEI VOP"))
+
+        // Ploeg G 1+2
+        // new Monteur("Tom", new Skill(1, "VIAG VP")), new Monteur("Bas", new Skill(3, "VIAG VOP"))
+        // new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP"))
+        
         List<Crew> crewList = new ArrayList<>();
         
-        crewList.add(new Crew("Ploeg COMBI", List.of(new CrewSkills(4, 1, "BEI VP"), new CrewSkills(6, 1, "BEI VOP"), new CrewSkills(1, 1, "VIAG VP"), new CrewSkills(3, 1, "VIAG VOP"))));
-        crewList.add(new Crew("Ploeg E1", List.of(new CrewSkills(4, 1, "BEI VP"), new CrewSkills(6, 1, "BEI VOP"))));
-        crewList.add(new Crew("Ploeg E2", List.of(new CrewSkills(4, 1, "BEI VP"), new CrewSkills(6, 1, "BEI VOP"))));
-        crewList.add(new Crew("Ploeg G1", List.of(new CrewSkills(1, 1, "VIAG VP"), new CrewSkills(3, 1, "VIAG VOP"))));
-        crewList.add(new Crew("Ploeg G2", List.of(new CrewSkills(1, 1, "VIAG VP"), new CrewSkills(3, 1, "VIAG VOP"))));
+        crewList.add(new Crew("Ploeg COMBI", List.of(new Monteur("Paul", new Skill(1, "VIAG VP")), new Monteur("Robbert", new Skill(3, "VIAG VOP")), new Monteur("Marichelle", new Skill(4, "BEI VP")), new Monteur("Fons", new Skill(6, "BEI VOP")))));
+        crewList.add(new Crew("Ploeg E1", List.of(new Monteur("Emiel", new Skill(4, "BEI VP")), new Monteur("Mark", new Skill(6, "BEI VOP")))));
+        crewList.add(new Crew("Ploeg E2", List.of(new Monteur("Gijs", new Skill(4, "BEI VP")), new Monteur("Dave", new Skill(6, "BEI VOP")))));
+        crewList.add(new Crew("Ploeg G1", List.of(new Monteur("Tom", new Skill(1, "VIAG VP")), new Monteur("Bas", new Skill(3, "VIAG VOP")))));
+        crewList.add(new Crew("Ploeg G2", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")), new Monteur("Mike2", new Skill(3, "VIAG VOP")))));
         
         crewRepository.persist(crewList);
 
