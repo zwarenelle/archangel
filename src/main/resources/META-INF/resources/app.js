@@ -97,7 +97,16 @@ function refreshSchedule() {
         byJobItemDataSet.clear();
 
         $.each(schedule.crewList, (index, crew) => {
-            byCrewGroupDataSet.add({id : crew.id, content: crew.name});
+                const crewDescription = $(`<div/>`)
+                .append(crew.name)
+                $.each(crew.monteurs, (index, monteur) => {
+                    crewDescription.append(`</br>`)
+                    crewDescription.append(monteur.naam)
+                    crewDescription.append(` `)
+                    crewDescription.append(monteur.vaardigheid.omschrijving)
+                });
+                byCrewGroupDataSet.add({id : crew.id, content: crewDescription.html()
+            });
         });
 
         $.each(schedule.jobList, (index, job) => {

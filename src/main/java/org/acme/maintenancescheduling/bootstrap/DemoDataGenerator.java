@@ -74,8 +74,13 @@ public class DemoDataGenerator {
         crewList.add(new Crew("Ploeg E1", List.of(new Monteur("Emiel", new Skill(4, "BEI VP")), new Monteur("Mark", new Skill(6, "BEI VOP")))));
         crewList.add(new Crew("Ploeg E2", List.of(new Monteur("Gijs", new Skill(4, "BEI VP")), new Monteur("Dave", new Skill(6, "BEI VOP")))));
         crewList.add(new Crew("Ploeg G1", List.of(new Monteur("Tom", new Skill(1, "VIAG VP")), new Monteur("Bas", new Skill(3, "VIAG VOP")))));
-        crewList.add(new Crew("Ploeg G2", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")), new Monteur("Mike2", new Skill(3, "VIAG VOP")))));
         
+        // Extra Skill
+        // crewList.add(new Crew("Ploeg G2", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")), new Monteur("Mike2", new Skill(3, "VIAG VOP")))));
+        
+        // Regular
+        crewList.add(new Crew("Ploeg G2", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")))));
+
         crewRepository.persist(crewList);
 
         final String[] JOB_AREA_NAMES = {
