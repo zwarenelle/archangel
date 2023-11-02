@@ -23,10 +23,6 @@ public class MaintenanceSchedule {
     @ProblemFactCollectionProperty
     @ValueRangeProvider
     private List<Crew> crewList;
-    @ProblemFactCollectionProperty
-    private List<JobRequirement> jobRequirementList;
-    @ProblemFactCollectionProperty
-    private List<CrewSkills> crewSkillsList;
     @PlanningEntityCollectionProperty
     private List<Job> jobList;
 
@@ -41,11 +37,9 @@ public class MaintenanceSchedule {
     }
 
     public MaintenanceSchedule(WorkCalendar workCalendar,
-            List<Crew> crewList, List<JobRequirement> jobRequirementList, List<CrewSkills> crewSkillsList, List<Job> jobList) {
+            List<Crew> crewList, List<Job> jobList) {
         this.workCalendar = workCalendar;
         this.crewList = crewList;
-        this.jobRequirementList = jobRequirementList;
-        this.crewSkillsList = crewSkillsList;
         this.jobList = jobList;
     }
 
@@ -66,14 +60,6 @@ public class MaintenanceSchedule {
 
     public List<Job> getJobList() {
         return jobList;
-    }
-
-    public List<JobRequirement> getJobRequirementList() {
-        return jobRequirementList;
-    }
-
-    public List<CrewSkills> getCrewSkillsList() {
-        return crewSkillsList;
     }
 
     public HardSoftLongScore getScore() {
