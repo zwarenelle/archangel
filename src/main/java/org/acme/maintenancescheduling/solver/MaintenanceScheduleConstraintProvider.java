@@ -93,7 +93,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                         .allMatch(crewskill -> job.getCrew().getCrewSkills().stream()
                         .anyMatch(jobreq -> crewskill.getTypenummer() == jobreq.getTypenummer() &&
                         crewskill.getAantal() <= jobreq.getAantal())))
-                )        
+                )
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> 10L)
                 .asConstraint("Skill Conflict");
