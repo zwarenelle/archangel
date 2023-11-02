@@ -30,10 +30,6 @@ public class WorkCalendar {
         return fromDate + " - " + toDate;
     }
 
-    // ************************************************************************
-    // Getters and setters
-    // ************************************************************************
-
     public Long getId() {
         return id;
     }

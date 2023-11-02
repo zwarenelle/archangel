@@ -49,17 +49,12 @@ public class MaintenanceSchedule {
         this.jobList = jobList;
     }
 
-        @ValueRangeProvider
-        public CountableValueRange<LocalDateTime> createStartDateList() {
-            return ValueRangeFactory.createLocalDateTimeValueRange(
-                workCalendar.getFromDate(), workCalendar.getToDate(),
-                1, ChronoUnit.HOURS);
-        }
-
-
-    // ************************************************************************
-    // Getters and setters
-    // ************************************************************************
+    @ValueRangeProvider
+    public CountableValueRange<LocalDateTime> createStartDateList() {
+        return ValueRangeFactory.createLocalDateTimeValueRange(
+            workCalendar.getFromDate(), workCalendar.getToDate(),
+            1, ChronoUnit.HOURS);
+    }
 
     public WorkCalendar getWorkCalendar() {
         return workCalendar;
