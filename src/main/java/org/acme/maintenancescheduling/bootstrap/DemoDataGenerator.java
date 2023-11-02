@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -114,11 +115,18 @@ public class DemoDataGenerator {
             LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays * 24);
             LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays * 24);
 
-            List<JobRequirement> requiredSkills = random.nextDouble() < 0.1 ?
-                List.of(new JobRequirement(4, 1, 1, "BEI VP"), new JobRequirement(6, 1, 1, "BEI VOP"), new JobRequirement(1, 1, 1, "VIAG VP")) : 
-                random.nextInt(2) < 1 ?
-                List.of(new JobRequirement(4, 1, 2, "BEI VP"), new JobRequirement(6, 1, 2, "BEI VOP")) :
-                List.of(new JobRequirement(1, 1, 2, "VIAG VP"), new JobRequirement(3, 1, 2, "VIAG VOP"));
+            List<JobRequirement> requiredSkills = new ArrayList<>();
+            if (random.nextDouble() < 0.1) {
+                requiredSkills.addAll(Arrays.asList(new JobRequirement(4, 1, 1, "BEI VP"), new JobRequirement(6, 1, 1, "BEI VOP"), new JobRequirement(1, 1, 1, "VIAG VP")));
+            }
+            else {
+                if (random.nextInt(2) < 1) {
+                    requiredSkills.addAll(Arrays.asList(new JobRequirement(4, 1, 2, "BEI VP"), new JobRequirement(6, 1, 2, "BEI VOP")));
+                }
+                else {
+                    requiredSkills.addAll(Arrays.asList(new JobRequirement(1, 1, 2, "VIAG VP"), new JobRequirement(3, 1, 2, "VIAG VOP")));
+                }
+            }
 
             if (requiredSkills.size() > 2) {
                 jobArea = "C " + jobArea;

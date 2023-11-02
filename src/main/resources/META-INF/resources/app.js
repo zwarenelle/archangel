@@ -152,8 +152,8 @@ function refreshSchedule() {
                     {
                         color = "#003366";
                     }
-                    unassignedJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.omschrijving));
-                    byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.omschrijving));
+                    unassignedJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
+                    byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
                 });
                 unassignedJobs.append($(`<div class="col"/>`).append($(`<div class="card"/>`).append(unassignedJobElement)));
                 byJobItemDataSet.add({
@@ -191,8 +191,8 @@ function refreshSchedule() {
                     {
                         color = "#003366";
                     }
-                    byCrewJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.omschrijving));
-                    byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.omschrijving));
+                    byCrewJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
+                    byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
                 });
                 byCrewItemDataSet.add({
                     id : job.id, group: job.crew.id,

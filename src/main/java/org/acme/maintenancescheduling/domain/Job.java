@@ -1,7 +1,11 @@
 package org.acme.maintenancescheduling.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -54,7 +58,7 @@ public class Job {
     public Job(String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, List<JobRequirement> requiredSkills) {
         this.adres = adres;
         this.bestekcode = bestekcode;
-        this.requiredSkills = requiredSkills;
+        setrequiredSkills(requiredSkills);
         this.durationInHours = requiredSkills.stream()
         .mapToInt(skill -> skill.getDuur()).sum();
         this.readyDate = readyDate;
@@ -67,7 +71,7 @@ public class Job {
         this.id = id;
         this.adres = adres;
         this.bestekcode = bestekcode;
-        this.requiredSkills = requiredSkills;
+        setrequiredSkills(requiredSkills);
         this.durationInHours = requiredSkills.stream()
         .mapToInt(skill -> skill.getDuur()).sum();
         this.readyDate = readyDate;
@@ -136,7 +140,21 @@ public class Job {
     }
 
     public void setrequiredSkills(List<JobRequirement> requiredSkills) {
-        this.requiredSkills = requiredSkills;
+        // Sort list by typenummer
+        requiredSkills.sort(Comparator.comparing(JobRequirement::getTypenummer));
+
+        // Group entry's with the same typenummer into a map
+        Map<Integer, List<JobRequirement>> reqMap = requiredSkills.stream()
+        .collect(Collectors.groupingBy(req -> req.getTypenummer()));
+
+        // Create new list including typenummmer count
+        List<JobRequirement> reqsummary = new ArrayList<JobRequirement>();
+
+        for (Map.Entry<Integer, List<JobRequirement>> req : reqMap.entrySet()) {
+            reqsummary.add(new JobRequirement(req.getKey(), req.getValue().size(), req.getValue().stream().mapToInt(JobRequirement::getDuur).sum(), req.getValue().iterator().next().getOmschrijving()));
+        }
+
+        this.requiredSkills = reqsummary;
     }
 
     public void setStartDate(LocalDateTime startDate) {
