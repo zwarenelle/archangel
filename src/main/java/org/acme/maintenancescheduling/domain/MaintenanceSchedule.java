@@ -25,6 +25,8 @@ public class MaintenanceSchedule {
     private List<Crew> crewList;
     @PlanningEntityCollectionProperty
     private List<Job> jobList;
+    // @ProblemFactCollectionProperty
+    // List<Availability> availabilityList;
 
     @PlanningScore
     private HardSoftLongScore score;

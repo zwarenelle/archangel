@@ -1,6 +1,7 @@
 package org.acme.maintenancescheduling.bootstrap;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
@@ -9,12 +10,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.acme.maintenancescheduling.domain.Availability;
+import org.acme.maintenancescheduling.domain.AvailabilityType;
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.JobRequirement;
 import org.acme.maintenancescheduling.domain.Monteur;
 import org.acme.maintenancescheduling.domain.Skill;
 import org.acme.maintenancescheduling.domain.WorkCalendar;
+import org.acme.maintenancescheduling.persistence.AvailabilityRepository;
 import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
 import org.acme.maintenancescheduling.persistence.JobRequirementRepository;
@@ -51,6 +55,8 @@ public class DemoDataGenerator {
     JobRequirementRepository skillRepository;
     @Inject
     MonteurRepository monteurRepository;
+    @Inject
+    AvailabilityRepository availabilityRepository;
 
     @Transactional
     public void generateDemoData(@Observes StartupEvent startupEvent) {
@@ -99,6 +105,16 @@ public class DemoDataGenerator {
         LocalDateTime toDate = fromDate.plusWeeks(weekListSize);
         workCalendarRepository.persist(new WorkCalendar(fromDate, toDate));
         int workdayTotal = weekListSize * 5;
+
+        AvailabilityType availabilityType = AvailabilityType.AVAILABLE;
+
+        for (Crew crew : crewList) {
+            for (Monteur monteur : crew.getMonteurs()) {
+                for (LocalDate date = fromDate.toLocalDate(); date.isBefore(toDate.toLocalDate()); date = date.plusDays(1)) {
+                    availabilityRepository.persist(new Availability(monteur, date, availabilityType));
+                }
+            }
+        }
 
         List<Job> jobList = new ArrayList<>();
         int jobListSize = crewList.size() * 15;
