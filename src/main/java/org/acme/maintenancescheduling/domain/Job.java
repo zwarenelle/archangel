@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.CascadeType;
@@ -62,7 +63,9 @@ public class Job {
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
         updateSkillsfromBestekcode();
-        this.durationInHours = requiredSkills.stream().mapToInt(skill -> skill.getDuur()).sum();
+        OptionalInt max = requiredSkills.stream()
+        .mapToInt(skill -> skill.getDuur()).max();
+        this.durationInHours = max.getAsInt();
     }
 
     public Job(Long id, String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate,
@@ -70,14 +73,16 @@ public class Job {
         this.id = id;
         this.adres = adres;
         this.bestekcode = bestekcode;
-        this.durationInHours = requiredSkills.stream().mapToInt(skill -> skill.getDuur()).sum();
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
         this.crew = crew;
         this.startDate = startDate;
-        updateSkillsfromBestekcode();
         this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInHours);
+        updateSkillsfromBestekcode();
+        OptionalInt max = requiredSkills.stream()
+        .mapToInt(skill -> skill.getDuur()).max();
+        this.durationInHours = max.getAsInt();
     }
 
     @Override

@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -14,7 +13,6 @@ import org.acme.maintenancescheduling.domain.Availability;
 import org.acme.maintenancescheduling.domain.AvailabilityType;
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
-import org.acme.maintenancescheduling.domain.JobRequirement;
 import org.acme.maintenancescheduling.domain.Monteur;
 import org.acme.maintenancescheduling.domain.Skill;
 import org.acme.maintenancescheduling.domain.WorkCalendar;

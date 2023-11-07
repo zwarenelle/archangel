@@ -94,8 +94,10 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .filter(job -> job.getCrew() != null &&
                         !(job.getrequiredSkills().stream()
                         .allMatch(crewskill -> job.getCrew().getCrewSkills().stream()
-                        .anyMatch(jobreq -> crewskill.getTypenummer() == jobreq.getTypenummer() &&
-                        crewskill.getAantal() <= jobreq.getAantal())))
+                        .anyMatch(jobreq -> 
+                        (jobreq.getTypenummer() <= 3 ? crewskill.getTypenummer() <= jobreq.getTypenummer()
+                        :  crewskill.getTypenummer() >= 3 && crewskill.getTypenummer() <= jobreq.getTypenummer())
+                        && crewskill.getAantal() <= jobreq.getAantal())))
                 )
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> 10L)
