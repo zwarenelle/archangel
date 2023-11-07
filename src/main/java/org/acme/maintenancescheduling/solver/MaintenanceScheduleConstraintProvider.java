@@ -15,6 +15,9 @@ import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
 
 public class MaintenanceScheduleConstraintProvider implements ConstraintProvider {
 
+        
+    // TODO: Implement availabilty constraint
+
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
@@ -26,9 +29,9 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 skillConflict(constraintFactory),
 
                 // Soft constraints
-                insideWorkHours(constraintFactory),
-                beforeIdealEndDate(constraintFactory),
-                afterIdealEndDate(constraintFactory)
+                insideWorkHours(constraintFactory)
+                // beforeIdealEndDate(constraintFactory),
+                // afterIdealEndDate(constraintFactory)
         };
     }
 
@@ -126,24 +129,24 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .asConstraint("Before work hours");
     }
 
-    public Constraint beforeIdealEndDate(ConstraintFactory constraintFactory) {
-        // Early maintenance is expensive because the sooner maintenance is done, the sooner it needs to happen again.
-        return constraintFactory.forEach(Job.class)
-                .filter(job -> job.getIdealEndDate() != null
-                        && job.getEndDate().isBefore(job.getIdealEndDate()))
-                .penalizeLong(HardSoftLongScore.ofSoft(1),
-                        job -> ChronoUnit.HOURS.between(job.getEndDate(), job.getIdealEndDate()))
-                .asConstraint("Before ideal end date");
-    }
+//     public Constraint beforeIdealEndDate(ConstraintFactory constraintFactory) {
+//         // Early maintenance is expensive because the sooner maintenance is done, the sooner it needs to happen again.
+//         return constraintFactory.forEach(Job.class)
+//                 .filter(job -> job.getIdealEndDate() != null
+//                         && job.getEndDate().isBefore(job.getIdealEndDate()))
+//                 .penalizeLong(HardSoftLongScore.ofSoft(1),
+//                         job -> ChronoUnit.HOURS.between(job.getEndDate(), job.getIdealEndDate()))
+//                 .asConstraint("Before ideal end date");
+//     }
 
-    public Constraint afterIdealEndDate(ConstraintFactory constraintFactory) {
-        // Late maintenance is risky because delays can push it over the due date.
-        return constraintFactory.forEach(Job.class)
-                .filter(job -> job.getIdealEndDate() != null
-                        && job.getEndDate().isAfter(job.getIdealEndDate()))
-                .penalizeLong(HardSoftLongScore.ofSoft(10),
-                        job -> ChronoUnit.HOURS.between(job.getIdealEndDate(), job.getEndDate()))
-                .asConstraint("After ideal end date");
-    }
+//     public Constraint afterIdealEndDate(ConstraintFactory constraintFactory) {
+//         // Late maintenance is risky because delays can push it over the due date.
+//         return constraintFactory.forEach(Job.class)
+//                 .filter(job -> job.getIdealEndDate() != null
+//                         && job.getEndDate().isAfter(job.getIdealEndDate()))
+//                 .penalizeLong(HardSoftLongScore.ofSoft(10),
+//                         job -> ChronoUnit.HOURS.between(job.getIdealEndDate(), job.getEndDate()))
+//                 .asConstraint("After ideal end date");
+//     }
 
 }

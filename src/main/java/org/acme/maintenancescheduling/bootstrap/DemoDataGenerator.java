@@ -100,6 +100,13 @@ public class DemoDataGenerator {
             JOB_AREA_NUMBERS.add(String.valueOf(housenumber.nextInt(199) + 1));
         }
 
+        final String[] BESTEK = {
+            "E1637", "E1665", "E1670", "E1671", "E1672", "E1673", "E1674", "E1675", "E1680", "E1681", "E1682", "E1683", "E1684", "E1685", "E1686",
+            "E1687", "E1688", "E1689", "E1690", "E1691", "E1692", "E1693", "E1694", "E1695", "E1696", "E1699", "E1701", "E1702",
+            "G1665", "G1670", "G1671", "G1672", "G1674", "G1675", "G1676", "G1677", "G1678", "G1680", "G1681", "G1682", "G1683", "G1684", "G1685",
+            "G1686", "G1688", "G1689", "G1690", "G1691", "G1693", "G1694", "G1695", "G1696", "G1697", "G1699", "G1702", "G1704", "G1705", "G1706",
+            "G1707", "G1708", "G1712", "G1714"};
+
         LocalDateTime fromDate = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.of(0, 0, 0, 0));
         int weekListSize = 4;
         LocalDateTime toDate = fromDate.plusWeeks(weekListSize);
@@ -131,23 +138,9 @@ public class DemoDataGenerator {
             LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays * 24);
             LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays * 24);
 
-            List<JobRequirement> requiredSkills = new ArrayList<>();
-            if (random.nextDouble() < 0.1) {
-                requiredSkills.addAll(Arrays.asList(new JobRequirement(4, 1, 1, "BEI VP"), new JobRequirement(6, 1, 1, "BEI VOP"), new JobRequirement(1, 1, 1, "VIAG VP")));
-            }
-            else {
-                if (random.nextInt(2) < 1) {
-                    requiredSkills.addAll(Arrays.asList(new JobRequirement(4, 1, 2, "BEI VP"), new JobRequirement(6, 1, 2, "BEI VOP")));
-                }
-                else {
-                    requiredSkills.addAll(Arrays.asList(new JobRequirement(1, 1, 2, "VIAG VP"), new JobRequirement(3, 1, 2, "VIAG VOP")));
-                }
-            }
+            String bestekcode = BESTEK[random.nextInt(BESTEK.length)];
 
-            if (requiredSkills.size() > 2) {
-                jobArea = "C " + jobArea;
-            }
-            jobList.add(new Job(jobArea, "0000", readyDate, dueDate, idealEndDate, requiredSkills));
+            jobList.add(new Job(jobArea, bestekcode, readyDate, dueDate, idealEndDate));
         }
 
         jobRepository.persist(jobList);

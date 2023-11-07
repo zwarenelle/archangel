@@ -55,30 +55,28 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, List<JobRequirement> requiredSkills) {
+    public Job(String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate) {
         this.adres = adres;
         this.bestekcode = bestekcode;
-        setrequiredSkills(requiredSkills);
-        this.durationInHours = requiredSkills.stream()
-        .mapToInt(skill -> skill.getDuur()).sum();
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
+        updateSkillsfromBestekcode();
+        this.durationInHours = requiredSkills.stream().mapToInt(skill -> skill.getDuur()).sum();
     }
 
-    public Job(Long id, String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, List<JobRequirement> requiredSkills,
+    public Job(Long id, String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate,
             Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
         this.bestekcode = bestekcode;
-        setrequiredSkills(requiredSkills);
-        this.durationInHours = requiredSkills.stream()
-        .mapToInt(skill -> skill.getDuur()).sum();
+        this.durationInHours = requiredSkills.stream().mapToInt(skill -> skill.getDuur()).sum();
         this.readyDate = readyDate;
         this.dueDate = dueDate;
         this.idealEndDate = idealEndDate;
         this.crew = crew;
         this.startDate = startDate;
+        updateSkillsfromBestekcode();
         this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInHours);
     }
 
@@ -135,8 +133,13 @@ public class Job {
         this.crew = crew;
     }
 
-    public void setrequiredSkills(List<JobRequirement> requiredSkills) {
+    public void setRequiredSkills(List<JobRequirement> requiredSkills) {
+        this.requiredSkills = requiredSkills;
+    }
+
+    public void updateSkillsfromBestekcode() {
         // Sort list by typenummer
+        List<JobRequirement> requiredSkills = new ArrayList<JobRequirement>(RequirementTranslator.getDefinition(this.bestekcode));
         requiredSkills.sort(Comparator.comparing(JobRequirement::getTypenummer));
 
         // Group entry's with the same typenummer into a map
