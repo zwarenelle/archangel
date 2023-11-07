@@ -68,8 +68,7 @@ public class Job {
         this.durationInHours = max.getAsInt();
     }
 
-    public Job(Long id, String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate,
-            Crew crew, LocalDateTime startDate) {
+    public Job(Long id, String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
         this.bestekcode = bestekcode;
@@ -78,11 +77,11 @@ public class Job {
         this.idealEndDate = idealEndDate;
         this.crew = crew;
         this.startDate = startDate;
-        this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInHours);
         updateSkillsfromBestekcode();
         OptionalInt max = requiredSkills.stream()
         .mapToInt(skill -> skill.getDuur()).max();
         this.durationInHours = max.getAsInt();
+        this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInHours);
     }
 
     @Override
