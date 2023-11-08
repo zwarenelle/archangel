@@ -111,18 +111,21 @@ public class DemoDataGenerator {
         workCalendarRepository.persist(new WorkCalendar(fromDate, toDate));
         int workdayTotal = weekListSize * 5;
 
-        AvailabilityType availabilityType = AvailabilityType.AVAILABLE;
-
         for (Crew crew : crewList) {
             for (Monteur monteur : crew.getMonteurs()) {
                 for (LocalDate date = fromDate.toLocalDate(); date.isBefore(toDate.toLocalDate()); date = date.plusDays(1)) {
-                    availabilityRepository.persist(new Availability(monteur, date, availabilityType));
+                    if (date.getDayOfWeek().getValue() >= 6) {
+                        availabilityRepository.persist(new Availability(monteur, date, AvailabilityType.UNAVAILABLE));
+                    }
+                    else {
+                        availabilityRepository.persist(new Availability(monteur, date, AvailabilityType.AVAILABLE));
+                    }
                 }
             }
         }
 
         List<Job> jobList = new ArrayList<>();
-        int jobListSize = crewList.size() * 15;
+        int jobListSize = crewList.size() * 50;
 
         Random random = new Random(17);
         for (int i = 0; i < jobListSize; i++) {

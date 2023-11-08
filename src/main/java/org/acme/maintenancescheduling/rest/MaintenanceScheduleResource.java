@@ -8,6 +8,7 @@ import jakarta.ws.rs.Path;
 
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
+import org.acme.maintenancescheduling.persistence.AvailabilityRepository;
 import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
 import org.acme.maintenancescheduling.persistence.WorkCalendarRepository;
@@ -23,6 +24,8 @@ public class MaintenanceScheduleResource {
 
     public static final Long SINGLETON_SCHEDULE_ID = 1L;
 
+    @Inject
+    AvailabilityRepository availabilityRepository;
     @Inject
     WorkCalendarRepository workCalendarRepository;
     @Inject
@@ -72,6 +75,7 @@ public class MaintenanceScheduleResource {
         }
         return new MaintenanceSchedule(
                 workCalendarRepository.listAll().get(0),
+                availabilityRepository.listAll(Sort.by("id")),
                 crewRepository.listAll(Sort.by("name").and("id")),
                 jobRepository.listAll(Sort.by("dueDate").and("readyDate").and("adres").and("id"))
                 );

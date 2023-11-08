@@ -1,17 +1,20 @@
 package org.acme.maintenancescheduling.solver;
 
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
 import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+
+import org.acme.maintenancescheduling.domain.Availability;
+import org.acme.maintenancescheduling.domain.AvailabilityType;
 import org.acme.maintenancescheduling.domain.Job;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoftlong.HardSoftLongScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
+import ai.timefold.solver.core.api.score.stream.Joiners;
 
 public class MaintenanceScheduleConstraintProvider implements ConstraintProvider {
 
@@ -29,7 +32,8 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 skillConflict(constraintFactory),
 
                 // Soft constraints
-                insideWorkHours(constraintFactory)
+                insideWorkHours(constraintFactory),
+                Availability(constraintFactory)
                 // beforeIdealEndDate(constraintFactory),
                 // afterIdealEndDate(constraintFactory)
         };
@@ -57,48 +61,52 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
 
     public Constraint readyDate(ConstraintFactory constraintFactory) {
         // Don't start a maintenance job before its ready to start.
-        return constraintFactory.forEach(Job.class)
-                .filter(job -> job.getReadyDate() != null
-                        && job.getStartDate().isBefore(job.getReadyDate()))
+        return constraintFactory
+                .forEach(Job.class)
+                        .filter(job -> job.getReadyDate() != null
+                                && job.getStartDate().isBefore(job.getReadyDate()))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
-                        job -> ChronoUnit.HOURS.between(job.getStartDate(), job.getReadyDate()))
+                                job -> ChronoUnit.HOURS.between(job.getStartDate(), job.getReadyDate()))
                 .asConstraint("Ready date");
     }
 
     public Constraint dueDate(ConstraintFactory constraintFactory) {
         // Don't end a maintenance job after its due.
-        return constraintFactory.forEach(Job.class)
-                .filter(job -> job.getDueDate() != null
-                        && job.getEndDate().isAfter(job.getDueDate()))
+        return constraintFactory
+                .forEach(Job.class)
+                        .filter(job -> job.getDueDate() != null
+                                && job.getEndDate().isAfter(job.getDueDate()))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
-                        job -> ChronoUnit.HOURS.between(job.getDueDate(), job.getEndDate()))
+                                job -> ChronoUnit.HOURS.between(job.getDueDate(), job.getEndDate()))
                 .asConstraint("Due date");
     }
 
     public Constraint noWeekends(ConstraintFactory constraintFactory) {
         // A crew does not work on weekends
-        return constraintFactory.forEach(Job.class)
-                .filter(job -> job.getStartDate() != null
-                        && (job.getStartDate().getDayOfWeek().getValue() > 5)
-                        || (job.getEndDate().getDayOfWeek().getValue() > 5)
-                        )
+        return constraintFactory
+                .forEach(Job.class)
+                        .filter(job -> job.getStartDate() != null
+                                && (job.getStartDate().getDayOfWeek().getValue() > 5)
+                                || (job.getEndDate().getDayOfWeek().getValue() > 5)
+                                )
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
-                job -> Long.valueOf(Math.max((job.getStartDate().getDayOfWeek().getValue() - 5), (job.getEndDate().getDayOfWeek().getValue() - 5))))
+                        job -> Long.valueOf(Math.max((job.getStartDate().getDayOfWeek().getValue() - 5), (job.getEndDate().getDayOfWeek().getValue() - 5))))
                 .asConstraint("Overlaps weekend");
     }
 
     public Constraint skillConflict(ConstraintFactory constraintFactory) {
         // TODO: Put in a dynamic penalize function based on count of missing skills
         // Match crewSkills to JobRequirements
-        return constraintFactory.forEach(Job.class)
-                .filter(job -> job.getCrew() != null &&
-                        !(job.getrequiredSkills().stream()
-                        .allMatch(crewskill -> job.getCrew().getCrewSkills().stream()
-                        .anyMatch(jobreq -> 
-                        (jobreq.getTypenummer() <= 3 ? crewskill.getTypenummer() <= jobreq.getTypenummer()
-                        :  crewskill.getTypenummer() >= 3 && crewskill.getTypenummer() <= jobreq.getTypenummer())
-                        && crewskill.getAantal() <= jobreq.getAantal())))
-                )
+        return constraintFactory
+                .forEach(Job.class)
+                        .filter(job -> job.getCrew() != null &&
+                                !(job.getrequiredSkills().stream()
+                                .allMatch(crewskill -> job.getCrew().getCrewSkills().stream()
+                                .anyMatch(jobreq -> 
+                                (jobreq.getTypenummer() <= 3 ? crewskill.getTypenummer() <= jobreq.getTypenummer()
+                                :  crewskill.getTypenummer() >= 3 && crewskill.getTypenummer() <= jobreq.getTypenummer())
+                                && crewskill.getAantal() <= jobreq.getAantal())))
+                        )
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> 10L)
                 .asConstraint("Skill Conflict");
@@ -110,17 +118,18 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
 
     public Constraint insideWorkHours(ConstraintFactory constraintFactory) {
         // Preferably only work between 7AM en 4PM
-        return constraintFactory.forEach(Job.class)
-                .filter(job -> job.getStartDate().toLocalTime() != null
-                        &&
-                                // Don't start the job before 7AM or after 4PM
-                                ((job.getStartDate().toLocalTime().isBefore(LocalTime.of(7, 0, 0))
-                                || job.getStartDate().toLocalTime().isAfter(LocalTime.of(16, 0, 0)))
-                        ||
-                                // Don't end it after 4PM or before 7AM
-                                (job.getEndDate().toLocalTime().isAfter(LocalTime.of(16, 0, 0))
-                                || job.getEndDate().toLocalTime().isBefore(LocalTime.of(7, 0, 0))))
-                        )
+        return constraintFactory
+                .forEach(Job.class)
+                        .filter(job -> job.getStartDate().toLocalTime() != null
+                                &&
+                                        // Don't start the job before 7AM or after 4PM
+                                        ((job.getStartDate().toLocalTime().isBefore(LocalTime.of(7, 0, 0))
+                                        || job.getStartDate().toLocalTime().isAfter(LocalTime.of(16, 0, 0)))
+                                ||
+                                        // Don't end it after 4PM or before 7AM
+                                        (job.getEndDate().toLocalTime().isAfter(LocalTime.of(16, 0, 0))
+                                        || job.getEndDate().toLocalTime().isBefore(LocalTime.of(7, 0, 0))))
+                                )
                 .penalizeLong(HardSoftLongScore.ONE_SOFT,
                         job -> job.getStartDate().toLocalTime().compareTo(LocalTime.of(7, 0, 0)) < 0
                                 ? ChronoUnit.MINUTES.between(job.getStartDate().toLocalTime(), LocalTime.of(7, 0, 0))
@@ -129,6 +138,20 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                                         : ChronoUnit.MINUTES.between(job.getEndDate().toLocalTime(), LocalTime.of(7, 0, 0))
                         )
                 .asConstraint("Before work hours");
+    }
+
+    public Constraint Availability(ConstraintFactory constraintFactory) {
+        // All instances of 'monteur' in crew should have AvailabiltyType 0
+        return constraintFactory
+                .forEach(Job.class)
+                        .join(Availability.class, Joiners.equal((Job Job) -> Job.getStartDate().toLocalDate(), Availability::getDate))
+                        .filter((job, availability) -> 
+                        job.getCrew() != null
+                        && job.getCrew().getMonteurs().contains(availability.getMonteur())
+                        && availability.getAvailabilityType() == AvailabilityType.UNAVAILABLE)
+                .penalizeLong(HardSoftLongScore.ONE_HARD,
+                        (job, availability) -> 100L)
+                .asConstraint("Unavailable employee");
     }
 
 //     public Constraint beforeIdealEndDate(ConstraintFactory constraintFactory) {

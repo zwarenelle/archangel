@@ -33,6 +33,11 @@ public class Availability {
         this.availabilityType = availabilityType;
     }
 
+    @Override
+    public String toString() {
+        return availabilityType + "(" + monteur + ", " + date + ")";
+    }
+
     public Long getId() {
         return id;
     }
@@ -53,6 +58,10 @@ public class Availability {
         return date;
     }
 
+    public Monteur getMonteur() {
+        return monteur;
+    }
+
     public void setDate(LocalDate localDate) {
         this.date = localDate;
     }
@@ -65,8 +74,7 @@ public class Availability {
         this.availabilityType = availabilityType;
     }
 
-    @Override
-    public String toString() {
-        return availabilityType + "(" + monteur + ", " + date + ")";
+    public void setMonteur(Monteur monteur) {
+        this.monteur = monteur;
     }
 }

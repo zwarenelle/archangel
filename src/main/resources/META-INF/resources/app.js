@@ -112,7 +112,14 @@ function refreshSchedule() {
         $.each(schedule.jobList, (index, job) => {
             const jobGroupElement = $(`<div/>`)
               .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
-              .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uren`));
+              .append($(`<p class="card-text ms-2 mb-0"/>`).text("Bestekcode: " + job.bestekcode))
+              .append($(`<p class="card-text ms-2 mb-0"/>`).text("Verwachte uitvoeringsduur: " + `${job.durationInHours} uur`));
+              $.each(job.requiredSkills, (index, req) => {
+                jobGroupElement.append(`</br>`)
+                jobGroupElement.append(req.aantal)
+                jobGroupElement.append(` `)
+                jobGroupElement.append(req.omschrijving)
+            });
             byJobGroupDataSet.add({
                 id : job.id,
                 content: jobGroupElement.html()
@@ -134,7 +141,7 @@ function refreshSchedule() {
                 unassignedJobsCount++;
                 const unassignedJobElement = $(`<div class="card-body p-2"/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uren`))
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uur`))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Voorbereiding gereed: ${job.readyDate}`))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Uiterlijke einddatum: ${job.dueDate}`));
                 const byJobJobElement = $(`<div/>`)
@@ -167,7 +174,7 @@ function refreshSchedule() {
                 const afterDue = JSJoda.LocalDateTime.parse(job.endDate).isAfter(JSJoda.LocalDateTime.parse(job.dueDate));
                 const byCrewJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uren`));
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uur`));
                 const byJobJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.crew.name));
                 if (beforeReady) {

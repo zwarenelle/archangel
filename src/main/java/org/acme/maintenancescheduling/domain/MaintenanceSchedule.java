@@ -21,12 +21,12 @@ public class MaintenanceSchedule {
     @ProblemFactProperty
     private WorkCalendar workCalendar;
     @ProblemFactCollectionProperty
+    List<Availability> availabilityList;
+    @ProblemFactCollectionProperty
     @ValueRangeProvider
     private List<Crew> crewList;
     @PlanningEntityCollectionProperty
     private List<Job> jobList;
-    // @ProblemFactCollectionProperty
-    // List<Availability> availabilityList;
 
     @PlanningScore
     private HardSoftLongScore score;
@@ -38,9 +38,10 @@ public class MaintenanceSchedule {
     public MaintenanceSchedule() {
     }
 
-    public MaintenanceSchedule(WorkCalendar workCalendar,
+    public MaintenanceSchedule(WorkCalendar workCalendar, List<Availability> availabilityList,
             List<Crew> crewList, List<Job> jobList) {
         this.workCalendar = workCalendar;
+        this.availabilityList = availabilityList;
         this.crewList = crewList;
         this.jobList = jobList;
     }
@@ -50,6 +51,10 @@ public class MaintenanceSchedule {
         return ValueRangeFactory.createLocalDateTimeValueRange(
             workCalendar.getFromDate(), workCalendar.getToDate(),
             1, ChronoUnit.HOURS);
+    }
+
+    public List<Availability> getAvailabilityList() {
+        return availabilityList;
     }
 
     public WorkCalendar getWorkCalendar() {
@@ -66,6 +71,10 @@ public class MaintenanceSchedule {
 
     public HardSoftLongScore getScore() {
         return score;
+    }
+
+    public void setAvailabilityList(List<Availability> availabilityList) {
+        this.availabilityList = availabilityList;
     }
 
     public void setScore(HardSoftLongScore score) {
