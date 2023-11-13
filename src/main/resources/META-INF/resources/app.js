@@ -7,9 +7,9 @@ var formattingOptions =
         minute:     'HH:mm',
         hour:       'HH:mm',
         weekday:    '',
-        day:        '',
+        day:        'D',
         week:       '',
-        month:      '',
+        month:      'MM',
         year:       ''        
     },
     majorLabels: {
@@ -56,7 +56,7 @@ var byJobTimeline = new vis.Timeline(byJobPanel, byJobItemDataSet, byJobGroupDat
 
 const byCapacityPanel = document.getElementById("byCapacityPanel");
 const byCapacityTimelineOptions = {
-    timeAxis: {scale: "hour", step: 6},
+    timeAxis: {scale: "day", step: 1},
     orientation: {axis: "top"},
     xss: {disabled: true}, // Items are XSS safe through JQuery
     zoomMin: 1000 * 60 * 60 * 24, // One day in milliseconds
@@ -115,23 +115,20 @@ function refreshSchedule() {
         byJobItemDataSet.clear();
         byCapacityItemDataSet.clear();
 
-        // $.each(schedule.crewList, (index, crew) => {
-        //         const monteurDescription = $(`<div/>`)
-        //         $.each(crew.monteurs, (index, monteur) => {
-        //             monteurDescription.append(monteur.naam)
-        //         });
-        //         byCapacityGroupDataSet.add({id : monteur.id, content: monteurDescription.html()
-        //     });
-        // });
-
         $.each(schedule.crewList, (index, crew) => {
                 const crewDescription = $(`<div/>`)
                 .append(crew.name)
                 $.each(crew.monteurs, (index, monteur) => {
+                    const capacityDescription = $(`<div/>`)
                     crewDescription.append(`</br>`)
                     crewDescription.append(monteur.naam)
                     crewDescription.append(` `)
                     crewDescription.append(monteur.vaardigheid.omschrijving)
+
+                    capacityDescription.append(monteur.naam)
+                    capacityDescription.append(`</br>`)
+                    capacityDescription.append(monteur.vaardigheid.omschrijving)
+                    byCapacityGroupDataSet.add({id : monteur.id, content: capacityDescription.html()});
                 });
                 byCrewGroupDataSet.add({id : crew.id, content: crewDescription.html()
             });
@@ -241,6 +238,20 @@ function refreshSchedule() {
                 });
             }
         });
+
+        $.each(schedule.availabilityList, (index, availability) => {
+            const byCapacityElement = $(`<div/>`)
+                .append($(`<h5 class="card-title mb-1"/>`).text(availability.availabilityType.toString()));
+            byCapacityItemDataSet.add({
+                id : availability.id, group: availability.monteur.id,
+                content: byCapacityElement.html(),
+                // type: "background",
+                // style: "background-color: #003366",
+                start: availability.date
+                // end: availability.getDateTimeEnd
+            });
+        });
+
         if (unassignedJobsCount === 0) {
             unassignedJobs.append($(`<p/>`).text(`There are no unassigned jobs.`));
         }
@@ -284,4 +295,8 @@ function stopSolving() {
     }).fail(function (xhr, ajaxOptions, thrownError) {
         showError("Stop solving failed.", xhr);
     });
+}
+
+function addMinutes(date, minutes) {
+    return new Date(date.getTime() + minutes*60000);
 }
