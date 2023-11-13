@@ -54,6 +54,20 @@ var byJobGroupDataSet = new vis.DataSet();
 var byJobItemDataSet = new vis.DataSet();
 var byJobTimeline = new vis.Timeline(byJobPanel, byJobItemDataSet, byJobGroupDataSet, byJobTimelineOptions);
 
+const byCapacityPanel = document.getElementById("byCapacityPanel");
+const byCapacityTimelineOptions = {
+    timeAxis: {scale: "hour", step: 6},
+    orientation: {axis: "top"},
+    xss: {disabled: true}, // Items are XSS safe through JQuery
+    zoomMin: 1000 * 60 * 60 * 24, // One day in milliseconds
+    locale: 'nl',
+    format: formattingOptions
+};
+
+var byCapacityGroupDataSet = new vis.DataSet();
+var byCapacityItemDataSet = new vis.DataSet();
+var byCapacityTimeline = new vis.Timeline(byCapacityPanel, byCapacityItemDataSet, byCapacityGroupDataSet, byCapacityTimelineOptions);
+
 $(document).ready(function () {
     replaceTimefoldAutoHeaderFooter();
     $.ajaxSetup({
@@ -79,6 +93,9 @@ $(document).ready(function () {
     $("#byJobTab").on('shown.bs.tab', function (event) {
         byJobTimeline.redraw();
     })
+    $("#byCapacityTab").on('shown.bs.tab', function (event) {
+        byCapacityTimeline.redraw();
+    })
 
     refreshSchedule();
 });
@@ -93,8 +110,19 @@ function refreshSchedule() {
         var unassignedJobsCount = 0;
         byCrewGroupDataSet.clear();
         byJobGroupDataSet.clear();
+        byCapacityGroupDataSet.clear();
         byCrewItemDataSet.clear();
         byJobItemDataSet.clear();
+        byCapacityItemDataSet.clear();
+
+        // $.each(schedule.crewList, (index, crew) => {
+        //         const monteurDescription = $(`<div/>`)
+        //         $.each(crew.monteurs, (index, monteur) => {
+        //             monteurDescription.append(monteur.naam)
+        //         });
+        //         byCapacityGroupDataSet.add({id : monteur.id, content: monteurDescription.html()
+        //     });
+        // });
 
         $.each(schedule.crewList, (index, crew) => {
                 const crewDescription = $(`<div/>`)
@@ -216,8 +244,11 @@ function refreshSchedule() {
         if (unassignedJobsCount === 0) {
             unassignedJobs.append($(`<p/>`).text(`There are no unassigned jobs.`));
         }
+
         byCrewTimeline.setWindow(schedule.workCalendar.fromDate, schedule.workCalendar.toDate);
         byJobTimeline.setWindow(schedule.workCalendar.fromDate, schedule.workCalendar.toDate);
+        byCapacityTimeline.setWindow(schedule.workCalendar.fromDate, schedule.workCalendar.toDate);
+        
     });
 }
 

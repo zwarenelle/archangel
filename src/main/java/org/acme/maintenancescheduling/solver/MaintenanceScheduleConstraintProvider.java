@@ -18,9 +18,6 @@ import ai.timefold.solver.core.api.score.stream.Joiners;
 
 public class MaintenanceScheduleConstraintProvider implements ConstraintProvider {
 
-        
-    // TODO: Implement availabilty constraint
-
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {

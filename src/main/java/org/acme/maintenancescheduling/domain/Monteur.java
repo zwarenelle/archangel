@@ -30,6 +30,11 @@ public class Monteur {
         this.vaardigheid = vaardigheid;
     }
 
+    @Override
+    public String toString() {
+        return this.naam;
+    }
+
     public Long getId() {
         return id;
     }
