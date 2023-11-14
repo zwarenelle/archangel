@@ -245,10 +245,7 @@ function refreshSchedule() {
             byCapacityItemDataSet.add({
                 id : availability.id, group: availability.monteur.id,
                 content: byCapacityElement.html(),
-                // type: "background",
-                // style: "background-color: #003366",
                 start: availability.date
-                // end: availability.getDateTimeEnd
             });
         });
 
