@@ -1,13 +1,5 @@
 package org.acme.maintenancescheduling.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -15,6 +7,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Crew{
@@ -87,7 +86,7 @@ public class Crew{
     }
 
     public void setCrewSkills() {
-        // Create new list of skills from monteurs
+        // Update crewSkills with skills from monteurs
         this.crewSkills = this.monteurs.stream()
         .map((monteur) -> new CrewSkills(monteur.getVaardigheid().getTypenummer(), 1, monteur.getVaardigheid().getOmschrijving()))
         .collect(Collectors.toList());

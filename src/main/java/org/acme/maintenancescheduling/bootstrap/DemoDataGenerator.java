@@ -106,7 +106,7 @@ public class DemoDataGenerator {
             "G1707", "G1708", "G1712", "G1714"};
 
         LocalDateTime fromDate = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.of(0, 0, 0, 0));
-        int weekListSize = 4;
+        int weekListSize = 3;
         LocalDateTime toDate = fromDate.plusWeeks(weekListSize);
         workCalendarRepository.persist(new WorkCalendar(fromDate, toDate));
         int workdayTotal = weekListSize * 5;

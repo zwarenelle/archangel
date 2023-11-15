@@ -31,7 +31,7 @@ const byCrewTimelineOptions = {
     orientation: {axis: "top"},
     stack: false,
     xss: {disabled: true}, // Items are XSS safe through JQuery
-    zoomMin: 1000 * 60 * 60 * 24, // One day in milliseconds
+    zoomMin: 1000 * 60 * 60, // One hour in milliseconds
     locale: 'nl',
     format: formattingOptions
 };
@@ -45,7 +45,7 @@ const byJobTimelineOptions = {
     timeAxis: {scale: "hour", step: 6},
     orientation: {axis: "top"},
     xss: {disabled: true}, // Items are XSS safe through JQuery
-    zoomMin: 1000 * 60 * 60 * 24, // One day in milliseconds
+    zoomMin: 1000 * 60 * 60, // One hour in milliseconds
     locale: 'nl',
     format: formattingOptions
 };
@@ -115,10 +115,15 @@ function refreshSchedule() {
         byJobItemDataSet.clear();
         byCapacityItemDataSet.clear();
 
+        // Map Monteur ID's to Crew ID's for later usage in availabilty background
+        var MonteurToCrew = new Map();
+
         $.each(schedule.crewList, (index, crew) => {
                 const crewDescription = $(`<div/>`)
                 .append(crew.name)
                 $.each(crew.monteurs, (index, monteur) => {
+                    MonteurToCrew.set(monteur.id, crew.id);
+
                     const capacityDescription = $(`<div/>`)
                     crewDescription.append(`</br>`)
                     crewDescription.append(monteur.naam)
@@ -195,34 +200,25 @@ function refreshSchedule() {
                     style: "background-color: #EF292999"
                 });
             } else {
-                const beforeReady = JSJoda.LocalDateTime.parse(job.startDate).isBefore(JSJoda.LocalDateTime.parse(job.readyDate));
-                const afterDue = JSJoda.LocalDateTime.parse(job.endDate).isAfter(JSJoda.LocalDateTime.parse(job.dueDate));
+                // const beforeReady = JSJoda.LocalDateTime.parse(job.startDate).isBefore(JSJoda.LocalDateTime.parse(job.readyDate));
+                // const afterDue = JSJoda.LocalDateTime.parse(job.endDate).isAfter(JSJoda.LocalDateTime.parse(job.dueDate));
                 const byCrewJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uur`));
                 const byJobJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.crew.name));
-                if (beforeReady) {
-                    byCrewJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`Before ready (too early)`));
-                    byJobJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`Before ready (too early)`));
-                }
-                if (afterDue) {
-                    byCrewJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`After due (too late)`));
-                    byJobJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`After due (too late)`));
-                }
+                // if (beforeReady) {
+                //     byCrewJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`Before ready (too early)`));
+                //     byJobJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`Before ready (too early)`));
+                // }
+                // if (afterDue) {
+                //     byCrewJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`After due (too late)`));
+                //     byJobJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`After due (too late)`));
+                // }
                 $.each(job.requiredSkills, (index, tag) => {
-                    if (tag.omschrijving.toString().startsWith("VIAG"))
-                    {
-                        color = "#FEB900";
-                    }
-                    else if (tag.omschrijving.toString().startsWith("BEI"))
-                    {
-                        color = "#ED5353";
-                    }
-                    else
-                    {
-                        color = "#003366";
-                    }
+                    if (tag.omschrijving.toString().startsWith("VIAG")) {color = "#FEB900";}
+                    else if (tag.omschrijving.toString().startsWith("BEI")) {color = "#ED5353";}
+                    else {color = "#003366";}
                     byCrewJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
                     byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
                 });
@@ -239,14 +235,48 @@ function refreshSchedule() {
             }
         });
 
+        var MonteurInCrewCount = {};
+        MonteurToCrew.forEach(function (x) {
+            MonteurInCrewCount[x] = (MonteurInCrewCount[x] || 0) + 1
+        });
+
+        var CrewMemberCount = 1;
+        var PreviousMonteurID;
+
         $.each(schedule.availabilityList, (index, availability) => {
+            if (availability.monteur.id == PreviousMonteurID) {}
+            else if (MonteurToCrew.get(availability.monteur.id) == MonteurToCrew.get(availability.monteur.id - 1)) {CrewMemberCount++;}
+            else {CrewMemberCount = 1;}
+
+            PreviousMonteurID = availability.monteur.id;
+
             const byCapacityElement = $(`<div/>`)
                 .append($(`<h5 class="card-title mb-1"/>`).text(availability.availabilityType.toString()));
             byCapacityItemDataSet.add({
                 id : availability.id, group: availability.monteur.id,
                 content: byCapacityElement.html(),
-                start: availability.date
+                start: availability.date, end: JSJoda.LocalDate.parse(availability.date).plusDays(1).toString()
             });
+
+            // Add background color to Crew planning if there's an unavailable or sick employee
+            if (MonteurToCrew.has(availability.monteur.id)) {
+                if (availability.availabilityType.toString() == "UNAVAILABLE" || availability.availabilityType.toString() == "SICK") {
+                    var nameElement = $(`<div/>`);
+                    if (CrewMemberCount > 1) {
+                        for (let index = 1; index < CrewMemberCount; index++) {
+                            nameElement.append("</br>");
+                        }
+                    }
+                    nameElement.append(availability.monteur.naam);
+                    byCrewItemDataSet.add({
+                        group: MonteurToCrew.get(availability.monteur.id),
+                        start: availability.date, end: JSJoda.LocalDate.parse(availability.date).plusDays(1).toString(),
+                        content: nameElement.html(),
+                        type: "background",
+                        style: "background-color: #DB4D4D20"
+                    });
+                }
+            }
         });
 
         if (unassignedJobsCount === 0) {

@@ -6,6 +6,8 @@ import java.util.List;
 import java.time.LocalDateTime;
 import jakarta.inject.Inject;
 
+import org.acme.maintenancescheduling.domain.Availability;
+import org.acme.maintenancescheduling.domain.AvailabilityType;
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
@@ -57,41 +59,41 @@ public class MaintenanceSchedulingConstraintProviderTest {
                 .penalizesBy(0);
     }
 
-    @Test
-    public void readyDate() {
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
-                .given(new Job(1L, "Downtown tunnel", "E1637", DAY_2, null, null, ALPHA_CREW, DAY_2))
-                .penalizesBy(0L);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
-                .given(new Job(1L, "Downtown tunnel", "E1637", DAY_1, null, null, ALPHA_CREW, DAY_3))
-                .penalizesBy(0L);
-        // Penalizing in hours, 48 hours = 2 days
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
-                .given(new Job(1L, "Downtown tunnel", "E1637", DAY_3, null, null, ALPHA_CREW, DAY_1))
-                .penalizesBy(48L);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
-                .given(new Job(1L, "Downtown tunnel", "E1637", DAY_3, null, null, ALPHA_CREW, DAY_1))
-                .penalizesBy(48L);
-    }
+//     @Test
+//     public void readyDate() {
+//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
+//                 .given(new Job(1L, "Downtown tunnel", "E1637", DAY_2, null, null, ALPHA_CREW, DAY_2))
+//                 .penalizesBy(0L);
+//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
+//                 .given(new Job(1L, "Downtown tunnel", "E1637", DAY_1, null, null, ALPHA_CREW, DAY_3))
+//                 .penalizesBy(0L);
+//         // Penalizing in hours, 48 hours = 2 days
+//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
+//                 .given(new Job(1L, "Downtown tunnel", "E1637", DAY_3, null, null, ALPHA_CREW, DAY_1))
+//                 .penalizesBy(48L);
+//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
+//                 .given(new Job(1L, "Downtown tunnel", "E1637", DAY_3, null, null, ALPHA_CREW, DAY_1))
+//                 .penalizesBy(48L);
+//     }
 
-    @Test
-    public void dueDate() {
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
-                .given(new Job(1L, "Downtown tunnel", "E1637", null, DAY_2, null, ALPHA_CREW, DAY_1))
-                .penalizesBy(0L);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
-                .given(new Job(1L, "Downtown tunnel", "E1637", null, DAY_1, null, ALPHA_CREW, DAY_1))
-                .penalizesBy(2L);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
-                .given(new Job(1L, "Downtown tunnel", "E1637", null, DAY_1, null, ALPHA_CREW, DAY_1_A))
-                .penalizesBy(3L);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
-                .given(new Job(1L, "Downtown tunnel", "E1637", null, DAY_1, null, ALPHA_CREW, DAY_2))
-                .penalizesBy(26L);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
-                .given(new Job(1L, "Downtown tunnel", "E1637", null, DAY_1, null, ALPHA_CREW, DAY_3))
-                .penalizesBy(50L);
-    }
+//     @Test
+//     public void dueDate() {
+//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
+//                 .given(new Job(1L, "Downtown tunnel", "E1637", null, DAY_2, null, ALPHA_CREW, DAY_1))
+//                 .penalizesBy(0L);
+//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
+//                 .given(new Job(1L, "Downtown tunnel", "E1637", null, DAY_1, null, ALPHA_CREW, DAY_1))
+//                 .penalizesBy(2L);
+//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
+//                 .given(new Job(1L, "Downtown tunnel", "E1637", null, DAY_1, null, ALPHA_CREW, DAY_1_A))
+//                 .penalizesBy(3L);
+//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
+//                 .given(new Job(1L, "Downtown tunnel", "E1637", null, DAY_1, null, ALPHA_CREW, DAY_2))
+//                 .penalizesBy(26L);
+//         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
+//                 .given(new Job(1L, "Downtown tunnel", "E1637", null, DAY_1, null, ALPHA_CREW, DAY_3))
+//                 .penalizesBy(50L);
+//     }
 
 //     @Test
 //     public void beforeIdealEndDate() {
@@ -149,4 +151,17 @@ public class MaintenanceSchedulingConstraintProviderTest {
                 .penalizesBy(10L);
     }
 
+    @Test
+    public void Availability() {
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::Availability)
+                .given(
+                        new Job(1L, "Downtown tunnel", "E1680", null, null, null, ALPHA_CREW, DAY_1),
+                        new Availability(ALPHA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), AvailabilityType.UNAVAILABLE),
+                        new Availability(ALPHA_CREW.getMonteurs().get(1), DAY_1.toLocalDate(), AvailabilityType.UNAVAILABLE),
+
+                        new Job(2L, "Downtown bridge", "E1680", null, null, null, ALPHA_CREW, DAY_3),
+                        new Availability(ALPHA_CREW.getMonteurs().get(0), DAY_3.toLocalDate(), AvailabilityType.AVAILABLE),
+                        new Availability(ALPHA_CREW.getMonteurs().get(1), DAY_3.toLocalDate(), AvailabilityType.AVAILABLE))
+                .penalizesBy(4L);
+    }
 }

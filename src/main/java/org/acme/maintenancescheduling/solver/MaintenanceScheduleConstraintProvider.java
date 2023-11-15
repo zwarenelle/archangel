@@ -5,10 +5,18 @@ import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.acme.maintenancescheduling.domain.Availability;
 import org.acme.maintenancescheduling.domain.AvailabilityType;
+import org.acme.maintenancescheduling.domain.Crew;
+import org.acme.maintenancescheduling.domain.CrewSkills;
 import org.acme.maintenancescheduling.domain.Job;
+import org.acme.maintenancescheduling.domain.Monteur;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoftlong.HardSoftLongScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
@@ -23,14 +31,14 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
         return new Constraint[] {
                 // Hard constraints
                 crewConflict(constraintFactory),
-                readyDate(constraintFactory),
-                dueDate(constraintFactory),
+                // readyDate(constraintFactory),
+                // dueDate(constraintFactory),
                 // noWeekends(constraintFactory),
                 skillConflict(constraintFactory),
+                // Availability(constraintFactory),
 
                 // Soft constraints
-                insideWorkHours(constraintFactory),
-                Availability(constraintFactory)
+                insideWorkHours(constraintFactory)
                 // beforeIdealEndDate(constraintFactory),
                 // afterIdealEndDate(constraintFactory)
         };
@@ -56,27 +64,27 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .asConstraint("Crew conflict");
     }
 
-    public Constraint readyDate(ConstraintFactory constraintFactory) {
-        // Don't start a maintenance job before its ready to start.
-        return constraintFactory
-                .forEach(Job.class)
-                        .filter(job -> job.getReadyDate() != null
-                                && job.getStartDate().isBefore(job.getReadyDate()))
-                .penalizeLong(HardSoftLongScore.ONE_HARD,
-                                job -> ChronoUnit.HOURS.between(job.getStartDate(), job.getReadyDate()))
-                .asConstraint("Ready date");
-    }
+//     public Constraint readyDate(ConstraintFactory constraintFactory) {
+//         // Don't start a maintenance job before its ready to start.
+//         return constraintFactory
+//                 .forEach(Job.class)
+//                         .filter(job -> job.getReadyDate() != null
+//                                 && job.getStartDate().isBefore(job.getReadyDate()))
+//                 .penalizeLong(HardSoftLongScore.ONE_HARD,
+//                                 job -> ChronoUnit.HOURS.between(job.getStartDate(), job.getReadyDate()))
+//                 .asConstraint("Ready date");
+//     }
 
-    public Constraint dueDate(ConstraintFactory constraintFactory) {
-        // Don't end a maintenance job after its due.
-        return constraintFactory
-                .forEach(Job.class)
-                        .filter(job -> job.getDueDate() != null
-                                && job.getEndDate().isAfter(job.getDueDate()))
-                .penalizeLong(HardSoftLongScore.ONE_HARD,
-                                job -> ChronoUnit.HOURS.between(job.getDueDate(), job.getEndDate()))
-                .asConstraint("Due date");
-    }
+//     public Constraint dueDate(ConstraintFactory constraintFactory) {
+//         // Don't end a maintenance job after its due.
+//         return constraintFactory
+//                 .forEach(Job.class)
+//                         .filter(job -> job.getDueDate() != null
+//                                 && job.getEndDate().isAfter(job.getDueDate()))
+//                 .penalizeLong(HardSoftLongScore.ONE_HARD,
+//                                 job -> ChronoUnit.HOURS.between(job.getDueDate(), job.getEndDate()))
+//                 .asConstraint("Due date");
+//     }
 
 //     public Constraint noWeekends(ConstraintFactory constraintFactory) {
 //         // A crew does not work on weekends
@@ -96,17 +104,42 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
         // Match crewSkills to JobRequirements
         return constraintFactory
                 .forEach(Job.class)
-                        .filter(job -> job.getCrew() != null &&
+                .join(Availability.class, Joiners.equal((Job Job) -> Job.getStartDate().toLocalDate(), Availability::getDate))
+                        .filter((job, availability) -> job.getCrew() != null &&
                                 !(job.getrequiredSkills().stream()
                                 .allMatch(crewskill -> job.getCrew().getCrewSkills().stream()
                                 .anyMatch(jobreq -> 
-                                (jobreq.getTypenummer() <= 3 ? crewskill.getTypenummer() <= jobreq.getTypenummer()
-                                :  crewskill.getTypenummer() >= 3 && crewskill.getTypenummer() <= jobreq.getTypenummer())
+                                (jobreq.getTypenummer() <= 3 ? 
+                                crewskill.getTypenummer() <= jobreq.getTypenummer() : 
+                                crewskill.getTypenummer() > 3 && crewskill.getTypenummer() <= jobreq.getTypenummer())
                                 && crewskill.getAantal() <= jobreq.getAantal())))
                         )
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
-                        job -> 10L)
+                        (job, availability) -> 1L)
                 .asConstraint("Skill Conflict");
+    }
+
+    public Constraint Availability(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEach(Job.class)
+                .filter(job -> job.getCrew() != null)
+                        .join(Availability.class, Joiners.equal((Job Job) -> Job.getStartDate().toLocalDate(), Availability::getDate))
+                        .filter((job, availability) -> !(job.getrequiredSkills().stream()
+                        .allMatch(crewskill ->
+                                reEvaluateCrewSkills(job.getCrew(), job.getCrew().getMonteurs().stream()
+                                        .filter(monteur -> monteur.getId() == availability.getMonteur().getId() && availability.getAvailabilityType() == AvailabilityType.UNAVAILABLE)
+                                        .collect(Collectors.toList())).stream()
+                                .anyMatch(jobreq -> 
+                                (jobreq.getTypenummer() <= 3 ? 
+                                        crewskill.getTypenummer() <= jobreq.getTypenummer()
+                                        :  
+                                        crewskill.getTypenummer() > 3 && crewskill.getTypenummer() <= jobreq.getTypenummer()) && crewskill.getAantal() <= jobreq.getAantal())))
+                        )
+                .penalizeLong(HardSoftLongScore.ONE_HARD,
+                        (job, availability) -> job.getCrew().getMonteurs().stream()
+                                .filter(monteur -> monteur.getId() == availability.getMonteur().getId())
+                                .count())
+                .asConstraint("Unavailable employee");
     }
 
     // ************************************************************************
@@ -137,20 +170,6 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .asConstraint("Before work hours");
     }
 
-    public Constraint Availability(ConstraintFactory constraintFactory) {
-        // All instances of 'monteur' in crew should have AvailabiltyType 0
-        return constraintFactory
-                .forEach(Job.class)
-                        .join(Availability.class, Joiners.equal((Job Job) -> Job.getStartDate().toLocalDate(), Availability::getDate))
-                        .filter((job, availability) -> 
-                        job.getCrew() != null
-                        && job.getCrew().getMonteurs().contains(availability.getMonteur())
-                        && availability.getAvailabilityType() == AvailabilityType.UNAVAILABLE)
-                .penalizeLong(HardSoftLongScore.ONE_HARD,
-                        (job, availability) -> 100L)
-                .asConstraint("Unavailable employee");
-    }
-
 //     public Constraint beforeIdealEndDate(ConstraintFactory constraintFactory) {
 //         // Early maintenance is expensive because the sooner maintenance is done, the sooner it needs to happen again.
 //         return constraintFactory.forEach(Job.class)
@@ -170,5 +189,48 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
 //                         job -> ChronoUnit.HOURS.between(job.getIdealEndDate(), job.getEndDate()))
 //                 .asConstraint("After ideal end date");
 //     }
+
+
+    private static List<CrewSkills> removeTypes(List<CrewSkills> skills, List<Integer> typenummers) {
+        for (Integer integer : typenummers) {
+                for (CrewSkills skill : skills) {
+                        int skillcount = skill.getAantal();
+                        if (skill.getTypenummer() == integer && skillcount > 1) {
+                                skill.setAantal(skillcount--);
+                        }
+                        else if (skill.getTypenummer() == integer && skillcount <= 1) {
+                                skills.remove(skill);
+                        }
+                }
+        }
+        return skills;
+    }
+
+    private static List<CrewSkills> reEvaluateCrewSkills(Crew crew, List<Monteur> monteurs) {
+        List<CrewSkills> redefinedskills = new ArrayList<CrewSkills>();
+        
+        List<Monteur> newMonteurList = new ArrayList<Monteur>(crew.getMonteurs());
+        newMonteurList.removeAll(monteurs);
+
+        redefinedskills = newMonteurList.stream()
+        .map((monteur) -> new CrewSkills(monteur.getVaardigheid().getTypenummer(), 1, monteur.getVaardigheid().getOmschrijving()))
+        .collect(Collectors.toList());
+
+        // Sort list by typenummer, just to be sure
+        redefinedskills.sort(Comparator.comparing(CrewSkills::getTypenummer));
+
+        // Group entry's with the same typenummer into a map
+        Map<Integer, List<CrewSkills>> skillMap = redefinedskills.stream()
+        .collect(Collectors.groupingBy(crewskill -> crewskill.getTypenummer()));
+
+        // Create new list including typenummmer count
+        List<CrewSkills> skillsummary = new ArrayList<CrewSkills>();
+
+        for (Map.Entry<Integer, List<CrewSkills>> crewskill : skillMap.entrySet()) {
+            skillsummary.add(new CrewSkills(crewskill.getKey(), crewskill.getValue().size(), crewskill.getValue().iterator().next().getOmschrijving()));
+        }
+        
+        return skillsummary;
+    }
 
 }
