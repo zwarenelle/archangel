@@ -11,6 +11,7 @@ import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
 import org.acme.maintenancescheduling.persistence.AvailabilityRepository;
 import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
+import org.acme.maintenancescheduling.persistence.MonteurRepository;
 import org.acme.maintenancescheduling.persistence.WorkCalendarRepository;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.solver.SolutionManager;
@@ -30,6 +31,8 @@ public class MaintenanceScheduleResource {
     WorkCalendarRepository workCalendarRepository;
     @Inject
     CrewRepository crewRepository;
+    @Inject
+    MonteurRepository monteurRepository;
     @Inject
     JobRepository jobRepository;
 
@@ -77,6 +80,7 @@ public class MaintenanceScheduleResource {
                 workCalendarRepository.listAll().get(0),
                 availabilityRepository.listAll(Sort.by("id")),
                 crewRepository.listAll(Sort.by("name").and("id")),
+                monteurRepository.listAll(Sort.by("id")),
                 jobRepository.listAll(Sort.by("dueDate").and("readyDate").and("adres").and("id"))
                 );
     }

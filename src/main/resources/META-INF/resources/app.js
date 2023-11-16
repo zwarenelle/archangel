@@ -262,6 +262,7 @@ function refreshSchedule() {
             if (MonteurToCrew.has(availability.monteur.id)) {
                 if (availability.availabilityType.toString() == "UNAVAILABLE" || availability.availabilityType.toString() == "SICK") {
                     var nameElement = $(`<div/>`);
+                    nameElement.append("</br>");
                     if (CrewMemberCount > 1) {
                         for (let index = 1; index < CrewMemberCount; index++) {
                             nameElement.append("</br>");

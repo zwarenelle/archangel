@@ -81,7 +81,7 @@ public class DemoDataGenerator {
         crewList.add(new Crew("Ploeg G1", List.of(new Monteur("Tom", new Skill(1, "VIAG VP")), new Monteur("Bas", new Skill(3, "VIAG VOP")))));
         
         // Extra Skill
-        crewList.add(new Crew("Ploeg G2", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")), new Monteur("Mike2", new Skill(3, "VIAG VOP")))));
+        crewList.add(new Crew("Ploeg G2", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")), new Monteur("Mike2", new Skill(2, "VIAG VOP meters")))));
         
         // Regular
         // crewList.add(new Crew("Ploeg G2", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")))));
@@ -106,7 +106,7 @@ public class DemoDataGenerator {
             "G1707", "G1708", "G1712", "G1714"};
 
         LocalDateTime fromDate = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.of(0, 0, 0, 0));
-        int weekListSize = 3;
+        int weekListSize = 4;
         LocalDateTime toDate = fromDate.plusWeeks(weekListSize);
         workCalendarRepository.persist(new WorkCalendar(fromDate, toDate));
         int workdayTotal = weekListSize * 5;
@@ -125,7 +125,7 @@ public class DemoDataGenerator {
         }
 
         List<Job> jobList = new ArrayList<>();
-        int jobListSize = crewList.size() * 45;
+        int jobListSize = crewList.size() * 40;
 
         Random random = new Random(17);
         for (int i = 0; i < jobListSize; i++) {

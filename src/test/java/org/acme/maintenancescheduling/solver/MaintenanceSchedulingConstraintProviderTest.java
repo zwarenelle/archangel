@@ -155,13 +155,12 @@ public class MaintenanceSchedulingConstraintProviderTest {
     public void Availability() {
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::Availability)
                 .given(
-                        new Job(1L, "Downtown tunnel", "E1680", null, null, null, ALPHA_CREW, DAY_1),
-                        new Availability(ALPHA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), AvailabilityType.UNAVAILABLE),
-                        new Availability(ALPHA_CREW.getMonteurs().get(1), DAY_1.toLocalDate(), AvailabilityType.UNAVAILABLE),
+                        new Job(1L, "Downtown tunnel", "E1680", null, null, null, ALPHA_CREW, DAY_1_A),
+                        new Job(2L, "Downtown bridge", "E1680", null, null, null, ALPHA_CREW, DAY_1_A),
 
-                        new Job(2L, "Downtown bridge", "E1680", null, null, null, ALPHA_CREW, DAY_3),
-                        new Availability(ALPHA_CREW.getMonteurs().get(0), DAY_3.toLocalDate(), AvailabilityType.AVAILABLE),
-                        new Availability(ALPHA_CREW.getMonteurs().get(1), DAY_3.toLocalDate(), AvailabilityType.AVAILABLE))
-                .penalizesBy(4L);
+                        new Availability(ALPHA_CREW.getMonteurs().get(0), DAY_1_A.toLocalDate(), AvailabilityType.UNAVAILABLE),
+                        new Availability(ALPHA_CREW.getMonteurs().get(1), DAY_1_A.toLocalDate(), AvailabilityType.UNAVAILABLE))
+
+                .penalizesBy(6L);
     }
 }

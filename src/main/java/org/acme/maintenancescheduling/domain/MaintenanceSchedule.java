@@ -25,6 +25,8 @@ public class MaintenanceSchedule {
     @ProblemFactCollectionProperty
     @ValueRangeProvider
     private List<Crew> crewList;
+    @ProblemFactCollectionProperty
+    private List<Monteur> monteurList;
     @PlanningEntityCollectionProperty
     private List<Job> jobList;
 
@@ -39,10 +41,11 @@ public class MaintenanceSchedule {
     }
 
     public MaintenanceSchedule(WorkCalendar workCalendar, List<Availability> availabilityList,
-            List<Crew> crewList, List<Job> jobList) {
+            List<Crew> crewList, List<Monteur> monteurList, List<Job> jobList) {
         this.workCalendar = workCalendar;
         this.availabilityList = availabilityList;
         this.crewList = crewList;
+        this.monteurList = monteurList;
         this.jobList = jobList;
     }
 
@@ -63,6 +66,10 @@ public class MaintenanceSchedule {
 
     public List<Crew> getCrewList() {
         return crewList;
+    }
+
+    public List<Monteur> getMonteurList() {
+        return monteurList;
     }
 
     public List<Job> getJobList() {

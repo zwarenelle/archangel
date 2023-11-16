@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 
-@Entity(name = "monteurs")
+@Entity(name = "Monteurs")
 public class Monteur {
     @Id
     @GeneratedValue
