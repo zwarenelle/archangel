@@ -5,11 +5,11 @@ import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.stream.Collectors;
 
 import org.acme.maintenancescheduling.domain.Availability;
 import org.acme.maintenancescheduling.domain.AvailabilityType;
 import org.acme.maintenancescheduling.domain.Job;
-import org.acme.maintenancescheduling.domain.Monteur;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoftlong.HardSoftLongScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
@@ -29,7 +29,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 // dueDate(constraintFactory),
                 // noWeekends(constraintFactory),
                 skillConflict(constraintFactory),
-                Availability(constraintFactory),
+                // Availability(constraintFactory),
 
                 // Soft constraints
                 insideWorkHours(constraintFactory)
@@ -98,42 +98,53 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
         // Match crewSkills to JobRequirements
         return constraintFactory
                 .forEach(Job.class)
-                        .filter(job -> job.getCrew() != null &&
+                .join(Availability.class, 
+                        Joiners.equal((Job job) -> job.getStartDate().toLocalDate(), Availability::getDate),
+                        Joiners.filtering((job, availability) -> job.getCrew().getMonteurs().contains(availability.getMonteur())))
+                .groupBy((job, availability) -> job, ConstraintCollectors.toList((job, availability) -> availability))
+                        .filter((job, availability) -> job.getCrew() != null &&
                                 !(job.getrequiredSkills().stream()
-                                .allMatch(crewskill -> job.getCrew().getCrewSkills().stream()
-                                .anyMatch(jobreq -> 
-                                (jobreq.getTypenummer() <= 3 ? 
-                                crewskill.getTypenummer() <= jobreq.getTypenummer() : 
-                                crewskill.getTypenummer() > 3 && crewskill.getTypenummer() <= jobreq.getTypenummer())
-                                && crewskill.getAantal() <= jobreq.getAantal())))
+                                .allMatch(jobreq -> job.getCrew()
+                                        .filter(availability.stream()
+                                                .filter(a -> a.getAvailabilityType() == AvailabilityType.AVAILABLE)
+                                                .map(Availability::getMonteur).collect(Collectors.toList()))
+                                        .getCrewSkills().stream()
+                                .anyMatch(crewskill -> 
+                                        (crewskill.getTypenummer() <= 3 ? 
+                                                jobreq.getTypenummer() <= crewskill.getTypenummer() : 
+                                                jobreq.getTypenummer() > 3 && jobreq.getTypenummer() <= crewskill.getTypenummer())
+                                        && jobreq.getAantal() <= crewskill.getAantal())))
                         )
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
-                        job -> 1L)
-                .asConstraint("Skill Conflict");
+                        (job, availability) -> 1L)
+                .asConstraint("Skill / Availability Conflict");
     }
 
-    public Constraint Availability(ConstraintFactory constraintFactory) {
-        return constraintFactory
-                .forEach(Availability.class)
-                // Match monteur to availability
-                .join(Monteur.class, Joiners.equal((Availability availability) -> availability.getMonteur().getId(), Monteur::getId))
-                // Filter unavailable and sick employees
-                .filter((availability, monteur) -> availability.getAvailabilityType() != AvailabilityType.AVAILABLE)
-                // Join jobs on date of availability
-                .join(Job.class, Joiners.equal((availability, monteur) -> availability.getDate(), (Job job) -> job.getStartDate().toLocalDate()))
-                // Filter actual employees planned for the job
-                .filter((availability, monteur, job) -> job.getCrew().getMonteurs().contains(monteur))
-                .groupBy((availability, monteur, job) -> availability,
-                        (availability, monteur, job) -> monteur,
-                        (availability, monteur, job) -> job)
-
-                
-                .penalizeLong(HardSoftLongScore.ONE_HARD,
-                        (availability, monteur, job) -> 
-                        job.getrequiredSkills().stream().filter(req -> req.getTypenummer() <= monteur.getVaardigheid().getTypenummer()).count() > 1  ? 1L : 0L)
-
-                .asConstraint("Employee unavailable");
-    }
+//     public Constraint Availability(ConstraintFactory constraintFactory) {
+//         return constraintFactory
+//                 .forEach(Availability.class)
+//                 // Match monteur to availability
+//                 .join(Monteur.class, Joiners.equal((Availability availability) -> availability.getMonteur().getId(), Monteur::getId))
+//                 // Filter unavailable and sick employees
+//                 .filter((availability, monteur) -> availability.getAvailabilityType() != AvailabilityType.AVAILABLE)
+//                 // Join jobs on date of availability
+//                 .join(Job.class, Joiners.equal((availability, monteur) -> availability.getDate(), (Job job) -> job.getStartDate().toLocalDate()))
+//                 // Filter actual employees planned for the job
+//                 .filter((availability, monteur, job) -> job.getCrew().getMonteurs().contains(monteur))
+//                 .groupBy((availability, monteur, job) -> job, ConstraintCollectors.toList((availability, monteur, job) -> availability))
+//                 .filter((job, availability) -> job.getCrew() != null &&
+//                                 !(job.getrequiredSkills().stream()
+//                                 .allMatch(jobreq -> job.getCrew().getCrewSkills().stream().filter(skill -> availability.stream().map(a -> a.getMonteur().getVaardigheid().getTypenummer()).collect(Collectors.toList()).contains(skill.getTypenummer())).collect(Collectors.toList()).stream()
+//                                 .anyMatch(crewskill -> 
+//                                 (crewskill.getTypenummer() <= 3 ? 
+//                                 jobreq.getTypenummer() <= crewskill.getTypenummer() : 
+//                                 jobreq.getTypenummer() > 3 && jobreq.getTypenummer() <= crewskill.getTypenummer())
+//                                 && jobreq.getAantal() <= crewskill.getAantal())))
+//                         )
+//                 .penalizeLong(HardSoftLongScore.ONE_HARD,
+//                         (job, availability) -> 1L)
+//                 .asConstraint("Employee unavailable");
+//     }
 
     // ************************************************************************
     // Soft constraints

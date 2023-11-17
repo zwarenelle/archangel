@@ -6,8 +6,6 @@ import java.util.List;
 import java.time.LocalDateTime;
 import jakarta.inject.Inject;
 
-import org.acme.maintenancescheduling.domain.Availability;
-import org.acme.maintenancescheduling.domain.AvailabilityType;
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
@@ -151,16 +149,4 @@ public class MaintenanceSchedulingConstraintProviderTest {
                 .penalizesBy(10L);
     }
 
-    @Test
-    public void Availability() {
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::Availability)
-                .given(
-                        new Job(1L, "Downtown tunnel", "E1680", null, null, null, ALPHA_CREW, DAY_1_A),
-                        new Job(2L, "Downtown bridge", "E1680", null, null, null, ALPHA_CREW, DAY_1_A),
-
-                        new Availability(ALPHA_CREW.getMonteurs().get(0), DAY_1_A.toLocalDate(), AvailabilityType.UNAVAILABLE),
-                        new Availability(ALPHA_CREW.getMonteurs().get(1), DAY_1_A.toLocalDate(), AvailabilityType.UNAVAILABLE))
-
-                .penalizesBy(6L);
-    }
 }

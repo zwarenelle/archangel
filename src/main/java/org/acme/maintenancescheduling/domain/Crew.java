@@ -85,6 +85,11 @@ public class Crew{
         .collect(Collectors.toList());
     }
 
+    public Crew filter(List<Monteur> monteursToRemove) {
+        Crew newcrew = new Crew(this.name, monteursToRemove);
+        return newcrew;
+    }
+
     public void setCrewSkills() {
         // Update crewSkills with skills from monteurs
         this.crewSkills = this.monteurs.stream()
