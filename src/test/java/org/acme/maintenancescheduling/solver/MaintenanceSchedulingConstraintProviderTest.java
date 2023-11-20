@@ -58,23 +58,23 @@ public class MaintenanceSchedulingConstraintProviderTest {
     }
 
     @Test
-    public void skillConflict() {
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
+    public void resourceCheck() {
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::resourceCheck)
                 .given(
                         new Job(1L, "Downtown tunnel", "E1680", null, null, null, ALPHA_CREW, DAY_1),
                         new Job(2L, "Downtown bridge", "E1680", null, null, null, ALPHA_CREW, DAY_3))
                 .penalizesBy(0L);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::resourceCheck)
                 .given(
                         new Job(1L, "Downtown tunnel", "E1680", null, null, null, BETA_CREW, DAY_1),
                         new Job(2L, "Downtown bridge", "E1680", null, null, null, BETA_CREW, DAY_1))
                 .penalizesBy(20L);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::resourceCheck)
                 .given(
                         new Job(1L, "Downtown tunnel", "G1680", null, null, null, ALPHA_CREW, DAY_1),
                         new Job(2L, "Uptown bridge", "G1680", null, null, null, ALPHA_CREW, DAY_1))
                 .penalizesBy(20L);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::skillConflict)
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::resourceCheck)
                 .given(
                         new Job(1L, "Downtown tunnel", "G1680", null, null, null, BETA_CREW, DAY_2),
                         new Job(2L, "Downtown bridge", "E1680", null, null, null, BETA_CREW, DAY_2))

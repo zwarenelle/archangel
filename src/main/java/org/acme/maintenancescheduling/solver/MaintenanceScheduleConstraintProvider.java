@@ -25,7 +25,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
         return new Constraint[] {
                 // Hard constraints
                 crewConflict(constraintFactory),
-                skillConflict(constraintFactory),
+                resourceCheck(constraintFactory),
                 // noWeekends(constraintFactory),
 
                 // Medium constraints
@@ -56,7 +56,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .asConstraint("Crew conflict");
     }
 
-    public Constraint skillConflict(ConstraintFactory constraintFactory) {
+    public Constraint resourceCheck(ConstraintFactory constraintFactory) {
         // Match crewSkills and Availability to JobRequirements
         return constraintFactory
                 .forEach(Job.class)
