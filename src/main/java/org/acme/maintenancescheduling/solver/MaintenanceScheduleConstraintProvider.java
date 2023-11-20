@@ -57,18 +57,24 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
     }
 
     public Constraint skillConflict(ConstraintFactory constraintFactory) {
-        // TODO: Put in a dynamic penalize function based on count of missing skills
-        // Match crewSkills to JobRequirements
+        // Match crewSkills and Availability to JobRequirements
         return constraintFactory
                 .forEach(Job.class)
+                // Join availability's on the same date as the startdate of job
                 .join(Availability.class, 
                         Joiners.equal((Job job) -> job.getStartDate().toLocalDate(), Availability::getDate),
+                        //Filter monteurs that are actually in the crew that's assigned this job
                         Joiners.filtering((job, availability) -> job.getCrew().getMonteurs().contains(availability.getMonteur())))
+                // Summarize the availabilties into a list per job
                 .groupBy((job, availability) -> job, ConstraintCollectors.toList((job, availability) -> availability))
-                        .filter((job, availability) -> 
+                // Filter out if the job needs more monteurs than there are in the crew, cause then all skills will never match
+                        .filter((job, availability) ->
+                                // Filter crew with monteurs that are available for that day and compare the list size with the job requirements list
                                 job.getrequiredSkills().size() > job.getCrew().filter(availability.stream().filter(a -> a.getAvailabilityType() == AvailabilityType.AVAILABLE).map(Availability::getMonteur).collect(Collectors.toList()))
                                         .getCrewSkills().size() ||
+                                // If above is not false, it could still be that the skills do not match between (again, filtered) crew and job
                                 !(job.getrequiredSkills().stream()
+                                // For every requirement, search for a suitable monteur in crew and make sure there are enough!
                                 .allMatch(jobreq -> job.getCrew()
                                         .filter(availability.stream()
                                                 .filter(a -> a.getAvailabilityType() == AvailabilityType.AVAILABLE)
@@ -81,7 +87,8 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                                         && jobreq.getAantal() <= crewskill.getAantal())))
                         )
                 .penalizeLong(HardMediumSoftLongScore.ONE_HARD,
-                        (job, availability) -> 1L)
+                        (job, availability) -> job.getrequiredSkills().isEmpty() ? 1L : Long.valueOf(job.getrequiredSkills().size())
+                        )
                 .asConstraint("Skill / Availability Conflict");
     }
 
