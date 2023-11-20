@@ -13,7 +13,7 @@ import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
 import org.acme.maintenancescheduling.persistence.MonteurRepository;
 import org.acme.maintenancescheduling.persistence.WorkCalendarRepository;
-import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import ai.timefold.solver.core.api.solver.SolverStatus;
@@ -39,7 +39,7 @@ public class MaintenanceScheduleResource {
     @Inject
     SolverManager<MaintenanceSchedule, Long> solverManager;
     @Inject
-    SolutionManager<MaintenanceSchedule, HardSoftScore> solutionManager;
+    SolutionManager<MaintenanceSchedule, HardMediumSoftLongScore> solutionManager;
 
     // To try, open http://localhost:8080/schedule
     @GET

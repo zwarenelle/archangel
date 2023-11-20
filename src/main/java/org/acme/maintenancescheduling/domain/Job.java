@@ -43,7 +43,7 @@ public class Job {
     @JoinColumn(name="JOB_ID")
     private List<JobRequirement> requiredSkills;
 
-    @PlanningVariable
+    @PlanningVariable(nullable = true)
     @ManyToOne
     private Crew crew;
     
@@ -156,7 +156,7 @@ public class Job {
         for (Map.Entry<Integer, List<JobRequirement>> req : reqMap.entrySet()) {
             reqsummary.add(new JobRequirement(req.getKey(), req.getValue().size(), req.getValue().stream().mapToInt(JobRequirement::getDuur).sum(), req.getValue().iterator().next().getOmschrijving()));
         }
-
+    
         this.requiredSkills = reqsummary;
     }
 

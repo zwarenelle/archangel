@@ -19,6 +19,11 @@ public class JobRequirement extends Skill{
         this.aantal = aantal;
         this.duur = duur;
     }
+
+    @Override
+    public String toString() {
+        return "Type: " + getTypenummer() + ", Aantal: " + this.aantal + ", Duur: " + this.duur + ", Omschrijving: " + getOmschrijving();
+    }
     
     public int getAantal() {
         return aantal;
