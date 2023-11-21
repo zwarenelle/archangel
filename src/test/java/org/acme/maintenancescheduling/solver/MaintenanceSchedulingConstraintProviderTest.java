@@ -6,6 +6,8 @@ import java.util.List;
 import java.time.LocalDateTime;
 import jakarta.inject.Inject;
 
+import org.acme.maintenancescheduling.domain.Availability;
+import org.acme.maintenancescheduling.domain.AvailabilityType;
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
@@ -67,18 +69,29 @@ public class MaintenanceSchedulingConstraintProviderTest {
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::resourceCheck)
                 .given(
                         new Job(1L, "Downtown tunnel", "E1680", null, null, null, BETA_CREW, DAY_1),
-                        new Job(2L, "Downtown bridge", "E1680", null, null, null, BETA_CREW, DAY_1))
-                .penalizesBy(20L);
+                        new Job(2L, "Downtown bridge", "E1680", null, null, null, BETA_CREW, DAY_1),
+                        new Availability(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), AvailabilityType.UNAVAILABLE))
+                .penalizesBy(4L);
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::resourceCheck)
                 .given(
-                        new Job(1L, "Downtown tunnel", "G1680", null, null, null, ALPHA_CREW, DAY_1),
-                        new Job(2L, "Uptown bridge", "G1680", null, null, null, ALPHA_CREW, DAY_1))
-                .penalizesBy(20L);
+                        new Job(1L, "Downtown tunnel", "E1680", null, null, null, ALPHA_CREW, DAY_1),
+                        new Job(2L, "Downtown bridge", "E1680", null, null, null, BETA_CREW, DAY_1),
+                        new Availability(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), AvailabilityType.UNAVAILABLE))
+                .penalizesBy(2L);
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::resourceCheck)
                 .given(
-                        new Job(1L, "Downtown tunnel", "G1680", null, null, null, BETA_CREW, DAY_2),
-                        new Job(2L, "Downtown bridge", "E1680", null, null, null, BETA_CREW, DAY_2))
-                .penalizesBy(10L);
+                        new Job(1L, "Downtown tunnel", "E1680", null, null, null, BETA_CREW, DAY_1),
+                        new Job(2L, "Downtown bridge", "E1680", null, null, null, BETA_CREW, DAY_1),
+                        new Availability(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), AvailabilityType.UNAVAILABLE),
+                        new Availability(BETA_CREW.getMonteurs().get(1), DAY_1.toLocalDate(), AvailabilityType.UNAVAILABLE))
+                .penalizesBy(4L);
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::resourceCheck)
+                .given(
+                        new Job(1L, "Downtown tunnel", "E1680", null, null, null, ALPHA_CREW, DAY_1),
+                        new Job(2L, "Downtown bridge", "E1680", null, null, null, BETA_CREW, DAY_1),
+                        new Availability(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), AvailabilityType.UNAVAILABLE),
+                        new Availability(ALPHA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), AvailabilityType.UNAVAILABLE))
+                .penalizesBy(4L);
     }
 
 }
