@@ -53,7 +53,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                                 job1.getEndDate().isBefore(job2.getEndDate())
                                         ? job1.getEndDate() : job2.getEndDate())
                         )
-                .asConstraint("Crew conflict");
+                .asConstraint("Dubbele boeking (ploeg)");
     }
 
     public Constraint resourceCheck(ConstraintFactory constraintFactory) {
@@ -89,7 +89,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .penalizeLong(HardMediumSoftLongScore.ONE_HARD,
                         (job, availability) -> job.getrequiredSkills().isEmpty() ? 1L : Long.valueOf(job.getrequiredSkills().size())
                         )
-                .asConstraint("Skill availability Conflict");
+                .asConstraint("Beschikbaarheid");
     }
 
 //     public Constraint noWeekends(ConstraintFactory constraintFactory) {
@@ -114,9 +114,8 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                .filter(job -> job.getCrew() == null)
                .penalizeLong(HardMediumSoftLongScore.ONE_MEDIUM,
                         job -> 1L)
-                .asConstraint("No suitable crew for job");
+                .asConstraint("Onplanbare opdracht (geen passende ploeg)");
     }
-
 
     // ************************************************************************
     // Soft constraints
@@ -127,12 +126,10 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
         return constraintFactory
                 .forEach(Job.class)
                         .filter(job -> job.getStartDate().toLocalTime() != null
-                                &&
-                                        // Don't start the job before 7AM or after 4PM
+                                && // Don't start the job before 7AM or after 4PM
                                         ((job.getStartDate().toLocalTime().isBefore(LocalTime.of(7, 0, 0))
                                         || job.getStartDate().toLocalTime().isAfter(LocalTime.of(16, 0, 0)))
-                                ||
-                                        // Don't end it after 4PM or before 7AM
+                                || // Don't end it after 4PM or before 7AM
                                         (job.getEndDate().toLocalTime().isAfter(LocalTime.of(16, 0, 0))
                                         || job.getEndDate().toLocalTime().isBefore(LocalTime.of(7, 0, 0))))
                                 )
@@ -143,7 +140,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                                         ? ChronoUnit.MINUTES.between(LocalTime.of(16, 0, 0), job.getEndDate().toLocalTime())
                                         : ChronoUnit.MINUTES.between(job.getEndDate().toLocalTime(), LocalTime.of(7, 0, 0))
                         )
-                .asConstraint("Before work hours");
+                .asConstraint("Reguliere werktijden");
     }
 
 }

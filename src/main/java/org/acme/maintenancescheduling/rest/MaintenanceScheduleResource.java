@@ -2,9 +2,14 @@ package org.acme.maintenancescheduling.rest;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
 
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
@@ -16,6 +21,7 @@ import org.acme.maintenancescheduling.persistence.WorkCalendarRepository;
 
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import ai.timefold.solver.core.api.solver.ScoreAnalysisFetchPolicy;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import ai.timefold.solver.core.api.solver.SolverStatus;
@@ -51,17 +57,17 @@ public class MaintenanceScheduleResource {
         SolverStatus solverStatus = getSolverStatus();
         MaintenanceSchedule solution = findById(SINGLETON_SCHEDULE_ID);
         solutionManager.update(solution); // Sets the score
-        // solutionManager.analyze(solution); // Break down the score per constraint
         solution.setSolverStatus(solverStatus);
         return solution;
     }
 
-    // @GET
-    // @Path("score")
-    // public ScoreAnalysis<HardMediumSoftLongScore> getScore () {
-    //     MaintenanceSchedule solution = findById(SINGLETON_SCHEDULE_ID);
-    //     return solutionManager.analyze(solution);
-    // }
+    @PUT
+    @Consumes({ MediaType.APPLICATION_JSON })
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("analyze")
+    public ScoreAnalysis<HardMediumSoftLongScore> analyze(MaintenanceSchedule problem, @QueryParam("fetchPolicy") ScoreAnalysisFetchPolicy fetchPolicy) {
+        return fetchPolicy == null ? solutionManager.analyze(problem) : solutionManager.analyze(problem, fetchPolicy);
+    }
 
     public SolverStatus getSolverStatus() {
         return solverManager.getSolverStatus(SINGLETON_SCHEDULE_ID);

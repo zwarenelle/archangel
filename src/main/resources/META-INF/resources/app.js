@@ -1,3 +1,5 @@
+let loadedSchedule = null;
+
 var autoRefreshIntervalId = null;
 var formattingOptions = 
 {
@@ -70,12 +72,7 @@ var byCapacityTimeline = new vis.Timeline(byCapacityPanel, byCapacityItemDataSet
 
 $(document).ready(function () {
     replaceTimefoldAutoHeaderFooter();
-    $.ajaxSetup({
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    });
+    setupAjax();
 
     $("#refreshButton").click(function () {
         refreshSchedule();
@@ -85,6 +82,9 @@ $(document).ready(function () {
     });
     $("#stopSolvingButton").click(function () {
         stopSolving();
+    });
+    $("#analyzeButton").click(function () {
+        analyze();
     });
     // HACK to allow vis-timeline to work within Bootstrap tabs
     $("#byCrewTab").on('shown.bs.tab', function (event) {
@@ -102,6 +102,8 @@ $(document).ready(function () {
 
 function refreshSchedule() {
     $.getJSON("/schedule", function (schedule) {
+        loadedSchedule = schedule;
+
         refreshSolvingButtons(schedule.solverStatus != null && schedule.solverStatus !== "NOT_SOLVING");
         $("#score").text("Score: " + (schedule.score == null ? "?" : schedule.score));
 
@@ -327,4 +329,60 @@ function stopSolving() {
 
 function addMinutes(date, minutes) {
     return new Date(date.getTime() + minutes*60000);
+}
+
+function analyze() {
+    new bootstrap.Modal("#scoreAnalysisModal").show()
+    const scoreAnalysisModalContent = $("#scoreAnalysisModalContent");
+    scoreAnalysisModalContent.children().remove();
+    scoreAnalysisModalContent.text("Analyzing score...");
+    $.put("/schedule/analyze", JSON.stringify(loadedSchedule), function (scoreAnalysis) {
+      scoreAnalysisModalContent.children().remove();
+      scoreAnalysisModalContent.text("");
+  
+      const analysisTable = $(`<table class="table table-striped"/>`);
+      const analysisTHead = $(`<thead/>`)
+        .append($(`<tr/>`)
+          .append($(`<th>Constraint</th>`))
+          .append($(`<th>Score</th>`)));
+      analysisTable.append(analysisTHead);
+      const analysisTBody = $(`<tbody/>`)
+      $.each(scoreAnalysis.constraints, (index, constraintAnalysis) => {
+        analysisTBody.append($(`<tr/>`)
+          .append($(`<td/>`).text(constraintAnalysis.name))
+          .append($(`<td/>`).text(constraintAnalysis.score)));
+      });
+      analysisTable.append(analysisTBody);
+      scoreAnalysisModalContent.append(analysisTable);
+    }).fail(function (xhr, ajaxOptions, thrownError) {
+      showError("Analyze failed.", xhr);
+    },
+    "text");
+  }
+
+  function setupAjax() {
+    $.ajaxSetup({
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json,text/plain', // plain text is required by solve() returning UUID of the solver job
+        }
+    });
+
+    // Extend jQuery to support $.put() and $.delete()
+    jQuery.each(["put", "delete"], function (i, method) {
+        jQuery[method] = function (url, data, callback, type) {
+            if (jQuery.isFunction(data)) {
+                type = type || callback;
+                callback = data;
+                data = undefined;
+            }
+            return jQuery.ajax({
+                url: url,
+                type: method,
+                dataType: type,
+                data: data,
+                success: callback
+            });
+        };
+    });
 }
