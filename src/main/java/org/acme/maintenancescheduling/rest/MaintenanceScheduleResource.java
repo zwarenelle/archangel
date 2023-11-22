@@ -13,6 +13,8 @@ import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
 import org.acme.maintenancescheduling.persistence.MonteurRepository;
 import org.acme.maintenancescheduling.persistence.WorkCalendarRepository;
+
+import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolverManager;
@@ -41,7 +43,7 @@ public class MaintenanceScheduleResource {
     @Inject
     SolutionManager<MaintenanceSchedule, HardMediumSoftLongScore> solutionManager;
 
-    // To try, open http://localhost:8080/schedule
+    // For JSON, open http://localhost:8080/schedule
     @GET
     public MaintenanceSchedule getSchedule() {
         // Get the solver status before loading the solution
@@ -49,9 +51,17 @@ public class MaintenanceScheduleResource {
         SolverStatus solverStatus = getSolverStatus();
         MaintenanceSchedule solution = findById(SINGLETON_SCHEDULE_ID);
         solutionManager.update(solution); // Sets the score
+        // solutionManager.analyze(solution); // Break down the score per constraint
         solution.setSolverStatus(solverStatus);
         return solution;
     }
+
+    // @GET
+    // @Path("score")
+    // public ScoreAnalysis<HardMediumSoftLongScore> getScore () {
+    //     MaintenanceSchedule solution = findById(SINGLETON_SCHEDULE_ID);
+    //     return solutionManager.analyze(solution);
+    // }
 
     public SolverStatus getSolverStatus() {
         return solverManager.getSolverStatus(SINGLETON_SCHEDULE_ID);

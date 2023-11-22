@@ -89,7 +89,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .penalizeLong(HardMediumSoftLongScore.ONE_HARD,
                         (job, availability) -> job.getrequiredSkills().isEmpty() ? 1L : Long.valueOf(job.getrequiredSkills().size())
                         )
-                .asConstraint("Skill / Availability Conflict");
+                .asConstraint("Skill availability Conflict");
     }
 
 //     public Constraint noWeekends(ConstraintFactory constraintFactory) {
