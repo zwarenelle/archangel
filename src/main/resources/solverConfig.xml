@@ -19,8 +19,8 @@
     <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
   </constructionHeuristic>
 
-  <localSearch>
+  <!-- <localSearch>
     <localSearchType>HILL_CLIMBING</localSearchType>
-  </localSearch>
+  </localSearch> -->
 
 </solver>

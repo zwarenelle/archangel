@@ -18,13 +18,15 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 import org.acme.maintenancescheduling.solver.EndDateUpdatingVariableListener;
+import org.acme.maintenancescheduling.solver.JobDifficultyComparator;
+import org.acme.maintenancescheduling.translators.RequirementTranslator;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import ai.timefold.solver.core.api.domain.variable.ShadowVariable;
 
-@PlanningEntity
+@PlanningEntity(difficultyComparatorClass = JobDifficultyComparator.class)
 @Entity
 public class Job {
 

@@ -1,8 +1,11 @@
-package org.acme.maintenancescheduling.domain;
+package org.acme.maintenancescheduling.translators;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.acme.maintenancescheduling.domain.JobRequirement;
+
 import java.util.List;
 
 public class RequirementTranslator {
