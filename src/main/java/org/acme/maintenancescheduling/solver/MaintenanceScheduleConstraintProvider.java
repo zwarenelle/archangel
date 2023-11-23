@@ -114,7 +114,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                .filter(job -> job.getCrew() == null)
                .penalizeLong(HardMediumSoftLongScore.ONE_MEDIUM,
                         job -> 1L)
-                .asConstraint("Onplanbare opdracht (geen passende ploeg)");
+                .asConstraint("Onplanbaar (geen passende ploeg)");
     }
 
     // ************************************************************************
@@ -140,7 +140,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                                         ? ChronoUnit.MINUTES.between(LocalTime.of(16, 0, 0), job.getEndDate().toLocalTime())
                                         : ChronoUnit.MINUTES.between(job.getEndDate().toLocalTime(), LocalTime.of(7, 0, 0))
                         )
-                .asConstraint("Reguliere werktijden");
+                .asConstraint("Werktijden");
     }
 
 }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver xmlns="https://timefold.ai/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
+  <!-- Define the model -->
+  <solutionClass>org.acme.maintenancescheduling.domain.MaintenanceSchedule</solutionClass>
+  <entityClass>org.acme.maintenancescheduling.domain.Job</entityClass>
+
+  <!-- Define the score function -->
+  <scoreDirectorFactory>
+    <constraintProviderClass>org.acme.maintenancescheduling.solver.MaintenanceScheduleConstraintProvider</constraintProviderClass>
+  </scoreDirectorFactory>
+
+  <!-- Configure the optimization algorithms -->
+  <termination>
+    <spentLimit>PT30S</spentLimit>
+  </termination>
+
+  <constructionHeuristic>
+    <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
+  </constructionHeuristic>
+
+  <localSearch>
+    <localSearchType>HILL_CLIMBING</localSearchType>
+  </localSearch>
+
+</solver>

@@ -127,6 +127,11 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${version.compiler.plugin}</version>
+          <configuration>
+          <!-- For building native exc -->
+            <!-- <meminitial>2048m</meminitial>
+            <maxmem>3072m</maxmem> -->
+        </configuration>
       </plugin>
       <plugin>
         <groupId>io.quarkus</groupId>
