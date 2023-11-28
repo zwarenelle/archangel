@@ -4,12 +4,16 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
@@ -27,6 +31,7 @@ import ai.timefold.solver.core.api.solver.SolverManager;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import io.quarkus.panache.common.Sort;
+import io.vertx.core.json.JsonObject;
 
 @Path("/schedule")
 public class MaintenanceScheduleResource {
@@ -67,6 +72,30 @@ public class MaintenanceScheduleResource {
     @Path("analyze")
     public ScoreAnalysis<HardMediumSoftLongScore> analyze(MaintenanceSchedule problem, @QueryParam("fetchPolicy") ScoreAnalysisFetchPolicy fetchPolicy) {
         return fetchPolicy == null ? solutionManager.analyze(problem) : solutionManager.analyze(problem, fetchPolicy);
+    }
+
+    @PUT
+    @Path("job")
+    @Transactional
+    public Job update(JsonObject item) {
+        Long jobId = item.getLong("id");
+        
+        Job entity = jobRepository.findById(jobId);
+        if(entity == null) {
+            throw new NotFoundException();
+        }
+
+        Long crewId = item.getLong("group");
+
+        LocalDateTime start = (item.getJsonObject("start")) == null ? null : LocalDateTime.ofInstant(item.getInstant("start"), ZoneId.of("Europe/Amsterdam"));
+        LocalDateTime end = (item.getJsonObject("end")) == null ? null : LocalDateTime.ofInstant(item.getInstant("end"), ZoneId.of("Europe/Amsterdam"));
+
+        // Map all fields from the job parameter to the existing entity
+        entity.setStartDate((start == null ? null : start));
+        entity.setEndDate((end == null ? null : end));
+        entity.setCrew((crewId == null ? null : crewRepository.findById(crewId)));
+        
+        return entity;
     }
 
     public SolverStatus getSolverStatus() {

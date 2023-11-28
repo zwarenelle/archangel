@@ -12,12 +12,12 @@
 
   <!-- Configure the optimization algorithms -->
   <termination>
-    <spentLimit>PT30S</spentLimit>
+    <spentLimit>PT35S</spentLimit>
   </termination>
 
-  <constructionHeuristic>
+  <!-- <constructionHeuristic>
     <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
-  </constructionHeuristic>
+  </constructionHeuristic> -->
 
   <!-- <localSearch>
     <localSearchType>HILL_CLIMBING</localSearchType>

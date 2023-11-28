@@ -32,10 +32,60 @@ const byCrewTimelineOptions = {
     timeAxis: {scale: "hour", step: 6},
     orientation: {axis: "top"},
     stack: false,
+    editable: {
+        add: true,         // add new items by double tapping
+        updateTime: true,  // drag items horizontally
+        updateGroup: true, // drag items from one group to another
+        remove: true,       // delete an item by tapping the delete button top right
+        overrideItems: false  // allow these options to override item.editable
+      },    
+    multiselect: true,
     xss: {disabled: true}, // Items are XSS safe through JQuery
     zoomMin: 1000 * 60 * 60, // One hour in milliseconds
     locale: 'nl',
-    format: formattingOptions
+    format: formattingOptions,
+
+    onRemove: function (item, callback) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then( function(result) {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                callback(item);
+                removeJob(item);
+            }
+          });
+      },
+
+      onMove: function (item, callback) {
+        Swal.fire({
+            title: 'Item verplaatsen',
+            html: `
+            Weet je zeker dat je dit item wilt verplaatsen naar<br>
+            Start: ` + item.start + `,<br>
+            Eind: ` + item.end,
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Save",
+            denyButtonText: `Don't save`
+        }).then( function(result) {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                callback(item);
+                updateJob(item);
+            } else if (result.isDenied) {
+                callback(null);
+                Swal.fire("Wijziging niet opgeslagen", "", "info");
+            }
+          });
+      }
+
 };
 
 var byCrewGroupDataSet = new vis.DataSet();
@@ -202,21 +252,11 @@ function refreshSchedule() {
                     style: "background-color: #EF292999"
                 });
             } else {
-                // const beforeReady = JSJoda.LocalDateTime.parse(job.startDate).isBefore(JSJoda.LocalDateTime.parse(job.readyDate));
-                // const afterDue = JSJoda.LocalDateTime.parse(job.endDate).isAfter(JSJoda.LocalDateTime.parse(job.dueDate));
                 const byCrewJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uur`));
                 const byJobJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.crew.name));
-                // if (beforeReady) {
-                //     byCrewJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`Before ready (too early)`));
-                //     byJobJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`Before ready (too early)`));
-                // }
-                // if (afterDue) {
-                //     byCrewJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`After due (too late)`));
-                //     byJobJobElement.append($(`<p class="badge badge-danger mb-0"/>`).text(`After due (too late)`));
-                // }
                 $.each(job.requiredSkills, (index, tag) => {
                     if (tag.omschrijving.toString().startsWith("VIAG")) {color = "#FEB900";}
                     else if (tag.omschrijving.toString().startsWith("BEI")) {color = "#ED5353";}
@@ -385,4 +425,32 @@ function analyze() {
             });
         };
     });
+}
+
+function updateJob(item) {
+    $.put("/schedule/job", JSON.stringify(item), function (result) {
+        console.log(result);
+    }).done(function(data, statusText, xhr){
+        if (xhr.status == 200) {
+            Swal.fire("Wijziging opgeslagen!", "", "success");
+        }
+    }).fail(function(data, textStatus, xhr) {
+        Swal.fire("Systeemfout", "", "error");
+   });
+}
+
+function removeJob(item) {
+    let clearedItem = item;
+    clearedItem.start = null;
+    clearedItem.end = null;
+    clearedItem.group = null;
+    $.put("/schedule/job", JSON.stringify(item), function (result) {
+        console.log(result);
+    }).done(function(data, statusText, xhr){
+        if (xhr.status == 200) {
+            Swal.fire("Wijziging opgeslagen!", "", "success");
+        }
+    }).fail(function(data, textStatus, xhr) {
+        Swal.fire("Systeemfout", "", "error");
+   });
 }

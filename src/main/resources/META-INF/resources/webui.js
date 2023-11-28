@@ -31,8 +31,6 @@ function replaceTimefoldAutoHeaderFooter() {
            </div>
            <div id="applicationInfo" class="container text-center"></div>
          </footer>`));
-
-      applicationInfo();
   }
 
 }
@@ -78,18 +76,6 @@ function showError(title, xhr) {
   $("#notificationPanel").append(notification);
   notification.toast({delay: 30000});
   notification.toast('show');
-}
-
-// ****************************************************************************
-// Application info
-// ****************************************************************************
-
-function applicationInfo() {
-  $.getJSON("info", function (info) {
-       $("#applicationInfo").append("<small>" + info.application + " (version: " + info.version + ", built at: " + info.built + ")</small>");
-   }).fail(function (xhr, ajaxOptions, thrownError) {
-       console.warn("Unable to collect application information");
-   });
 }
 
 // ****************************************************************************

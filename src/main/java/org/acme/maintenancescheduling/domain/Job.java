@@ -174,4 +174,8 @@ public class Job {
         this.bestekcode = bestekcode;
     }
 
+    public void setAdres(String adres) {
+        this.adres = adres;
+    }
+
 }
