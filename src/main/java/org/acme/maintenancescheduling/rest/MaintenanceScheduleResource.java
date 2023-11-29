@@ -12,6 +12,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -22,6 +23,7 @@ import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
 import org.acme.maintenancescheduling.persistence.MonteurRepository;
 import org.acme.maintenancescheduling.persistence.WorkCalendarRepository;
+import org.json.JSONObject;
 
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
@@ -31,10 +33,13 @@ import ai.timefold.solver.core.api.solver.SolverManager;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import io.quarkus.panache.common.Sort;
-import io.vertx.core.json.JsonObject;
+
+// import org.jboss.logging.Logger;
 
 @Path("/schedule")
 public class MaintenanceScheduleResource {
+
+    // private static final Logger LOG = Logger.getLogger(MaintenanceScheduleResource.class);
 
     public static final Long SINGLETON_SCHEDULE_ID = 1L;
 
@@ -77,23 +82,31 @@ public class MaintenanceScheduleResource {
     @PUT
     @Path("job")
     @Transactional
-    public Job update(JsonObject item) {
-        Long jobId = item.getLong("id");
+    public Job update(String item) {
         
+        // Create JSON Object from received JSON String
+        JSONObject itemJackson = new JSONObject(item);
+        
+        // Get jobId in question from JSON Object
+        Long jobId = itemJackson.getLong("id");
+        
+        // Check if corresponding Job exists and get it
         Job entity = jobRepository.findById(jobId);
         if(entity == null) {
             throw new NotFoundException();
         }
 
-        Long crewId = item.getLong("group");
+        // Get values that need to be modified in Job from JSON Object
+        Long crewId = itemJackson.optLongObject("group");
+        LocalDateTime start = itemJackson.optString("start") == "" || itemJackson.optString("start") == null ? null
+        : LocalDateTime.ofInstant(Instant.parse(itemJackson.optString("start")), ZoneId.of("Europe/Amsterdam"));
+        LocalDateTime end = itemJackson.optString("end") == "" || itemJackson.optString("start") == null ? null
+        : LocalDateTime.ofInstant(Instant.parse(itemJackson.optString("end")), ZoneId.of("Europe/Amsterdam"));
 
-        LocalDateTime start = (item.getJsonObject("start")) == null ? null : LocalDateTime.ofInstant(item.getInstant("start"), ZoneId.of("Europe/Amsterdam"));
-        LocalDateTime end = (item.getJsonObject("end")) == null ? null : LocalDateTime.ofInstant(item.getInstant("end"), ZoneId.of("Europe/Amsterdam"));
-
-        // Map all fields from the job parameter to the existing entity
-        entity.setStartDate((start == null ? null : start));
-        entity.setEndDate((end == null ? null : end));
-        entity.setCrew((crewId == null ? null : crewRepository.findById(crewId)));
+        // Modify Job accordingly
+        entity.setStartDate(start);
+        entity.setEndDate(end);
+        entity.setCrew((crewId == 0 || crewId == null ? null : crewRepository.findById(crewId)));
         
         return entity;
     }
@@ -126,7 +139,7 @@ public class MaintenanceScheduleResource {
                 availabilityRepository.listAll(Sort.by("id")),
                 crewRepository.listAll(Sort.by("name").and("id")),
                 monteurRepository.listAll(Sort.by("id")),
-                jobRepository.listAll(Sort.by("dueDate").and("readyDate").and("adres").and("id"))
+                jobRepository.listAll(Sort.by("adres").and("id"))
                 );
     }
 

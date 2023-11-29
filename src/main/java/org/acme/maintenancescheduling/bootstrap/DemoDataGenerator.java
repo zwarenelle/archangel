@@ -22,7 +22,6 @@ import org.acme.maintenancescheduling.persistence.JobRepository;
 import org.acme.maintenancescheduling.persistence.JobRequirementRepository;
 import org.acme.maintenancescheduling.persistence.MonteurRepository;
 import org.acme.maintenancescheduling.persistence.WorkCalendarRepository;
-import org.acme.maintenancescheduling.solver.EndDateUpdatingVariableListener;
 
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -62,17 +61,6 @@ public class DemoDataGenerator {
             return;
         }
         
-        // Ploeg COMBI
-        // new Monteur("Paul", new Skill(1, "VIAG VP")), new Monteur("Robbert", new Skill(3, "VIAG VOP")), new Monteur("Marichelle", new Skill(4, "BEI VP")), new Monteur("Fons", new Skill(6, "BEI VOP"))
-
-        // Ploeg E 1+2
-        // new Monteur("Emiel", new Skill(4, "BEI VP")), new Monteur("Mark", new Skill(6, "BEI VOP"))
-        // new Monteur("Gijs", new Skill(4, "BEI VP")), new Monteur("Dave", new Skill(6, "BEI VOP"))
-
-        // Ploeg G 1+2
-        // new Monteur("Tom", new Skill(1, "VIAG VP")), new Monteur("Bas", new Skill(3, "VIAG VOP"))
-        // new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP"))
-        
         List<Crew> crewList = new ArrayList<>();
         
         // crewList.add(new Crew("Ploeg Combi", List.of(new Monteur("Paul", new Skill(1, "VIAG VP")), new Monteur("Robbert", new Skill(3, "VIAG VOP")), new Monteur("Marichelle", new Skill(4, "BEI VP")), new Monteur("Fons", new Skill(6, "BEI VOP")))));
@@ -111,7 +99,6 @@ public class DemoDataGenerator {
         int weekListSize = 2;
         LocalDateTime toDate = fromDate.plusWeeks(weekListSize);
         workCalendarRepository.persist(new WorkCalendar(fromDate, toDate));
-        int workdayTotal = weekListSize * 5;
 
         for (Crew crew : crewList) {
             for (Monteur monteur : crew.getMonteurs()) {
@@ -131,22 +118,13 @@ public class DemoDataGenerator {
 
         Random random = new Random(17);
         for (int i = 0; i < jobListSize; i++) {
-            String jobArea = JOB_AREA_NAMES[random.nextInt(JOB_AREA_NAMES.length)] + " " + JOB_AREA_NUMBERS.get(random.nextInt(JOB_AREA_NUMBERS.size()));
             
-            int readyDueBetweenWorkdays = 5 // at least 5 days of flexibility
-                    + random.nextInt(workdayTotal - 5);
-            int readyWorkdayOffset = random.nextInt(workdayTotal - readyDueBetweenWorkdays + 1);
-            int readyIdealEndBetweenWorkdays = readyDueBetweenWorkdays - 1 - random.nextInt(2);
-            LocalDateTime readyDate = EndDateUpdatingVariableListener.calculateEndDate(fromDate, readyWorkdayOffset * 24);
-            LocalDateTime dueDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyDueBetweenWorkdays * 24);
-            LocalDateTime idealEndDate = EndDateUpdatingVariableListener.calculateEndDate(readyDate, readyIdealEndBetweenWorkdays * 24);
-
+            String jobArea = JOB_AREA_NAMES[random.nextInt(JOB_AREA_NAMES.length)] + " " + JOB_AREA_NUMBERS.get(random.nextInt(JOB_AREA_NUMBERS.size()));
             String bestekcode = BESTEK[random.nextInt(BESTEK.length)];
 
-            jobList.add(new Job(jobArea, bestekcode, readyDate, dueDate, idealEndDate));
+            jobList.add(new Job(jobArea, bestekcode));
         }
 
         jobRepository.persist(jobList);
     }
-
 }

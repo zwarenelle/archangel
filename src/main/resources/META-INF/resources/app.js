@@ -206,26 +206,12 @@ function refreshSchedule() {
                 id : job.id,
                 content: jobGroupElement.html()
             });
-            byJobItemDataSet.add({
-                  id: job.id + "_readyToIdealEnd", group: job.id,
-                  start: job.readyDate, end: job.idealEndDate,
-                  type: "background",
-                  style: "background-color: #8AE23433"
-            });
-            byJobItemDataSet.add({
-                  id: job.id + "_idealEndToDue", group: job.id,
-                  start: job.idealEndDate, end: job.dueDate,
-                  type: "background",
-                  style: "background-color: #FCAF3E33"
-            });
 
             if (job.crew == null || job.startDate == null) {
                 unassignedJobsCount++;
                 const unassignedJobElement = $(`<div class="card-body p-2"/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uur`))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Voorbereiding gereed: ${job.readyDate}`))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Uiterlijke einddatum: ${job.dueDate}`));
                 const byJobJobElement = $(`<div/>`)
                   .append($(`<h5 class="card-title mb-1"/>`).text(`Unassigned`));
                 $.each(job.requiredSkills, (index, tag) => {
@@ -245,12 +231,6 @@ function refreshSchedule() {
                     byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
                 });
                 unassignedJobs.append($(`<div class="col"/>`).append($(`<div class="card"/>`).append(unassignedJobElement)));
-                byJobItemDataSet.add({
-                    id : job.id, group: job.id,
-                    content: byJobJobElement.html(),
-                    start: job.readyDate, end: JSJoda.LocalDateTime.parse(job.readyDate).plusDays(job.durationInHours).toString(),
-                    style: "background-color: #EF292999"
-                });
             } else {
                 const byCrewJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
@@ -304,7 +284,7 @@ function refreshSchedule() {
             if (MonteurToCrew.has(availability.monteur.id)) {
                 if (availability.availabilityType.toString() == "UNAVAILABLE" || availability.availabilityType.toString() == "SICK") {
                     var nameElement = $(`<div/>`);
-                    nameElement.append("</br>");
+                    nameElement.append("Onbeschikbaar:</br>");
                     if (CrewMemberCount > 1) {
                         for (let index = 1; index < CrewMemberCount; index++) {
                             nameElement.append("</br>");
@@ -432,7 +412,10 @@ function updateJob(item) {
         console.log(result);
     }).done(function(data, statusText, xhr){
         if (xhr.status == 200) {
-            Swal.fire("Wijziging opgeslagen!", "", "success");
+            Swal.fire("Wijziging opgeslagen!", "", "success")
+            .then(function() {
+                refreshSchedule();
+            });
         }
     }).fail(function(data, textStatus, xhr) {
         Swal.fire("Systeemfout", "", "error");
@@ -448,7 +431,10 @@ function removeJob(item) {
         console.log(result);
     }).done(function(data, statusText, xhr){
         if (xhr.status == 200) {
-            Swal.fire("Wijziging opgeslagen!", "", "success");
+            Swal.fire("Wijziging opgeslagen!", "", "success")
+            .then(function() {
+                refreshSchedule();
+            });
         }
     }).fail(function(data, textStatus, xhr) {
         Swal.fire("Systeemfout", "", "error");

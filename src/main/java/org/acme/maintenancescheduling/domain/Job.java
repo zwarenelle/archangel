@@ -37,9 +37,6 @@ public class Job {
     private String adres;
     private String bestekcode;
     private int durationInHours;
-    private LocalDateTime readyDate; // Inclusive
-    private LocalDateTime dueDate; // Exclusive
-    private LocalDateTime idealEndDate; // Exclusive
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="JOB_ID")
@@ -58,25 +55,19 @@ public class Job {
     public Job() {
     }
 
-    public Job(String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate) {
+    public Job(String adres, String bestekcode) {
         this.adres = adres;
         this.bestekcode = bestekcode;
-        this.readyDate = readyDate;
-        this.dueDate = dueDate;
-        this.idealEndDate = idealEndDate;
         updateSkillsfromBestekcode();
         OptionalInt max = requiredSkills.stream()
         .mapToInt(skill -> skill.getDuur()).max();
         this.durationInHours = max.getAsInt();
     }
 
-    public Job(Long id, String adres, String bestekcode, LocalDateTime readyDate, LocalDateTime dueDate, LocalDateTime idealEndDate, Crew crew, LocalDateTime startDate) {
+    public Job(Long id, String adres, String bestekcode, Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
         this.bestekcode = bestekcode;
-        this.readyDate = readyDate;
-        this.dueDate = dueDate;
-        this.idealEndDate = idealEndDate;
         this.crew = crew;
         this.startDate = startDate;
         updateSkillsfromBestekcode();
@@ -105,18 +96,6 @@ public class Job {
     }
     public int getdurationInHours() {
         return durationInHours;
-    }
-    
-    public LocalDateTime getReadyDate() {
-        return readyDate;
-    }
-
-    public LocalDateTime getDueDate() {
-        return dueDate;
-    }
-
-    public LocalDateTime getIdealEndDate() {
-        return idealEndDate;
     }
 
     public List<JobRequirement> getrequiredSkills() {
