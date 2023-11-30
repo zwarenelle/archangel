@@ -211,7 +211,8 @@ function refreshSchedule() {
                 unassignedJobsCount++;
                 const unassignedJobElement = $(`<div class="card-body p-2"/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uur`))
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Bestekcode: ${job.bestekcode}`))
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Verwachte uitvoeringsduur: ${job.durationInHours} uur`));
                 const byJobJobElement = $(`<div/>`)
                   .append($(`<h5 class="card-title mb-1"/>`).text(`Unassigned`));
                 $.each(job.requiredSkills, (index, tag) => {
@@ -234,7 +235,7 @@ function refreshSchedule() {
             } else {
                 const byCrewJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.durationInHours} uur`));
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.bestekcode}: ${job.durationInHours} uur`));
                 const byJobJobElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.crew.name));
                 $.each(job.requiredSkills, (index, tag) => {
@@ -306,7 +307,7 @@ function refreshSchedule() {
             unassignedJobs.append($(`<p/>`).text(`There are no unassigned jobs.`));
         }
 
-        byCrewTimeline.setWindow(schedule.workCalendar.fromDate, schedule.workCalendar.toDate);
+        // byCrewTimeline.setWindow(schedule.workCalendar.fromDate, schedule.workCalendar.toDate);
         byJobTimeline.setWindow(schedule.workCalendar.fromDate, schedule.workCalendar.toDate);
         byCapacityTimeline.setWindow(schedule.workCalendar.fromDate, schedule.workCalendar.toDate);
         
