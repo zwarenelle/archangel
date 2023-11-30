@@ -36,6 +36,9 @@ public class MaintenanceSchedule {
     // Ignored by Timefold, used by the UI to display solve or stop solving button
     private SolverStatus solverStatus;
 
+    public static final int TIME_GRAIN_MINUTES = 60;
+    private static boolean overlapping = false;
+
     // No-arg constructor required for Timefold
     public MaintenanceSchedule() {
     }
@@ -53,7 +56,7 @@ public class MaintenanceSchedule {
     public CountableValueRange<LocalDateTime> createStartDateList() {
         return ValueRangeFactory.createLocalDateTimeValueRange(
             workCalendar.getFromDate(), workCalendar.getToDate(),
-            1, ChronoUnit.HOURS);
+                TIME_GRAIN_MINUTES, ChronoUnit.MINUTES);
     }
 
     public List<Availability> getAvailabilityList() {
@@ -78,6 +81,14 @@ public class MaintenanceSchedule {
 
     public HardMediumSoftLongScore getScore() {
         return score;
+    }
+
+    public boolean getOverlapping() {
+        return MaintenanceSchedule.overlapping;
+    }
+
+    public static void setOverlapping(boolean overlapping) {
+        MaintenanceSchedule.overlapping = overlapping;
     }
 
     public void setAvailabilityList(List<Availability> availabilityList) {

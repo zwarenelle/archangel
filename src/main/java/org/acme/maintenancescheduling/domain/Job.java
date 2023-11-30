@@ -36,7 +36,8 @@ public class Job {
 
     private String adres;
     private String bestekcode;
-    private int durationInHours;
+    // 1 grain is equal to MaintenanceSchedule.TIME_GRAIN_MINUTES minutes
+    private int durationInGrains;
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="JOB_ID")
@@ -61,7 +62,7 @@ public class Job {
         updateSkillsfromBestekcode();
         OptionalInt max = requiredSkills.stream()
         .mapToInt(skill -> skill.getDuur()).max();
-        this.durationInHours = max.getAsInt();
+        this.durationInGrains = max.getAsInt() * (60 / MaintenanceSchedule.TIME_GRAIN_MINUTES);
     }
 
     public Job(Long id, String adres, String bestekcode, Crew crew, LocalDateTime startDate) {
@@ -73,8 +74,8 @@ public class Job {
         updateSkillsfromBestekcode();
         OptionalInt max = requiredSkills.stream()
         .mapToInt(skill -> skill.getDuur()).max();
-        this.durationInHours = max.getAsInt();
-        this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInHours);
+        this.durationInGrains = max.getAsInt() * (60 / MaintenanceSchedule.TIME_GRAIN_MINUTES);
+        this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInGrains);
     }
 
     @Override
@@ -94,8 +95,17 @@ public class Job {
     public String getBestekcode() {
         return bestekcode;
     }
-    public int getdurationInHours() {
-        return durationInHours;
+
+    public int getDurationInHours() {
+        return durationInGrains / (60 / MaintenanceSchedule.TIME_GRAIN_MINUTES);
+    }
+
+    public int getDurationInMinutes() {
+        return durationInGrains * MaintenanceSchedule.TIME_GRAIN_MINUTES;
+    }
+
+    public int getDurationInGrains() {
+        return durationInGrains;
     }
 
     public List<JobRequirement> getrequiredSkills() {
@@ -155,6 +165,10 @@ public class Job {
 
     public void setAdres(String adres) {
         this.adres = adres;
+    }
+
+    public void setDurationInGrains(int durationInGrains) {
+        this.durationInGrains = durationInGrains;
     }
 
 }

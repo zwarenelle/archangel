@@ -41,15 +41,15 @@ public class EndDateUpdatingVariableListener implements VariableListener<Mainten
 
     protected void updateEndDate(ScoreDirector<MaintenanceSchedule> scoreDirector, Job job) {
         scoreDirector.beforeVariableChanged(job, "endDate");
-        job.setEndDate(calculateEndDate(job.getStartDate(), job.getdurationInHours()));
+        job.setEndDate(calculateEndDate(job.getStartDate(), job.getDurationInMinutes()));
         scoreDirector.afterVariableChanged(job, "endDate");
     }
 
-    public static LocalDateTime calculateEndDate(LocalDateTime startDate, int durationInHours) {
+    public static LocalDateTime calculateEndDate(LocalDateTime startDate, int durationInMinutes) {
         if (startDate == null) {
             return null;
         } else {
-            return startDate.plusHours(durationInHours);
+            return startDate.plusMinutes(durationInMinutes);
         }
     }
 }

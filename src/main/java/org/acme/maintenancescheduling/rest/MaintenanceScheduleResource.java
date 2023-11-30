@@ -111,6 +111,15 @@ public class MaintenanceScheduleResource {
         return entity;
     }
 
+    @PUT
+    @Path("overlapping")
+    @Transactional
+    public void set(String boolString) {
+        Boolean bool = Boolean.valueOf(boolString);
+        MaintenanceSchedule.setOverlapping(bool);
+        return;
+    }
+
     public SolverStatus getSolverStatus() {
         return solverManager.getSolverStatus(SINGLETON_SCHEDULE_ID);
     }

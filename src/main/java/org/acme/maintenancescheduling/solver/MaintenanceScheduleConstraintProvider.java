@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.acme.maintenancescheduling.domain.Availability;
 import org.acme.maintenancescheduling.domain.AvailabilityType;
 import org.acme.maintenancescheduling.domain.Job;
+import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
 
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
@@ -46,12 +47,18 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .forEachUniquePair(Job.class,
                         equal(Job::getCrew),
                         overlapping(Job::getStartDate, Job::getEndDate))
+                // .filter((job1, job2) -> ChronoUnit.MINUTES.between(
+                //                 job1.getStartDate().isAfter(job2.getStartDate())
+                //                         ? job1.getStartDate() : job2.getStartDate(),
+                //                 job1.getEndDate().isBefore(job2.getEndDate())
+                //                         ? job1.getEndDate() : job2.getEndDate()) > MaintenanceSchedule.TIME_GRAIN_MINUTES)
                 .penalizeLong(HardMediumSoftLongScore.ONE_HARD,
-                        (job1, job2) -> ChronoUnit.HOURS.between(
+                        (job1, job2) -> ChronoUnit.MINUTES.between(
                                 job1.getStartDate().isAfter(job2.getStartDate())
                                         ? job1.getStartDate() : job2.getStartDate(),
                                 job1.getEndDate().isBefore(job2.getEndDate())
                                         ? job1.getEndDate() : job2.getEndDate())
+                                        // / (60 / MaintenanceSchedule.TIME_GRAIN_MINUTES)
                         )
                 .asConstraint("Dubbele boeking (ploeg)");
     }
