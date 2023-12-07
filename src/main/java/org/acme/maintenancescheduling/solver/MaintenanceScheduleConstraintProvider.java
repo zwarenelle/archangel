@@ -77,14 +77,14 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 // Filter out if the job needs more monteurs than there are in the crew, cause then all skills will never match
                         .filter((job, beschikbaarheid) ->
                                 // Filter crew with monteurs that are available for that day and compare the list size with the job requirements list
-                                job.getrequiredSkills().size() > job.getCrew().filter(beschikbaarheid.stream().filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.AVAILABLE).map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
+                                job.getrequiredSkills().size() > job.getCrew().filter(beschikbaarheid.stream().filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.BESCHIKBAAR).map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
                                         .getCrewSkills().size() ||
                                 // If above is not false, it could still be that the skills do not match between (again, filtered) crew and job
                                 !(job.getrequiredSkills().stream()
                                 // For every requirement, search for a suitable monteur in crew and make sure there are enough!
                                 .allMatch(jobreq -> job.getCrew()
                                         .filter(beschikbaarheid.stream()
-                                                .filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.AVAILABLE)
+                                                .filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.BESCHIKBAAR)
                                                 .map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
                                         .getCrewSkills().stream()
                                 .anyMatch(crewskill -> 

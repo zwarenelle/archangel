@@ -104,10 +104,10 @@ public class DemoDataGenerator {
             for (Monteur monteur : crew.getMonteurs()) {
                 for (LocalDate date = fromDate.toLocalDate(); date.isBefore(toDate.toLocalDate()); date = date.plusDays(1)) {
                     if (date.getDayOfWeek().getValue() >= 6) {
-                        beschikbaarheidRepository.persist(new Beschikbaarheid(monteur, date, BeschikbaarheidType.UNAVAILABLE));
+                        beschikbaarheidRepository.persist(new Beschikbaarheid(monteur, date, BeschikbaarheidType.ONBESCHIKBAAR));
                     }
                     else {
-                        beschikbaarheidRepository.persist(new Beschikbaarheid(monteur, date, BeschikbaarheidType.AVAILABLE));
+                        beschikbaarheidRepository.persist(new Beschikbaarheid(monteur, date, BeschikbaarheidType.BESCHIKBAAR));
                     }
                 }
             }

@@ -70,27 +70,27 @@ public class MaintenanceSchedulingConstraintProviderTest {
                 .given(
                         new Job(1L, "Downtown tunnel", "E1680", BETA_CREW, DAY_1),
                         new Job(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
-                        new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), BeschikbaarheidType.UNAVAILABLE))
+                        new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), BeschikbaarheidType.ONBESCHIKBAAR))
                 .penalizesBy(4L);
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::resourceCheck)
                 .given(
                         new Job(1L, "Downtown tunnel", "E1680", ALPHA_CREW, DAY_1),
                         new Job(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
-                        new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), BeschikbaarheidType.UNAVAILABLE))
+                        new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), BeschikbaarheidType.ONBESCHIKBAAR))
                 .penalizesBy(2L);
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::resourceCheck)
                 .given(
                         new Job(1L, "Downtown tunnel", "E1680", BETA_CREW, DAY_1),
                         new Job(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
-                        new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), BeschikbaarheidType.UNAVAILABLE),
-                        new Beschikbaarheid(BETA_CREW.getMonteurs().get(1), DAY_1.toLocalDate(), BeschikbaarheidType.UNAVAILABLE))
+                        new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), BeschikbaarheidType.ONBESCHIKBAAR),
+                        new Beschikbaarheid(BETA_CREW.getMonteurs().get(1), DAY_1.toLocalDate(), BeschikbaarheidType.ONBESCHIKBAAR))
                 .penalizesBy(4L);
         constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::resourceCheck)
                 .given(
                         new Job(1L, "Downtown tunnel", "E1680", ALPHA_CREW, DAY_1),
                         new Job(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
-                        new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), BeschikbaarheidType.UNAVAILABLE),
-                        new Beschikbaarheid(ALPHA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), BeschikbaarheidType.UNAVAILABLE))
+                        new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), BeschikbaarheidType.ONBESCHIKBAAR),
+                        new Beschikbaarheid(ALPHA_CREW.getMonteurs().get(0), DAY_1.toLocalDate(), BeschikbaarheidType.ONBESCHIKBAAR))
                 .penalizesBy(4L);
     }
 

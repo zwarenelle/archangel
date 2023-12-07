@@ -283,7 +283,7 @@ function refreshSchedule() {
 
             // Add background color to Crew planning if there's an unavailable or sick employee
             if (MonteurToCrew.has(beschikbaarheid.monteur.id)) {
-                if (beschikbaarheid.beschikbaarheidType.toString() == "UNAVAILABLE" || beschikbaarheid.beschikbaarheidType.toString() == "SICK") {
+                if (beschikbaarheid.beschikbaarheidType.toString() == "ONBESCHIKBAAR" || beschikbaarheid.beschikbaarheidType.toString() == "ZIEK") {
                     var nameElement = $(`<div/>`);
                     nameElement.append("Onbeschikbaar:</br>");
                     if (CrewMemberCount > 1) {
