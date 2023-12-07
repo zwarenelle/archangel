@@ -21,7 +21,7 @@ public class MaintenanceSchedule {
     @ProblemFactProperty
     private WorkCalendar workCalendar;
     @ProblemFactCollectionProperty
-    List<Availability> availabilityList;
+    List<Beschikbaarheid> beschikbaarheidList;
     @ProblemFactCollectionProperty
     @ValueRangeProvider
     private List<Crew> crewList;
@@ -43,10 +43,10 @@ public class MaintenanceSchedule {
     public MaintenanceSchedule() {
     }
 
-    public MaintenanceSchedule(WorkCalendar workCalendar, List<Availability> availabilityList,
+    public MaintenanceSchedule(WorkCalendar workCalendar, List<Beschikbaarheid> beschikbaarheidList,
             List<Crew> crewList, List<Monteur> monteurList, List<Job> jobList) {
         this.workCalendar = workCalendar;
-        this.availabilityList = availabilityList;
+        this.beschikbaarheidList = beschikbaarheidList;
         this.crewList = crewList;
         this.monteurList = monteurList;
         this.jobList = jobList;
@@ -59,8 +59,8 @@ public class MaintenanceSchedule {
                 TIME_GRAIN_MINUTES, ChronoUnit.MINUTES);
     }
 
-    public List<Availability> getAvailabilityList() {
-        return availabilityList;
+    public List<Beschikbaarheid> getBeschikbaarheidList() {
+        return beschikbaarheidList;
     }
 
     public WorkCalendar getWorkCalendar() {
@@ -91,8 +91,8 @@ public class MaintenanceSchedule {
         MaintenanceSchedule.overlapping = overlapping;
     }
 
-    public void setAvailabilityList(List<Availability> availabilityList) {
-        this.availabilityList = availabilityList;
+    public void setBeschikbaarheidList(List<Beschikbaarheid> beschikbaarheidList) {
+        this.beschikbaarheidList = beschikbaarheidList;
     }
 
     public void setScore(HardMediumSoftLongScore score) {

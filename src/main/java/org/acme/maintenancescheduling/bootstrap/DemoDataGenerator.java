@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.acme.maintenancescheduling.domain.Availability;
-import org.acme.maintenancescheduling.domain.AvailabilityType;
+import org.acme.maintenancescheduling.domain.Beschikbaarheid;
+import org.acme.maintenancescheduling.domain.BeschikbaarheidType;
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.Monteur;
 import org.acme.maintenancescheduling.domain.Skill;
 import org.acme.maintenancescheduling.domain.WorkCalendar;
-import org.acme.maintenancescheduling.persistence.AvailabilityRepository;
+import org.acme.maintenancescheduling.persistence.BeschikbaarheidRepository;
 import org.acme.maintenancescheduling.persistence.CrewRepository;
 import org.acme.maintenancescheduling.persistence.JobRepository;
 import org.acme.maintenancescheduling.persistence.JobRequirementRepository;
@@ -53,7 +53,7 @@ public class DemoDataGenerator {
     @Inject
     MonteurRepository monteurRepository;
     @Inject
-    AvailabilityRepository availabilityRepository;
+    BeschikbaarheidRepository beschikbaarheidRepository;
 
     @Transactional
     public void generateDemoData(@Observes StartupEvent startupEvent) {
@@ -104,10 +104,10 @@ public class DemoDataGenerator {
             for (Monteur monteur : crew.getMonteurs()) {
                 for (LocalDate date = fromDate.toLocalDate(); date.isBefore(toDate.toLocalDate()); date = date.plusDays(1)) {
                     if (date.getDayOfWeek().getValue() >= 6) {
-                        availabilityRepository.persist(new Availability(monteur, date, AvailabilityType.UNAVAILABLE));
+                        beschikbaarheidRepository.persist(new Beschikbaarheid(monteur, date, BeschikbaarheidType.UNAVAILABLE));
                     }
                     else {
-                        availabilityRepository.persist(new Availability(monteur, date, AvailabilityType.AVAILABLE));
+                        beschikbaarheidRepository.persist(new Beschikbaarheid(monteur, date, BeschikbaarheidType.AVAILABLE));
                     }
                 }
             }

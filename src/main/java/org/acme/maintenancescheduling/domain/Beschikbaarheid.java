@@ -10,7 +10,7 @@ import jakarta.persistence.ManyToOne;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
 @Entity
-public class Availability {
+public class Beschikbaarheid {
 
     @PlanningId
     @Id
@@ -22,20 +22,20 @@ public class Availability {
 
     LocalDate date;
 
-    AvailabilityType availabilityType;
+    BeschikbaarheidType beschikbaarheidType;
 
-    public Availability() {
+    public Beschikbaarheid() {
     }
 
-    public Availability(Monteur monteur, LocalDate date, AvailabilityType availabilityType) {
+    public Beschikbaarheid(Monteur monteur, LocalDate date, BeschikbaarheidType beschikbaarheidType) {
         this.monteur = monteur;
         this.date = date;
-        this.availabilityType = availabilityType;
+        this.beschikbaarheidType = beschikbaarheidType;
     }
 
     @Override
     public String toString() {
-        return availabilityType + "(" + monteur + ", " + date + ")";
+        return beschikbaarheidType + "(" + monteur + ", " + date + ")";
     }
 
     public Long getId() {
@@ -66,12 +66,12 @@ public class Availability {
         this.date = localDate;
     }
 
-    public AvailabilityType getAvailabilityType() {
-        return availabilityType;
+    public BeschikbaarheidType getBeschikbaarheidType() {
+        return beschikbaarheidType;
     }
 
-    public void setAvailabilityType(AvailabilityType availabilityType) {
-        this.availabilityType = availabilityType;
+    public void setBeschikbaarheidType(BeschikbaarheidType beschikbaarheidType) {
+        this.beschikbaarheidType = beschikbaarheidType;
     }
 
     public void setMonteur(Monteur monteur) {

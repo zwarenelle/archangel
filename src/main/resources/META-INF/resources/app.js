@@ -266,24 +266,24 @@ function refreshSchedule() {
         var CrewMemberCount = 1;
         var PreviousMonteurID;
 
-        $.each(schedule.availabilityList, (index, availability) => {
-            if (availability.monteur.id == PreviousMonteurID) {}
-            else if (MonteurToCrew.get(availability.monteur.id) == MonteurToCrew.get(availability.monteur.id - 1)) {CrewMemberCount++;}
+        $.each(schedule.beschikbaarheidList, (index, beschikbaarheid) => {
+            if (beschikbaarheid.monteur.id == PreviousMonteurID) {}
+            else if (MonteurToCrew.get(beschikbaarheid.monteur.id) == MonteurToCrew.get(beschikbaarheid.monteur.id - 1)) {CrewMemberCount++;}
             else {CrewMemberCount = 1;}
 
-            PreviousMonteurID = availability.monteur.id;
+            PreviousMonteurID = beschikbaarheid.monteur.id;
 
             const byCapacityElement = $(`<div/>`)
-                .append($(`<h5 class="card-title mb-1"/>`).text(availability.availabilityType.toString()));
+                .append($(`<h5 class="card-title mb-1"/>`).text(beschikbaarheid.beschikbaarheidType.toString()));
             byCapacityItemDataSet.add({
-                id : availability.id, group: availability.monteur.id,
+                id : beschikbaarheid.id, group: beschikbaarheid.monteur.id,
                 content: byCapacityElement.html(),
-                start: availability.date, end: JSJoda.LocalDate.parse(availability.date).plusDays(1).toString()
+                start: beschikbaarheid.date, end: JSJoda.LocalDate.parse(beschikbaarheid.date).plusDays(1).toString()
             });
 
             // Add background color to Crew planning if there's an unavailable or sick employee
-            if (MonteurToCrew.has(availability.monteur.id)) {
-                if (availability.availabilityType.toString() == "UNAVAILABLE" || availability.availabilityType.toString() == "SICK") {
+            if (MonteurToCrew.has(beschikbaarheid.monteur.id)) {
+                if (beschikbaarheid.beschikbaarheidType.toString() == "UNAVAILABLE" || beschikbaarheid.beschikbaarheidType.toString() == "SICK") {
                     var nameElement = $(`<div/>`);
                     nameElement.append("Onbeschikbaar:</br>");
                     if (CrewMemberCount > 1) {
@@ -291,10 +291,10 @@ function refreshSchedule() {
                             nameElement.append("</br>");
                         }
                     }
-                    nameElement.append(availability.monteur.naam);
+                    nameElement.append(beschikbaarheid.monteur.naam);
                     byCrewItemDataSet.add({
-                        group: MonteurToCrew.get(availability.monteur.id),
-                        start: availability.date, end: JSJoda.LocalDate.parse(availability.date).plusDays(1).toString(),
+                        group: MonteurToCrew.get(beschikbaarheid.monteur.id),
+                        start: beschikbaarheid.date, end: JSJoda.LocalDate.parse(beschikbaarheid.date).plusDays(1).toString(),
                         content: nameElement.html(),
                         type: "background",
                         style: "background-color: #DB4D4D20"

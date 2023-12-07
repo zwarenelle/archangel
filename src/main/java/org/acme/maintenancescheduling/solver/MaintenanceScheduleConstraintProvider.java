@@ -7,8 +7,8 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
 
-import org.acme.maintenancescheduling.domain.Availability;
-import org.acme.maintenancescheduling.domain.AvailabilityType;
+import org.acme.maintenancescheduling.domain.Beschikbaarheid;
+import org.acme.maintenancescheduling.domain.BeschikbaarheidType;
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
 
@@ -64,28 +64,28 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
     }
 
     public Constraint resourceCheck(ConstraintFactory constraintFactory) {
-        // Match crewSkills and Availability to JobRequirements
+        // Match crewSkills and Beschikbaarheid to JobRequirements
         return constraintFactory
                 .forEach(Job.class)
-                // Join availability's on the same date as the startdate of job
-                .join(Availability.class, 
-                        Joiners.equal((Job job) -> job.getStartDate().toLocalDate(), Availability::getDate),
+                // Join beschikbaarheid's on the same date as the startdate of job
+                .join(Beschikbaarheid.class, 
+                        Joiners.equal((Job job) -> job.getStartDate().toLocalDate(), Beschikbaarheid::getDate),
                         //Filter monteurs that are actually in the crew that's assigned this job
-                        Joiners.filtering((job, availability) -> job.getCrew().getMonteurs().contains(availability.getMonteur())))
+                        Joiners.filtering((job, beschikbaarheid) -> job.getCrew().getMonteurs().contains(beschikbaarheid.getMonteur())))
                 // Summarize the availabilties into a list per job
-                .groupBy((job, availability) -> job, ConstraintCollectors.toList((job, availability) -> availability))
+                .groupBy((job, beschikbaarheid) -> job, ConstraintCollectors.toList((job, beschikbaarheid) -> beschikbaarheid))
                 // Filter out if the job needs more monteurs than there are in the crew, cause then all skills will never match
-                        .filter((job, availability) ->
+                        .filter((job, beschikbaarheid) ->
                                 // Filter crew with monteurs that are available for that day and compare the list size with the job requirements list
-                                job.getrequiredSkills().size() > job.getCrew().filter(availability.stream().filter(a -> a.getAvailabilityType() == AvailabilityType.AVAILABLE).map(Availability::getMonteur).collect(Collectors.toList()))
+                                job.getrequiredSkills().size() > job.getCrew().filter(beschikbaarheid.stream().filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.AVAILABLE).map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
                                         .getCrewSkills().size() ||
                                 // If above is not false, it could still be that the skills do not match between (again, filtered) crew and job
                                 !(job.getrequiredSkills().stream()
                                 // For every requirement, search for a suitable monteur in crew and make sure there are enough!
                                 .allMatch(jobreq -> job.getCrew()
-                                        .filter(availability.stream()
-                                                .filter(a -> a.getAvailabilityType() == AvailabilityType.AVAILABLE)
-                                                .map(Availability::getMonteur).collect(Collectors.toList()))
+                                        .filter(beschikbaarheid.stream()
+                                                .filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.AVAILABLE)
+                                                .map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
                                         .getCrewSkills().stream()
                                 .anyMatch(crewskill -> 
                                         (crewskill.getTypenummer() <= 3 ? 
@@ -94,7 +94,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                                         && jobreq.getAantal() <= crewskill.getAantal())))
                         )
                 .penalizeLong(HardMediumSoftLongScore.ONE_HARD,
-                        (job, availability) -> job.getrequiredSkills().isEmpty() ? 1L : Long.valueOf(job.getrequiredSkills().size())
+                        (job, beschikbaarheid) -> job.getrequiredSkills().isEmpty() ? 1L : Long.valueOf(job.getrequiredSkills().size())
                         )
                 .asConstraint("Beschikbaarheid");
     }

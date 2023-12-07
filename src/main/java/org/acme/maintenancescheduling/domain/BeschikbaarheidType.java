@@ -1,6 +1,6 @@
 package org.acme.maintenancescheduling.domain;
 
-public enum AvailabilityType {
+public enum BeschikbaarheidType {
     AVAILABLE,
     UNAVAILABLE,
     SICK;

@@ -12,7 +12,7 @@
 
   <!-- Configure the optimization algorithms -->
   <termination>
-    <spentLimit>PT35S</spentLimit>
+    <spentLimit>PT30S</spentLimit>
   </termination>
 
   <!-- <constructionHeuristic>
