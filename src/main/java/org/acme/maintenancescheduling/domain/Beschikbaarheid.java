@@ -1,6 +1,6 @@
 package org.acme.maintenancescheduling.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,22 +20,24 @@ public class Beschikbaarheid {
     @ManyToOne
     Monteur monteur;
 
-    LocalDate date;
+    LocalDateTime start;
+    LocalDateTime end;
 
-    BeschikbaarheidType beschikbaarheidType;
+    BeschikbaarheidType availabilityType;
 
     public Beschikbaarheid() {
     }
 
-    public Beschikbaarheid(Monteur monteur, LocalDate date, BeschikbaarheidType beschikbaarheidType) {
+    public Beschikbaarheid(Monteur monteur, LocalDateTime start, LocalDateTime end, BeschikbaarheidType availabilityType) {
         this.monteur = monteur;
-        this.date = date;
-        this.beschikbaarheidType = beschikbaarheidType;
+        this.start = start;
+        this.end = end;
+        this.availabilityType = availabilityType;
     }
 
     @Override
     public String toString() {
-        return beschikbaarheidType + "(" + monteur + ", " + date + ")";
+        return availabilityType + "(" + monteur + ", " + start + ")";
     }
 
     public Long getId() {
@@ -54,27 +56,35 @@ public class Beschikbaarheid {
         this.monteur = monteur;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getStart() {
+        return start;
+    }
+
+    public LocalDateTime getEnd() {
+        return end;
     }
 
     public Monteur getMonteur() {
         return monteur;
     }
 
-    public void setDate(LocalDate localDate) {
-        this.date = localDate;
+    public void setStart(LocalDateTime localDateTime) {
+        this.start = localDateTime;
     }
 
     public BeschikbaarheidType getBeschikbaarheidType() {
-        return beschikbaarheidType;
+        return availabilityType;
     }
 
-    public void setBeschikbaarheidType(BeschikbaarheidType beschikbaarheidType) {
-        this.beschikbaarheidType = beschikbaarheidType;
+    public void setBeschikbaarheidType(BeschikbaarheidType availabilityType) {
+        this.availabilityType = availabilityType;
     }
 
     public void setMonteur(Monteur monteur) {
         this.monteur = monteur;
+    }
+
+    public void setEnd(LocalDateTime end) {
+        this.end = end;
     }
 }

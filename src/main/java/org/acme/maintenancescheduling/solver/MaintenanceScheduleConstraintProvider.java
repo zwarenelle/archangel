@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.acme.maintenancescheduling.domain.Beschikbaarheid;
 import org.acme.maintenancescheduling.domain.BeschikbaarheidType;
 import org.acme.maintenancescheduling.domain.Job;
-import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
 
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
@@ -47,29 +46,28 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .forEachUniquePair(Job.class,
                         equal(Job::getCrew),
                         overlapping(Job::getStartDate, Job::getEndDate))
-                // .filter((job1, job2) -> ChronoUnit.MINUTES.between(
-                //                 job1.getStartDate().isAfter(job2.getStartDate())
-                //                         ? job1.getStartDate() : job2.getStartDate(),
-                //                 job1.getEndDate().isBefore(job2.getEndDate())
-                //                         ? job1.getEndDate() : job2.getEndDate()) > MaintenanceSchedule.TIME_GRAIN_MINUTES)
+                .filter((job1, job2) -> ChronoUnit.MINUTES.between(
+                                job1.getStartDate().isAfter(job2.getStartDate())
+                                        ? job1.getStartDate() : job2.getStartDate(),
+                                job1.getEndDate().isBefore(job2.getEndDate())
+                                        ? job1.getEndDate() : job2.getEndDate()) > 15) // Job's may overlap 15 minutes
                 .penalizeLong(HardMediumSoftLongScore.ONE_HARD,
                         (job1, job2) -> ChronoUnit.MINUTES.between(
                                 job1.getStartDate().isAfter(job2.getStartDate())
                                         ? job1.getStartDate() : job2.getStartDate(),
                                 job1.getEndDate().isBefore(job2.getEndDate())
                                         ? job1.getEndDate() : job2.getEndDate())
-                                        // / (60 / MaintenanceSchedule.TIME_GRAIN_MINUTES)
                         )
                 .asConstraint("Dubbele boeking (ploeg)");
     }
 
     public Constraint resourceCheck(ConstraintFactory constraintFactory) {
-        // Match crewSkills and Beschikbaarheid to JobRequirements
+        // Match crewSkills and Availability to JobRequirements
         return constraintFactory
                 .forEach(Job.class)
                 // Join beschikbaarheid's on the same date as the startdate of job
                 .join(Beschikbaarheid.class, 
-                        Joiners.equal((Job job) -> job.getStartDate().toLocalDate(), Beschikbaarheid::getDate),
+                        Joiners.overlapping(Job::getStartDate, Job::getEndDate, Beschikbaarheid::getStart, Beschikbaarheid::getEnd),
                         //Filter monteurs that are actually in the crew that's assigned this job
                         Joiners.filtering((job, beschikbaarheid) -> job.getCrew().getMonteurs().contains(beschikbaarheid.getMonteur())))
                 // Summarize the availabilties into a list per job
@@ -77,16 +75,17 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 // Filter out if the job needs more monteurs than there are in the crew, cause then all skills will never match
                         .filter((job, beschikbaarheid) ->
                                 // Filter crew with monteurs that are available for that day and compare the list size with the job requirements list
-                                job.getrequiredSkills().size() > job.getCrew().filter(beschikbaarheid.stream().filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.BESCHIKBAAR).map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
+                                job.getrequiredSkills().size() > job.getCrew().filter(beschikbaarheid.stream()
+                                        .filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.BESCHIKBAAR).map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
                                         .getCrewSkills().size() ||
-                                // If above is not false, it could still be that the skills do not match between (again, filtered) crew and job
-                                !(job.getrequiredSkills().stream()
-                                // For every requirement, search for a suitable monteur in crew and make sure there are enough!
-                                .allMatch(jobreq -> job.getCrew()
-                                        .filter(beschikbaarheid.stream()
-                                                .filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.BESCHIKBAAR)
-                                                .map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
-                                        .getCrewSkills().stream()
+                                        // If above is not false, it could still be that the skills do not match between (again, filtered) crew and job
+                                        !(job.getrequiredSkills().stream()
+                                        // For every requirement, search for a suitable monteur in crew and make sure there are enough!
+                                        .allMatch(jobreq -> job.getCrew()
+                                                .filter(beschikbaarheid.stream()
+                                                        .filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.BESCHIKBAAR)
+                                                        .map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
+                                                .getCrewSkills().stream()
                                 .anyMatch(crewskill -> 
                                         (crewskill.getTypenummer() <= 3 ? 
                                                 jobreq.getTypenummer() <= crewskill.getTypenummer() : 
