@@ -16,13 +16,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class Crew{
+public class Crew {
 
     @PlanningId
     @Id
     @GeneratedValue
     private Long id;
-    private String name;
+    private String naam;
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="CREW_ID")
@@ -36,8 +36,8 @@ public class Crew{
     public Crew() {
     }
 
-    public Crew(String name, List<Monteur> monteurs) {
-        this.name = name;
+    public Crew(String naam, List<Monteur> monteurs) {
+        this.naam = naam;
         this.monteurs = monteurs;
         this.setCrewSkills();
     }
@@ -67,8 +67,8 @@ public class Crew{
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String naam) {
+        this.naam = naam;
     }
     
     public void setMonteurs(List<Monteur> monteurs) {
@@ -86,7 +86,7 @@ public class Crew{
     }
 
     public Crew filter(List<Monteur> monteursToRemove) {
-        Crew newcrew = new Crew(this.name, monteursToRemove);
+        Crew newcrew = new Crew(this.naam, monteursToRemove);
         return newcrew;
     }
 

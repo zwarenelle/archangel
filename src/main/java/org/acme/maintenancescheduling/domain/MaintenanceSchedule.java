@@ -21,7 +21,7 @@ public class MaintenanceSchedule {
     @ProblemFactProperty
     private WorkCalendar workCalendar;
     @ProblemFactCollectionProperty
-    List<Beschikbaarheid> beschikbaarheidList;
+    private List<Beschikbaarheid> beschikbaarheidList;
     @ProblemFactCollectionProperty
     @ValueRangeProvider
     private List<Crew> crewList;

@@ -172,7 +172,7 @@ function refreshSchedule() {
 
         $.each(schedule.crewList, (index, crew) => {
                 const crewDescription = $(`<div/>`)
-                .append(crew.name)
+                .append(crew.naam)
                 $.each(crew.monteurs, (index, monteur) => {
                     MonteurToCrew.set(monteur.id, crew.id);
 
@@ -237,7 +237,7 @@ function refreshSchedule() {
                     .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.bestekcode}: ${job.durationInHours} uur`));
                 const byJobJobElement = $(`<div/>`)
-                    .append($(`<h5 class="card-title mb-1"/>`).text(job.crew.name));
+                    .append($(`<h5 class="card-title mb-1"/>`).text(job.crew.naam));
                 $.each(job.requiredSkills, (index, tag) => {
                     if (tag.omschrijving.toString().startsWith("VIAG")) {color = "#FEB900";}
                     else if (tag.omschrijving.toString().startsWith("BEI")) {color = "#ED5353";}
