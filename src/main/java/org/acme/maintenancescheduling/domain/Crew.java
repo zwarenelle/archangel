@@ -44,7 +44,7 @@ public class Crew {
 
     @Override
     public String toString() {
-        return name;
+        return this.naam;
     }
 
     public Long getId() {
@@ -52,7 +52,7 @@ public class Crew {
     }
 
     public String getName() {
-        return name;
+        return this.naam;
     }
 
     public List<Monteur> getMonteurs() {
