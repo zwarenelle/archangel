@@ -33,7 +33,7 @@ const byCrewTimelineOptions = {
     orientation: {axis: "top"},
     stack: false,
     editable: {
-        add: true,         // add new items by double tapping
+        add: false,         // add new items by double tapping
         updateTime: true,  // drag items horizontally
         updateGroup: true, // drag items from one group to another
         remove: true,       // delete an item by tapping the delete button top right
@@ -250,6 +250,15 @@ function refreshSchedule() {
                     content: byCrewJobElement.html(),
                     start: job.startDate, end: job.endDate
                 });
+                // if (1 == true) {
+                //     byCrewItemDataSet.add({
+                //         id : job.id, group: job.crew.id,
+                //         content: "Boogzinker",
+                //         color: "#003366",
+                //         editable: false,
+                //         start: job.startDate - 3, end: job.endDate
+                //     });
+                // }
                 byJobItemDataSet.add({
                     id : job.id, group: job.id,
                     content: byJobJobElement.html(),

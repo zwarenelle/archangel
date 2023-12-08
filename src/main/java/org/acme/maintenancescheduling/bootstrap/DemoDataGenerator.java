@@ -73,7 +73,7 @@ public class DemoDataGenerator {
         // crewList.add(new Crew("Ploeg G3", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")), new Monteur("Mike2", new Skill(2, "VIAG VOP meters")))));
         
         // Regular
-        crewList.add(new Crew("Ploeg G3", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")))));
+        // crewList.add(new Crew("Ploeg G3", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")))));
         
 
         crewRepository.persist(crewList);
@@ -96,7 +96,7 @@ public class DemoDataGenerator {
             "G1707", "G1708", "G1712", "G1714"};
 
         LocalDateTime fromDate = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.of(0, 0, 0, 0));
-        int weekListSize = 2;
+        int weekListSize = 1;
         LocalDateTime toDate = fromDate.plusWeeks(weekListSize);
         workCalendarRepository.persist(new WorkCalendar(fromDate, toDate));
 
@@ -114,7 +114,7 @@ public class DemoDataGenerator {
         }
 
         List<Job> jobList = new ArrayList<>();
-        int jobListSize = crewList.size() * 30;
+        int jobListSize = crewList.size() * 16;
 
         Random random = new Random(17);
         for (int i = 0; i < jobListSize; i++) {

@@ -15,12 +15,12 @@
     <spentLimit>PT30S</spentLimit>
   </termination>
 
-  <!-- <constructionHeuristic>
+  <constructionHeuristic>
     <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
-  </constructionHeuristic> -->
+  </constructionHeuristic>
 
-  <!-- <localSearch>
-    <localSearchType>HILL_CLIMBING</localSearchType>
-  </localSearch> -->
+  <localSearch>
+    <!-- <localSearchType>HILL_CLIMBING</localSearchType> -->
+  </localSearch>
 
 </solver>
