@@ -146,7 +146,7 @@ public class MaintenanceScheduleResource {
         return new MaintenanceSchedule(
                 workCalendarRepository.listAll().get(0),
                 beschikbaarheidRepository.listAll(Sort.by("id")),
-                crewRepository.listAll(Sort.by("name").and("id")),
+                crewRepository.listAll(Sort.by("naam").and("id")),
                 monteurRepository.listAll(Sort.by("id")),
                 jobRepository.listAll(Sort.by("adres").and("id"))
                 );
