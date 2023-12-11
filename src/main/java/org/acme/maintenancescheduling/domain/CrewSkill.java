@@ -3,16 +3,16 @@ package org.acme.maintenancescheduling.domain;
 import jakarta.persistence.Entity;
 
 @Entity
-public class CrewSkills extends Skill{
+public class CrewSkill extends Skill{
 
     private int aantal;
 
-    public CrewSkills()
+    public CrewSkill()
     {
 
     }
 
-    public CrewSkills(int typenummer, int aantal, String omschrijving)
+    public CrewSkill(int typenummer, int aantal, String omschrijving)
     {
         super(typenummer, omschrijving);
         this.aantal = aantal;

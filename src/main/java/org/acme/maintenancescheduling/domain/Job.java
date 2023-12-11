@@ -59,7 +59,7 @@ public class Job {
     public Job(String adres, String bestekcode) {
         this.adres = adres;
         this.bestekcode = bestekcode;
-        updateSkillsfromBestekcode();
+        ReqsFromBestekcode();
         OptionalInt max = requiredSkills.stream()
         .mapToInt(skill -> skill.getDuur()).max();
         this.durationInGrains = max.getAsInt() * (60 / MaintenanceSchedule.TIME_GRAIN_MINUTES);
@@ -71,7 +71,7 @@ public class Job {
         this.bestekcode = bestekcode;
         this.crew = crew;
         this.startDate = startDate;
-        updateSkillsfromBestekcode();
+        ReqsFromBestekcode();
         OptionalInt max = requiredSkills.stream()
         .mapToInt(skill -> skill.getDuur()).max();
         this.durationInGrains = max.getAsInt() * (60 / MaintenanceSchedule.TIME_GRAIN_MINUTES);
@@ -132,7 +132,7 @@ public class Job {
         this.requiredSkills = requiredSkills;
     }
 
-    public void updateSkillsfromBestekcode() {
+    public void ReqsFromBestekcode() {
         // Sort list by typenummer
         List<JobRequirement> requiredSkills = new ArrayList<JobRequirement>(RequirementTranslator.getDefinition(this.bestekcode));
         requiredSkills.sort(Comparator.comparing(JobRequirement::getTypenummer));

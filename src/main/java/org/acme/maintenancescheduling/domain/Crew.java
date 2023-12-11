@@ -30,7 +30,7 @@ public class Crew {
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="CREW_ID")
-    private List<CrewSkills> crewSkills;
+    private List<CrewSkill> crewSkill;
 
     // No-arg constructor required for Hibernate
     public Crew() {
@@ -39,7 +39,7 @@ public class Crew {
     public Crew(String naam, List<Monteur> monteurs) {
         this.naam = naam;
         this.monteurs = monteurs;
-        this.setCrewSkills();
+        this.setCrewSkill();
     }
 
     @Override
@@ -59,8 +59,8 @@ public class Crew {
         return monteurs;
     }
 
-    public List<CrewSkills> getCrewSkills() {
-        return this.crewSkills;
+    public List<CrewSkill> getCrewSkill() {
+        return this.crewSkill;
     }
 
     public void setId(Long id) {
@@ -90,27 +90,27 @@ public class Crew {
         return newcrew;
     }
 
-    public void setCrewSkills() {
-        // Update crewSkills with skills from monteurs
-        this.crewSkills = this.monteurs.stream()
-        .map((monteur) -> new CrewSkills(monteur.getVaardigheid().getTypenummer(), 1, monteur.getVaardigheid().getOmschrijving()))
+    public void setCrewSkill() {
+        // Update crewSkill with skills from monteurs
+        this.crewSkill = this.monteurs.stream()
+        .map((monteur) -> new CrewSkill(monteur.getVaardigheid().getTypenummer(), 1, monteur.getVaardigheid().getOmschrijving()))
         .collect(Collectors.toList());
 
         // Sort list by typenummer, just to be sure
-        this.crewSkills.sort(Comparator.comparing(CrewSkills::getTypenummer));
+        this.crewSkill.sort(Comparator.comparing(CrewSkill::getTypenummer));
 
         // Group entry's with the same typenummer into a map
-        Map<Integer, List<CrewSkills>> skillMap = this.crewSkills.stream()
+        Map<Integer, List<CrewSkill>> skillMap = this.crewSkill.stream()
         .collect(Collectors.groupingBy(crewskill -> crewskill.getTypenummer()));
 
         // Create new list including typenummmer count
-        List<CrewSkills> skillsummary = new ArrayList<CrewSkills>();
+        List<CrewSkill> skillsummary = new ArrayList<CrewSkill>();
 
-        for (Map.Entry<Integer, List<CrewSkills>> crewskill : skillMap.entrySet()) {
-            skillsummary.add(new CrewSkills(crewskill.getKey(), crewskill.getValue().size(), crewskill.getValue().iterator().next().getOmschrijving()));
+        for (Map.Entry<Integer, List<CrewSkill>> crewskill : skillMap.entrySet()) {
+            skillsummary.add(new CrewSkill(crewskill.getKey(), crewskill.getValue().size(), crewskill.getValue().iterator().next().getOmschrijving()));
         }
 
-        this.crewSkills = skillsummary;
+        this.crewSkill = skillsummary;
     }
 
 }

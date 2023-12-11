@@ -62,7 +62,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
     }
 
     public Constraint resourceCheck(ConstraintFactory constraintFactory) {
-        // Match crewSkills and Availability to JobRequirements
+        // Match crewSkill and Availability to JobRequirements
         return constraintFactory
                 .forEach(Job.class)
                 // Join beschikbaarheid's on the same date as the startdate of job
@@ -77,7 +77,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                                 // Filter crew with monteurs that are available for that day and compare the list size with the job requirements list
                                 job.getrequiredSkills().size() > job.getCrew().filter(beschikbaarheid.stream()
                                         .filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.BESCHIKBAAR).map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
-                                        .getCrewSkills().size() ||
+                                        .getCrewSkill().size() ||
                                         // If above is not false, it could still be that the skills do not match between (again, filtered) crew and job
                                         !(job.getrequiredSkills().stream()
                                         // For every requirement, search for a suitable monteur in crew and make sure there are enough!
@@ -85,7 +85,7 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                                                 .filter(beschikbaarheid.stream()
                                                         .filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.BESCHIKBAAR)
                                                         .map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
-                                                .getCrewSkills().stream()
+                                                .getCrewSkill().stream()
                                 .anyMatch(crewskill -> 
                                         (crewskill.getTypenummer() <= 3 ? 
                                                 jobreq.getTypenummer() <= crewskill.getTypenummer() : 
