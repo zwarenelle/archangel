@@ -5,8 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.acme.teamplanning.domain.Job;
-import org.acme.teamplanning.domain.MaintenanceSchedule;
-import org.acme.teamplanning.rest.MaintenanceScheduleResource;
+import org.acme.teamplanning.domain.Teamplanning;
 
 import jakarta.inject.Inject;
 
@@ -17,28 +16,28 @@ import ai.timefold.solver.core.api.solver.SolverStatus;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-public class MaintenanceScheduleResourceTest {
+public class TeamplanningResourceTest {
 
     @Inject
-    MaintenanceScheduleResource maintenanceScheduleResource;
+    TeamplanningResource teamplanningResource;
 
     @Test
     @Timeout(600_000)
     public void solveDemoDataUntilFeasible() throws InterruptedException {
-        maintenanceScheduleResource.solve();
-        MaintenanceSchedule maintenanceSchedule = maintenanceScheduleResource.getSchedule();
-        while (maintenanceSchedule.getSolverStatus() != SolverStatus.NOT_SOLVING
-                || !maintenanceSchedule.getScore().isFeasible()) {
+        teamplanningResource.solve();
+        Teamplanning teamplanning = teamplanningResource.getSchedule();
+        while (teamplanning.getSolverStatus() != SolverStatus.NOT_SOLVING
+                || !teamplanning.getScore().isFeasible()) {
             // Quick polling (not a Test Thread Sleep anti-pattern)
             // Test is still fast on fast machines and doesn't randomly fail on slow machines.
             Thread.sleep(20L);
-            maintenanceSchedule = maintenanceScheduleResource.getSchedule();
+            teamplanning = teamplanningResource.getSchedule();
         }
-        assertFalse(maintenanceSchedule.getJobList().isEmpty());
-        for (Job job : maintenanceSchedule.getJobList()) {
+        assertFalse(teamplanning.getJobList().isEmpty());
+        for (Job job : teamplanning.getJobList()) {
             assertNotNull(job.getCrew());
             assertNotNull(job.getStartDate());
         }
-        assertTrue(maintenanceSchedule.getScore().isFeasible());
+        assertTrue(teamplanning.getScore().isFeasible());
     }
 }

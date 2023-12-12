@@ -35,7 +35,7 @@ public class Job {
 
     private String adres;
     private String bestekcode;
-    // 1 grain is equal to MaintenanceSchedule.TIME_GRAIN_MINUTES minutes
+    // 1 grain is equal to Teamplanning.TIME_GRAIN_MINUTES minutes
     private int durationInGrains;
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
@@ -61,7 +61,7 @@ public class Job {
         ReqsFromBestekcode();
         OptionalInt max = requiredSkills.stream()
         .mapToInt(skill -> skill.getDuur()).max();
-        this.durationInGrains = max.getAsInt() * (60 / MaintenanceSchedule.TIME_GRAIN_MINUTES);
+        this.durationInGrains = max.getAsInt() * (60 / Teamplanning.TIME_GRAIN_MINUTES);
     }
 
     public Job(Long id, String adres, String bestekcode, Crew crew, LocalDateTime startDate) {
@@ -73,7 +73,7 @@ public class Job {
         ReqsFromBestekcode();
         OptionalInt max = requiredSkills.stream()
         .mapToInt(skill -> skill.getDuur()).max();
-        this.durationInGrains = max.getAsInt() * (60 / MaintenanceSchedule.TIME_GRAIN_MINUTES);
+        this.durationInGrains = max.getAsInt() * (60 / Teamplanning.TIME_GRAIN_MINUTES);
         this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInGrains);
     }
 
@@ -96,11 +96,11 @@ public class Job {
     }
 
     public int getDurationInHours() {
-        return durationInGrains / (60 / MaintenanceSchedule.TIME_GRAIN_MINUTES);
+        return durationInGrains / (60 / Teamplanning.TIME_GRAIN_MINUTES);
     }
 
     public int getDurationInMinutes() {
-        return durationInGrains * MaintenanceSchedule.TIME_GRAIN_MINUTES;
+        return durationInGrains * Teamplanning.TIME_GRAIN_MINUTES;
     }
 
     public int getDurationInGrains() {

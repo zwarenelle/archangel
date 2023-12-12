@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import org.acme.teamplanning.domain.Job;
-import org.acme.teamplanning.domain.MaintenanceSchedule;
+import org.acme.teamplanning.domain.Teamplanning;
 import org.acme.teamplanning.persistence.AgendaRepository;
 import org.acme.teamplanning.persistence.BeschikbaarheidRepository;
 import org.acme.teamplanning.persistence.CrewRepository;
@@ -37,9 +37,7 @@ import io.quarkus.panache.common.Sort;
 // import org.jboss.logging.Logger;
 
 @Path("/schedule")
-public class MaintenanceScheduleResource {
-
-    // private static final Logger LOG = Logger.getLogger(MaintenanceScheduleResource.class);
+public class TeamplanningResource {
 
     public static final Long SINGLETON_SCHEDULE_ID = 1L;
 
@@ -55,17 +53,17 @@ public class MaintenanceScheduleResource {
     JobRepository jobRepository;
 
     @Inject
-    SolverManager<MaintenanceSchedule, Long> solverManager;
+    SolverManager<Teamplanning, Long> solverManager;
     @Inject
-    SolutionManager<MaintenanceSchedule, HardMediumSoftLongScore> solutionManager;
+    SolutionManager<Teamplanning, HardMediumSoftLongScore> solutionManager;
 
     // For JSON, open http://localhost:8080/schedule
     @GET
-    public MaintenanceSchedule getSchedule() {
+    public Teamplanning getSchedule() {
         // Get the solver status before loading the solution
         // to avoid the race condition that the solver terminates between them
         SolverStatus solverStatus = getSolverStatus();
-        MaintenanceSchedule solution = findById(SINGLETON_SCHEDULE_ID);
+        Teamplanning solution = findById(SINGLETON_SCHEDULE_ID);
         solutionManager.update(solution); // Sets the score
         solution.setSolverStatus(solverStatus);
         return solution;
@@ -75,7 +73,7 @@ public class MaintenanceScheduleResource {
     @Consumes({ MediaType.APPLICATION_JSON })
     @Produces(MediaType.APPLICATION_JSON)
     @Path("analyze")
-    public ScoreAnalysis<HardMediumSoftLongScore> analyze(MaintenanceSchedule problem, @QueryParam("fetchPolicy") ScoreAnalysisFetchPolicy fetchPolicy) {
+    public ScoreAnalysis<HardMediumSoftLongScore> analyze(Teamplanning problem, @QueryParam("fetchPolicy") ScoreAnalysisFetchPolicy fetchPolicy) {
         return fetchPolicy == null ? solutionManager.analyze(problem) : solutionManager.analyze(problem, fetchPolicy);
     }
 
@@ -116,7 +114,7 @@ public class MaintenanceScheduleResource {
     @Transactional
     public void set(String boolString) {
         Boolean bool = Boolean.valueOf(boolString);
-        MaintenanceSchedule.setOverlapping(bool);
+        Teamplanning.setOverlapping(bool);
         return;
     }
 
@@ -139,11 +137,11 @@ public class MaintenanceScheduleResource {
     }
 
     @Transactional
-    protected MaintenanceSchedule findById(Long id) {
+    protected Teamplanning findById(Long id) {
         if (!SINGLETON_SCHEDULE_ID.equals(id)) {
             throw new IllegalStateException("There is no schedule with id (" + id + ").");
         }
-        return new MaintenanceSchedule(
+        return new Teamplanning(
                 agendaRepository.listAll().get(0),
                 beschikbaarheidRepository.listAll(Sort.by("id")),
                 crewRepository.listAll(Sort.by("naam").and("id")),
@@ -153,7 +151,7 @@ public class MaintenanceScheduleResource {
     }
 
     @Transactional
-    protected void save(MaintenanceSchedule schedule) {
+    protected void save(Teamplanning schedule) {
         for (Job job : schedule.getJobList()) {
             // TODO: This is awfully naive: optimistic locking causes issues if called by the SolverManager
             Job attachedJob = jobRepository.findById(job.getId());

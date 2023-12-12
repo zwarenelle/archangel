@@ -3,44 +3,44 @@ package org.acme.teamplanning.solver;
 import java.time.LocalDateTime;
 
 import org.acme.teamplanning.domain.Job;
-import org.acme.teamplanning.domain.MaintenanceSchedule;
+import org.acme.teamplanning.domain.Teamplanning;
 
 import ai.timefold.solver.core.api.domain.variable.VariableListener;
 import ai.timefold.solver.core.api.score.director.ScoreDirector;
 
-public class EndDateUpdatingVariableListener implements VariableListener<MaintenanceSchedule, Job> {
+public class EndDateUpdatingVariableListener implements VariableListener<Teamplanning, Job> {
 
     @Override
-    public void beforeEntityAdded(ScoreDirector<MaintenanceSchedule> scoreDirector, Job job) {
+    public void beforeEntityAdded(ScoreDirector<Teamplanning> scoreDirector, Job job) {
         // Do nothing
     }
 
     @Override
-    public void afterEntityAdded(ScoreDirector<MaintenanceSchedule> scoreDirector, Job job) {
+    public void afterEntityAdded(ScoreDirector<Teamplanning> scoreDirector, Job job) {
         updateEndDate(scoreDirector, job);
     }
 
     @Override
-    public void beforeVariableChanged(ScoreDirector<MaintenanceSchedule> scoreDirector, Job job) {
+    public void beforeVariableChanged(ScoreDirector<Teamplanning> scoreDirector, Job job) {
         // Do nothing
     }
 
     @Override
-    public void afterVariableChanged(ScoreDirector<MaintenanceSchedule> scoreDirector, Job job) {
+    public void afterVariableChanged(ScoreDirector<Teamplanning> scoreDirector, Job job) {
         updateEndDate(scoreDirector, job);
     }
 
     @Override
-    public void beforeEntityRemoved(ScoreDirector<MaintenanceSchedule> scoreDirector, Job job) {
+    public void beforeEntityRemoved(ScoreDirector<Teamplanning> scoreDirector, Job job) {
         // Do nothing
     }
 
     @Override
-    public void afterEntityRemoved(ScoreDirector<MaintenanceSchedule> scoreDirector, Job job) {
+    public void afterEntityRemoved(ScoreDirector<Teamplanning> scoreDirector, Job job) {
         // Do nothing
     }
 
-    protected void updateEndDate(ScoreDirector<MaintenanceSchedule> scoreDirector, Job job) {
+    protected void updateEndDate(ScoreDirector<Teamplanning> scoreDirector, Job job) {
         scoreDirector.beforeVariableChanged(job, "endDate");
         job.setEndDate(calculateEndDate(job.getStartDate(), job.getDurationInMinutes()));
         scoreDirector.afterVariableChanged(job, "endDate");

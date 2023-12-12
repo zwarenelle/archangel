@@ -16,7 +16,7 @@ import ai.timefold.solver.core.api.score.buildin.hardmediumsoftlong.HardMediumSo
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 @PlanningSolution
-public class MaintenanceSchedule {
+public class Teamplanning {
 
     @ProblemFactProperty
     private Agenda agenda;
@@ -40,10 +40,10 @@ public class MaintenanceSchedule {
     private static boolean overlapping = false;
 
     // No-arg constructor required for Timefold
-    public MaintenanceSchedule() {
+    public Teamplanning() {
     }
 
-    public MaintenanceSchedule(Agenda agenda, List<Beschikbaarheid> beschikbaarheidList,
+    public Teamplanning(Agenda agenda, List<Beschikbaarheid> beschikbaarheidList,
             List<Crew> crewList, List<Monteur> monteurList, List<Job> jobList) {
         this.agenda = agenda;
         this.beschikbaarheidList = beschikbaarheidList;
@@ -84,11 +84,11 @@ public class MaintenanceSchedule {
     }
 
     public boolean getOverlapping() {
-        return MaintenanceSchedule.overlapping;
+        return Teamplanning.overlapping;
     }
 
     public static void setOverlapping(boolean overlapping) {
-        MaintenanceSchedule.overlapping = overlapping;
+        Teamplanning.overlapping = overlapping;
     }
 
     public void setBeschikbaarheidList(List<Beschikbaarheid> beschikbaarheidList) {
