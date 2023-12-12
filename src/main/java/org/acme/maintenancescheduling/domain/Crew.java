@@ -51,7 +51,7 @@ public class Crew {
         return id;
     }
 
-    public String getName() {
+    public String getNaam() {
         return this.naam;
     }
 
@@ -67,7 +67,7 @@ public class Crew {
         this.id = id;
     }
 
-    public void setName(String naam) {
+    public void setNaam(String naam) {
         this.naam = naam;
     }
     

@@ -287,7 +287,7 @@ function refreshSchedule() {
             byCapacityItemDataSet.add({
                 id : beschikbaarheid.id, group: beschikbaarheid.monteur.id,
                 content: byCapacityElement.html(),
-                start: beschikbaarheid.date, end: JSJoda.LocalDate.parse(beschikbaarheid.date).plusDays(1).toString()
+                start: beschikbaarheid.start, end: beschikbaarheid.end
             });
 
             // Add background color to Crew planning if there's an unavailable or sick employee
@@ -303,7 +303,7 @@ function refreshSchedule() {
                     nameElement.append(beschikbaarheid.monteur.naam);
                     byCrewItemDataSet.add({
                         group: MonteurToCrew.get(beschikbaarheid.monteur.id),
-                        start: beschikbaarheid.date, end: JSJoda.LocalDate.parse(beschikbaarheid.date).plusDays(1).toString(),
+                        start: beschikbaarheid.start, end: beschikbaarheid.end,
                         content: nameElement.html(),
                         type: "background",
                         style: "background-color: #DB4D4D20"
