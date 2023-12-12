@@ -9,7 +9,7 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 import nl.heijmans.teamplanning.solver.EndDateUpdatingVariableListener;
-import nl.heijmans.teamplanning.solver.JobDifficultyComparator;
+import nl.heijmans.teamplanning.solver.OpdrachtDifficultyComparator;
 import nl.heijmans.teamplanning.translators.RequirementTranslator;
 
 import jakarta.persistence.CascadeType;
@@ -25,9 +25,9 @@ import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import ai.timefold.solver.core.api.domain.variable.ShadowVariable;
 
-@PlanningEntity(difficultyComparatorClass = JobDifficultyComparator.class)
+@PlanningEntity(difficultyComparatorClass = OpdrachtDifficultyComparator.class)
 @Entity
-public class Job {
+public class Opdracht {
 
     @Id
     @GeneratedValue
@@ -40,7 +40,7 @@ public class Job {
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="JOB_ID")
-    private List<JobRequirement> requiredSkills;
+    private List<OpdrachtRequirement> requiredSkills;
 
     @PlanningVariable(nullable = true)
     @ManyToOne
@@ -52,10 +52,10 @@ public class Job {
     private LocalDateTime endDate; // Exclusive
 
     // No-arg constructor required for Hibernate and Timefold
-    public Job() {
+    public Opdracht() {
     }
 
-    public Job(String adres, String bestekcode) {
+    public Opdracht(String adres, String bestekcode) {
         this.adres = adres;
         this.bestekcode = bestekcode;
         ReqsFromBestekcode();
@@ -64,7 +64,7 @@ public class Job {
         this.durationInGrains = max.getAsInt() * (60 / Teamplanning.TIME_GRAIN_MINUTES);
     }
 
-    public Job(Long id, String adres, String bestekcode, Crew crew, LocalDateTime startDate) {
+    public Opdracht(Long id, String adres, String bestekcode, Crew crew, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
         this.bestekcode = bestekcode;
@@ -107,7 +107,7 @@ public class Job {
         return durationInGrains;
     }
 
-    public List<JobRequirement> getrequiredSkills() {
+    public List<OpdrachtRequirement> getrequiredSkills() {
         return this.requiredSkills;
     }
 
@@ -127,24 +127,24 @@ public class Job {
         this.crew = crew;
     }
 
-    public void setRequiredSkills(List<JobRequirement> requiredSkills) {
+    public void setRequiredSkills(List<OpdrachtRequirement> requiredSkills) {
         this.requiredSkills = requiredSkills;
     }
 
     public void ReqsFromBestekcode() {
         // Sort list by typenummer
-        List<JobRequirement> requiredSkills = new ArrayList<JobRequirement>(RequirementTranslator.getDefinition(this.bestekcode));
-        requiredSkills.sort(Comparator.comparing(JobRequirement::getTypenummer));
+        List<OpdrachtRequirement> requiredSkills = new ArrayList<OpdrachtRequirement>(RequirementTranslator.getDefinition(this.bestekcode));
+        requiredSkills.sort(Comparator.comparing(OpdrachtRequirement::getTypenummer));
 
         // Group entry's with the same typenummer into a map
-        Map<Integer, List<JobRequirement>> reqMap = requiredSkills.stream()
+        Map<Integer, List<OpdrachtRequirement>> reqMap = requiredSkills.stream()
         .collect(Collectors.groupingBy(req -> req.getTypenummer()));
 
         // Create new list including typenummmer count
-        List<JobRequirement> reqsummary = new ArrayList<JobRequirement>();
+        List<OpdrachtRequirement> reqsummary = new ArrayList<OpdrachtRequirement>();
 
-        for (Map.Entry<Integer, List<JobRequirement>> req : reqMap.entrySet()) {
-            reqsummary.add(new JobRequirement(req.getKey(), req.getValue().size(), req.getValue().stream().mapToInt(JobRequirement::getDuur).sum(), req.getValue().iterator().next().getOmschrijving()));
+        for (Map.Entry<Integer, List<OpdrachtRequirement>> req : reqMap.entrySet()) {
+            reqsummary.add(new OpdrachtRequirement(req.getKey(), req.getValue().size(), req.getValue().stream().mapToInt(OpdrachtRequirement::getDuur).sum(), req.getValue().iterator().next().getOmschrijving()));
         }
     
         this.requiredSkills = reqsummary;

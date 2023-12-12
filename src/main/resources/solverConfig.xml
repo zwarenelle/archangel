@@ -3,7 +3,7 @@
     xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
   <!-- Define the model -->
   <solutionClass>nl.heijmans.teamplanning.domain.Teamplanning</solutionClass>
-  <entityClass>nl.heijmans.teamplanning.domain.Job</entityClass>
+  <entityClass>nl.heijmans.teamplanning.domain.Opdracht</entityClass>
 
   <!-- Define the score function -->
   <scoreDirectorFactory>

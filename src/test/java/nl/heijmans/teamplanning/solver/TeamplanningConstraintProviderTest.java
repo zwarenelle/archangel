@@ -9,11 +9,11 @@ import jakarta.inject.Inject;
 import nl.heijmans.teamplanning.domain.Beschikbaarheid;
 import nl.heijmans.teamplanning.domain.BeschikbaarheidType;
 import nl.heijmans.teamplanning.domain.Crew;
-import nl.heijmans.teamplanning.domain.Job;
+import nl.heijmans.teamplanning.domain.Opdracht;
 import nl.heijmans.teamplanning.domain.Monteur;
 import nl.heijmans.teamplanning.domain.Skill;
 import nl.heijmans.teamplanning.domain.Teamplanning;
-// import nl.heijmans.teamplanning.solver.TeamplanningConstraintProvider;
+
 import org.junit.jupiter.api.Test;
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
 
@@ -35,28 +35,28 @@ public class TeamplanningConstraintProviderTest {
     @Test
     public void crewConflict() {
         constraintVerifier.verifyThat(TeamplanningConstraintProvider::crewConflict)
-        // Verify that one crew cannot do two jobs in the same exact time window
+        // Verify that one crew cannot do two opdrachts in the same exact time window
                 .given(ALPHA_CREW,
-                        new Job(1L, "Downtown tunnel", "E1637", ALPHA_CREW, DAY_1),
-                        new Job(2L, "Uptown bridge", "E1637", ALPHA_CREW, DAY_1))
+                        new Opdracht(1L, "Downtown tunnel", "E1637", ALPHA_CREW, DAY_1),
+                        new Opdracht(2L, "Uptown bridge", "E1637", ALPHA_CREW, DAY_1))
                 .penalizesBy(2L);
         constraintVerifier.verifyThat(TeamplanningConstraintProvider::crewConflict)
-        // Verify that one crew cannot do two jobs in a time windows overlapping an hour
+        // Verify that one crew cannot do two opdrachts in a time windows overlapping an hour
                 .given(ALPHA_CREW,
-                        new Job(1L, "Downtown tunnel", "E1637", ALPHA_CREW, DAY_1),
-                        new Job(2L, "Uptown bridge", "E1637", ALPHA_CREW, DAY_1_A))
+                        new Opdracht(1L, "Downtown tunnel", "E1637", ALPHA_CREW, DAY_1),
+                        new Opdracht(2L, "Uptown bridge", "E1637", ALPHA_CREW, DAY_1_A))
                 .penalizesBy(1L);
-        // Verify that one crew can do two jobs differing in day of month
+        // Verify that one crew can do two opdrachts differing in day of month
         constraintVerifier.verifyThat(TeamplanningConstraintProvider::crewConflict)
                 .given(ALPHA_CREW,
-                        new Job(1L, "Downtown tunnel", "E1637", ALPHA_CREW, DAY_1),
-                        new Job(2L, "Uptown bridge", "E1637",ALPHA_CREW, DAY_2))
+                        new Opdracht(1L, "Downtown tunnel", "E1637", ALPHA_CREW, DAY_1),
+                        new Opdracht(2L, "Uptown bridge", "E1637",ALPHA_CREW, DAY_2))
                 .penalizesBy(0);
         // Verify that two different crews can work in the same exact time window
         constraintVerifier.verifyThat(TeamplanningConstraintProvider::crewConflict)
                 .given(ALPHA_CREW, BETA_CREW,
-                        new Job(1L, "Downtown tunnel", "E1637", ALPHA_CREW, DAY_1),
-                        new Job(2L, "Uptown bridge", "G1688", BETA_CREW, DAY_1))
+                        new Opdracht(1L, "Downtown tunnel", "E1637", ALPHA_CREW, DAY_1),
+                        new Opdracht(2L, "Uptown bridge", "G1688", BETA_CREW, DAY_1))
                 .penalizesBy(0);
     }
 
@@ -64,32 +64,32 @@ public class TeamplanningConstraintProviderTest {
     public void resourceCheck() {
         constraintVerifier.verifyThat(TeamplanningConstraintProvider::resourceCheck)
                 .given(
-                        new Job(1L, "Downtown tunnel", "E1680", ALPHA_CREW, DAY_1),
-                        new Job(2L, "Downtown bridge", "E1680", ALPHA_CREW, DAY_3))
+                        new Opdracht(1L, "Downtown tunnel", "E1680", ALPHA_CREW, DAY_1),
+                        new Opdracht(2L, "Downtown bridge", "E1680", ALPHA_CREW, DAY_3))
                 .penalizesBy(0L);
         constraintVerifier.verifyThat(TeamplanningConstraintProvider::resourceCheck)
                 .given(
-                        new Job(1L, "Downtown tunnel", "E1680", BETA_CREW, DAY_1),
-                        new Job(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
+                        new Opdracht(1L, "Downtown tunnel", "E1680", BETA_CREW, DAY_1),
+                        new Opdracht(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
                         new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate().atStartOfDay(), DAY_1.toLocalDate().atTime(LocalTime.MAX), BeschikbaarheidType.ONBESCHIKBAAR))
                 .penalizesBy(4L);
         constraintVerifier.verifyThat(TeamplanningConstraintProvider::resourceCheck)
                 .given(
-                        new Job(1L, "Downtown tunnel", "E1680", ALPHA_CREW, DAY_1),
-                        new Job(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
+                        new Opdracht(1L, "Downtown tunnel", "E1680", ALPHA_CREW, DAY_1),
+                        new Opdracht(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
                         new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate().atStartOfDay(), DAY_1.toLocalDate().atTime(LocalTime.MAX), BeschikbaarheidType.ONBESCHIKBAAR))
                 .penalizesBy(2L);
         constraintVerifier.verifyThat(TeamplanningConstraintProvider::resourceCheck)
                 .given(
-                        new Job(1L, "Downtown tunnel", "E1680", BETA_CREW, DAY_1),
-                        new Job(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
+                        new Opdracht(1L, "Downtown tunnel", "E1680", BETA_CREW, DAY_1),
+                        new Opdracht(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
                         new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate().atStartOfDay(), DAY_1.toLocalDate().atTime(LocalTime.MAX), BeschikbaarheidType.ONBESCHIKBAAR),
                         new Beschikbaarheid(BETA_CREW.getMonteurs().get(1), DAY_1.toLocalDate().atStartOfDay(), DAY_1.toLocalDate().atTime(LocalTime.MAX), BeschikbaarheidType.ONBESCHIKBAAR))
                 .penalizesBy(4L);
         constraintVerifier.verifyThat(TeamplanningConstraintProvider::resourceCheck)
                 .given(
-                        new Job(1L, "Downtown tunnel", "E1680", ALPHA_CREW, DAY_1),
-                        new Job(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
+                        new Opdracht(1L, "Downtown tunnel", "E1680", ALPHA_CREW, DAY_1),
+                        new Opdracht(2L, "Downtown bridge", "E1680", BETA_CREW, DAY_1),
                         new Beschikbaarheid(BETA_CREW.getMonteurs().get(0), DAY_1.toLocalDate().atStartOfDay(), DAY_1.toLocalDate().atTime(LocalTime.MAX), BeschikbaarheidType.ONBESCHIKBAAR),
                         new Beschikbaarheid(ALPHA_CREW.getMonteurs().get(0), DAY_1.toLocalDate().atStartOfDay(), DAY_1.toLocalDate().atTime(LocalTime.MAX), BeschikbaarheidType.ONBESCHIKBAAR))
                 .penalizesBy(4L);

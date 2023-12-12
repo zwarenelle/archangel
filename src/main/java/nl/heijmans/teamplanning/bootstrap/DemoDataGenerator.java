@@ -20,14 +20,14 @@ import nl.heijmans.teamplanning.domain.Agenda;
 import nl.heijmans.teamplanning.domain.Beschikbaarheid;
 import nl.heijmans.teamplanning.domain.BeschikbaarheidType;
 import nl.heijmans.teamplanning.domain.Crew;
-import nl.heijmans.teamplanning.domain.Job;
+import nl.heijmans.teamplanning.domain.Opdracht;
 import nl.heijmans.teamplanning.domain.Monteur;
 import nl.heijmans.teamplanning.domain.Skill;
 import nl.heijmans.teamplanning.persistence.AgendaRepository;
 import nl.heijmans.teamplanning.persistence.BeschikbaarheidRepository;
 import nl.heijmans.teamplanning.persistence.CrewRepository;
-import nl.heijmans.teamplanning.persistence.JobRepository;
-import nl.heijmans.teamplanning.persistence.JobRequirementRepository;
+import nl.heijmans.teamplanning.persistence.OpdrachtRepository;
+import nl.heijmans.teamplanning.persistence.OpdrachtRequirementRepository;
 import nl.heijmans.teamplanning.persistence.MonteurRepository;
 
 @ApplicationScoped
@@ -46,9 +46,9 @@ public class DemoDataGenerator {
     @Inject
     CrewRepository crewRepository;
     @Inject
-    JobRepository jobRepository;
+    OpdrachtRepository opdrachtRepository;
     @Inject
-    JobRequirementRepository skillRepository;
+    OpdrachtRequirementRepository skillRepository;
     @Inject
     MonteurRepository monteurRepository;
     @Inject
@@ -112,18 +112,18 @@ public class DemoDataGenerator {
             }
         }
 
-        List<Job> jobList = new ArrayList<>();
-        int jobListSize = crewList.size() * 16;
+        List<Opdracht> opdrachtList = new ArrayList<>();
+        int opdrachtListSize = crewList.size() * 16;
 
         Random random = new Random(17);
-        for (int i = 0; i < jobListSize; i++) {
+        for (int i = 0; i < opdrachtListSize; i++) {
             
-            String jobArea = JOB_AREA_NAMES[random.nextInt(JOB_AREA_NAMES.length)] + " " + JOB_AREA_NUMBERS.get(random.nextInt(JOB_AREA_NUMBERS.size()));
+            String opdrachtArea = JOB_AREA_NAMES[random.nextInt(JOB_AREA_NAMES.length)] + " " + JOB_AREA_NUMBERS.get(random.nextInt(JOB_AREA_NUMBERS.size()));
             String bestekcode = BESTEK[random.nextInt(BESTEK.length)];
 
-            jobList.add(new Job(jobArea, bestekcode));
+            opdrachtList.add(new Opdracht(opdrachtArea, bestekcode));
         }
 
-        jobRepository.persist(jobList);
+        opdrachtRepository.persist(opdrachtList);
     }
 }

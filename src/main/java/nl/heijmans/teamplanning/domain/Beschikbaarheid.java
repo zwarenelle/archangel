@@ -48,11 +48,11 @@ public class Beschikbaarheid {
         this.id = id;
     }
 
-    public Monteur getJob() {
+    public Monteur getOpdracht() {
         return monteur;
     }
 
-    public void setJob(Monteur monteur) {
+    public void setOpdracht(Monteur monteur) {
         this.monteur = monteur;
     }
 

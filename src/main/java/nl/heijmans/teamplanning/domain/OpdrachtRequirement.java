@@ -3,17 +3,17 @@ package nl.heijmans.teamplanning.domain;
 import jakarta.persistence.Entity;
 
 @Entity
-public class JobRequirement extends Skill{
+public class OpdrachtRequirement extends Skill{
 
     private int aantal;
     private int duur;
 
-    public JobRequirement()
+    public OpdrachtRequirement()
     {
 
     }
 
-    public JobRequirement(int typenummer, int aantal, int duur, String omschrijving)
+    public OpdrachtRequirement(int typenummer, int aantal, int duur, String omschrijving)
     {
         super(typenummer, omschrijving);
         this.aantal = aantal;

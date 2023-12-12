@@ -16,12 +16,12 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-import nl.heijmans.teamplanning.domain.Job;
+import nl.heijmans.teamplanning.domain.Opdracht;
 import nl.heijmans.teamplanning.domain.Teamplanning;
 import nl.heijmans.teamplanning.persistence.AgendaRepository;
 import nl.heijmans.teamplanning.persistence.BeschikbaarheidRepository;
 import nl.heijmans.teamplanning.persistence.CrewRepository;
-import nl.heijmans.teamplanning.persistence.JobRepository;
+import nl.heijmans.teamplanning.persistence.OpdrachtRepository;
 import nl.heijmans.teamplanning.persistence.MonteurRepository;
 import org.json.JSONObject;
 
@@ -33,8 +33,6 @@ import ai.timefold.solver.core.api.solver.SolverManager;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import io.quarkus.panache.common.Sort;
-
-// import org.jboss.logging.Logger;
 
 @Path("/schedule")
 public class TeamplanningResource {
@@ -50,7 +48,7 @@ public class TeamplanningResource {
     @Inject
     MonteurRepository monteurRepository;
     @Inject
-    JobRepository jobRepository;
+    OpdrachtRepository opdrachtRepository;
 
     @Inject
     SolverManager<Teamplanning, Long> solverManager;
@@ -78,30 +76,30 @@ public class TeamplanningResource {
     }
 
     @PUT
-    @Path("job")
+    @Path("opdracht")
     @Transactional
-    public Job update(String item) {
+    public Opdracht update(String item) {
         
         // Create JSON Object from received JSON String
         JSONObject itemJackson = new JSONObject(item);
         
-        // Get jobId in question from JSON Object
-        Long jobId = itemJackson.getLong("id");
+        // Get opdrachtId in question from JSON Object
+        Long opdrachtId = itemJackson.getLong("id");
         
-        // Check if corresponding Job exists and get it
-        Job entity = jobRepository.findById(jobId);
+        // Check if corresponding opdracht exists and get it
+        Opdracht entity = opdrachtRepository.findById(opdrachtId);
         if(entity == null) {
             throw new NotFoundException();
         }
 
-        // Get values that need to be modified in Job from JSON Object
+        // Get values that need to be modified in opdracht from JSON Object
         Long crewId = itemJackson.optLongObject("group");
         LocalDateTime start = itemJackson.optString("start") == "" || itemJackson.optString("start") == null ? null
         : LocalDateTime.ofInstant(Instant.parse(itemJackson.optString("start")), ZoneId.of("Europe/Amsterdam"));
         LocalDateTime end = itemJackson.optString("end") == "" || itemJackson.optString("start") == null ? null
         : LocalDateTime.ofInstant(Instant.parse(itemJackson.optString("end")), ZoneId.of("Europe/Amsterdam"));
 
-        // Modify Job accordingly
+        // Modify opdracht accordingly
         entity.setStartDate(start);
         entity.setEndDate(end);
         entity.setCrew((crewId == 0 || crewId == null ? null : crewRepository.findById(crewId)));
@@ -146,18 +144,18 @@ public class TeamplanningResource {
                 beschikbaarheidRepository.listAll(Sort.by("id")),
                 crewRepository.listAll(Sort.by("naam").and("id")),
                 monteurRepository.listAll(Sort.by("id")),
-                jobRepository.listAll(Sort.by("adres").and("id"))
+                opdrachtRepository.listAll(Sort.by("adres").and("id"))
                 );
     }
 
     @Transactional
     protected void save(Teamplanning schedule) {
-        for (Job job : schedule.getJobList()) {
+        for (Opdracht opdracht : schedule.getOpdrachtList()) {
             // TODO: This is awfully naive: optimistic locking causes issues if called by the SolverManager
-            Job attachedJob = jobRepository.findById(job.getId());
-            attachedJob.setCrew(job.getCrew());
-            attachedJob.setStartDate(job.getStartDate());
-            attachedJob.setEndDate(job.getEndDate());
+            Opdracht attachedOpdracht = opdrachtRepository.findById(opdracht.getId());
+            attachedOpdracht.setCrew(opdracht.getCrew());
+            attachedOpdracht.setStartDate(opdracht.getStartDate());
+            attachedOpdracht.setEndDate(opdracht.getEndDate());
         }
     }
 }

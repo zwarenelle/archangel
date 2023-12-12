@@ -58,7 +58,7 @@ const byCrewTimelineOptions = {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
                 callback(item);
-                removeJob(item);
+                removeOpdracht(item);
             }
           });
       },
@@ -78,7 +78,7 @@ const byCrewTimelineOptions = {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
                 callback(item);
-                updateJob(item);
+                updateOpdracht(item);
             } else if (result.isDenied) {
                 callback(null);
                 Swal.fire("Wijziging niet opgeslagen", "", "info");
@@ -92,8 +92,8 @@ var byCrewGroupDataSet = new vis.DataSet();
 var byCrewItemDataSet = new vis.DataSet();
 var byCrewTimeline = new vis.Timeline(byCrewPanel, byCrewItemDataSet, byCrewGroupDataSet, byCrewTimelineOptions);
 
-const byJobPanel = document.getElementById("byJobPanel");
-const byJobTimelineOptions = {
+const byOpdrachtPanel = document.getElementById("byOpdrachtPanel");
+const byOpdrachtTimelineOptions = {
     timeAxis: {scale: "hour", step: 6},
     orientation: {axis: "top"},
     xss: {disabled: true}, // Items are XSS safe through JQuery
@@ -102,9 +102,9 @@ const byJobTimelineOptions = {
     format: formattingOptions
 };
 
-var byJobGroupDataSet = new vis.DataSet();
-var byJobItemDataSet = new vis.DataSet();
-var byJobTimeline = new vis.Timeline(byJobPanel, byJobItemDataSet, byJobGroupDataSet, byJobTimelineOptions);
+var byOpdrachtGroupDataSet = new vis.DataSet();
+var byOpdrachtItemDataSet = new vis.DataSet();
+var byOpdrachtTimeline = new vis.Timeline(byOpdrachtPanel, byOpdrachtItemDataSet, byOpdrachtGroupDataSet, byOpdrachtTimelineOptions);
 
 const byCapacityPanel = document.getElementById("byCapacityPanel");
 const byCapacityTimelineOptions = {
@@ -140,8 +140,8 @@ $(document).ready(function () {
     $("#byCrewTab").on('shown.bs.tab', function (event) {
         byCrewTimeline.redraw();
     })
-    $("#byJobTab").on('shown.bs.tab', function (event) {
-        byJobTimeline.redraw();
+    $("#byOpdrachtTab").on('shown.bs.tab', function (event) {
+        byOpdrachtTimeline.redraw();
     })
     $("#byCapacityTab").on('shown.bs.tab', function (event) {
         byCapacityTimeline.redraw();
@@ -157,14 +157,14 @@ function refreshSchedule() {
         refreshSolvingButtons(schedule.solverStatus != null && schedule.solverStatus !== "NOT_SOLVING");
         $("#score").text("Score: " + (schedule.score == null ? "?" : schedule.score));
 
-        const unassignedJobs = $("#unassignedJobs");
-        unassignedJobs.children().remove();
-        var unassignedJobsCount = 0;
+        const unassignedOpdrachts = $("#unassignedOpdrachts");
+        unassignedOpdrachts.children().remove();
+        var unassignedOpdrachtsCount = 0;
         byCrewGroupDataSet.clear();
-        byJobGroupDataSet.clear();
+        byOpdrachtGroupDataSet.clear();
         byCapacityGroupDataSet.clear();
         byCrewItemDataSet.clear();
-        byJobItemDataSet.clear();
+        byOpdrachtItemDataSet.clear();
         byCapacityItemDataSet.clear();
 
         // Map Monteur ID's to Crew ID's for later usage in availabilty background
@@ -191,31 +191,31 @@ function refreshSchedule() {
             });
         });
 
-        $.each(schedule.jobList, (index, job) => {
-            const jobGroupElement = $(`<div/>`)
-              .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
-              .append($(`<p class="card-text ms-2 mb-0"/>`).text("Bestekcode: " + job.bestekcode))
-              .append($(`<p class="card-text ms-2 mb-0"/>`).text("Verwachte uitvoeringsduur: " + `${job.durationInHours} uur`));
-              $.each(job.requiredSkills, (index, req) => {
-                jobGroupElement.append(`</br>`)
-                jobGroupElement.append(req.aantal)
-                jobGroupElement.append(` `)
-                jobGroupElement.append(req.omschrijving)
+        $.each(schedule.opdrachtList, (index, opdracht) => {
+            const opdrachtGroupElement = $(`<div/>`)
+              .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
+              .append($(`<p class="card-text ms-2 mb-0"/>`).text("Bestekcode: " + opdracht.bestekcode))
+              .append($(`<p class="card-text ms-2 mb-0"/>`).text("Verwachte uitvoeringsduur: " + `${opdracht.durationInHours} uur`));
+              $.each(opdracht.requiredSkills, (index, req) => {
+                opdrachtGroupElement.append(`</br>`)
+                opdrachtGroupElement.append(req.aantal)
+                opdrachtGroupElement.append(` `)
+                opdrachtGroupElement.append(req.omschrijving)
             });
-            byJobGroupDataSet.add({
-                id : job.id,
-                content: jobGroupElement.html()
+            byOpdrachtGroupDataSet.add({
+                id : opdracht.id,
+                content: opdrachtGroupElement.html()
             });
 
-            if (job.crew == null || job.startDate == null) {
-                unassignedJobsCount++;
-                const unassignedJobElement = $(`<div class="card-body p-2"/>`)
-                    .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Bestekcode: ${job.bestekcode}`))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Verwachte uitvoeringsduur: ${job.durationInHours} uur`));
-                const byJobJobElement = $(`<div/>`)
+            if (opdracht.crew == null || opdracht.startDate == null) {
+                unassignedOpdrachtsCount++;
+                const unassignedOpdrachtElement = $(`<div class="card-body p-2"/>`)
+                    .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Bestekcode: ${opdracht.bestekcode}`))
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Verwachte uitvoeringsduur: ${opdracht.durationInHours} uur`));
+                const byOpdrachtOpdrachtElement = $(`<div/>`)
                   .append($(`<h5 class="card-title mb-1"/>`).text(`Unassigned`));
-                $.each(job.requiredSkills, (index, tag) => {
+                $.each(opdracht.requiredSkills, (index, tag) => {
                     if (tag.omschrijving.toString().startsWith("VIAG"))
                     {
                         color = "#FEB900";
@@ -228,41 +228,49 @@ function refreshSchedule() {
                     {
                         color = "#003366";
                     }
-                    unassignedJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
-                    byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
+                    unassignedOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
+                    byOpdrachtOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
                 });
-                unassignedJobs.append($(`<div class="col"/>`).append($(`<div class="card"/>`).append(unassignedJobElement)));
+                unassignedOpdrachts.append($(`<div class="col"/>`)
+                    .append($(`<div class="card"/>`)
+                    .append($(`<div class="container"/>`)
+                    .append($(`<div class="row align-items-center"/>`)
+                    .append($(`<div class="col-sm-8"/>`)
+                    .append(unassignedOpdrachtElement))
+                    .append($(`<div class="col-sm-4"/>`)
+                    .append($(`<button type="button" id="` + opdracht.id + `" class="btn btn-outline-info">Plannen</button>`).on("click", function() { plan(opdracht.id) })))
+                    ))));
             } else {
-                const byCrewJobElement = $(`<div/>`)
-                    .append($(`<h5 class="card-title mb-1"/>`).text(job.adres))
-                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${job.bestekcode}: ${job.durationInHours} uur`));
-                const byJobJobElement = $(`<div/>`)
-                    .append($(`<h5 class="card-title mb-1"/>`).text(job.crew.naam));
-                $.each(job.requiredSkills, (index, tag) => {
+                const byCrewOpdrachtElement = $(`<div/>`)
+                    .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${opdracht.bestekcode}: ${opdracht.durationInHours} uur`));
+                const byOpdrachtOpdrachtElement = $(`<div/>`)
+                    .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.crew.naam));
+                $.each(opdracht.requiredSkills, (index, tag) => {
                     if (tag.omschrijving.toString().startsWith("VIAG")) {color = "#FEB900";}
                     else if (tag.omschrijving.toString().startsWith("BEI")) {color = "#ED5353";}
                     else {color = "#003366";}
-                    byCrewJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
-                    byJobJobElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
+                    byCrewOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
+                    byOpdrachtOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
                 });
                 byCrewItemDataSet.add({
-                    id : job.id, group: job.crew.id,
-                    content: byCrewJobElement.html(),
-                    start: job.startDate, end: job.endDate
+                    id : opdracht.id, group: opdracht.crew.id,
+                    content: byCrewOpdrachtElement.html(),
+                    start: opdracht.startDate, end: opdracht.endDate
                 });
                 // if (1 == true) {
                 //     byCrewItemDataSet.add({
-                //         id : job.id, group: job.crew.id,
+                //         id : opdracht.id, group: opdracht.crew.id,
                 //         content: "Boogzinker",
                 //         color: "#003366",
                 //         editable: false,
-                //         start: job.startDate - 3, end: job.endDate
+                //         start: opdracht.startDate - 3, end: opdracht.endDate
                 //     });
                 // }
-                byJobItemDataSet.add({
-                    id : job.id, group: job.id,
-                    content: byJobJobElement.html(),
-                    start: job.startDate, end: job.endDate
+                byOpdrachtItemDataSet.add({
+                    id : opdracht.id, group: opdracht.id,
+                    content: byOpdrachtOpdrachtElement.html(),
+                    start: opdracht.startDate, end: opdracht.endDate
                 });
             }
         });
@@ -312,13 +320,18 @@ function refreshSchedule() {
             }
         });
 
-        if (unassignedJobsCount === 0) {
-            unassignedJobs.append($(`<p/>`).text(`There are no unassigned jobs.`));
+        if (unassignedOpdrachtsCount === 0) {
+            unassignedOpdrachts.append($(`<p/>`).text(`Geen opdrachten in voorraad.`));
         }
 
-        byJobTimeline.setWindow(schedule.agenda.fromDate, schedule.agenda.toDate);
-        byCapacityTimeline.setWindow(schedule.agenda.fromDate, schedule.agenda.toDate);
+        // byOpdrachtTimeline.setWindow(schedule.agenda.fromDate, schedule.agenda.toDate);
+        // byCapacityTimeline.setWindow(schedule.agenda.fromDate, schedule.agenda.toDate);
     });
+}
+
+function plan(opdrachtId) {
+    console.log("Received plan");
+    console.log("opdrachtId: " + opdrachtId);
 }
 
 function solve() {
@@ -392,7 +405,7 @@ function analyze() {
     $.ajaxSetup({
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json,text/plain', // plain text is required by solve() returning UUID of the solver job
+            'Accept': 'application/json,text/plain', // plain text is required by solve() returning UUID of the solver opdracht
         }
     });
 
@@ -415,8 +428,8 @@ function analyze() {
     });
 }
 
-function updateJob(item) {
-    $.put("/schedule/job", JSON.stringify(item), function (result) {
+function updateOpdracht(item) {
+    $.put("/schedule/opdracht", JSON.stringify(item), function (result) {
         console.log(result);
     }).done(function(data, statusText, xhr){
         if (xhr.status == 200) {
@@ -430,12 +443,12 @@ function updateJob(item) {
    });
 }
 
-function removeJob(item) {
+function removeOpdracht(item) {
     let clearedItem = item;
     clearedItem.start = null;
     clearedItem.end = null;
     clearedItem.group = null;
-    $.put("/schedule/job", JSON.stringify(item), function (result) {
+    $.put("/schedule/opdracht", JSON.stringify(item), function (result) {
         console.log(result);
     }).done(function(data, statusText, xhr){
         if (xhr.status == 200) {

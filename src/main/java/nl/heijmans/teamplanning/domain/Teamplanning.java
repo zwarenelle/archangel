@@ -28,7 +28,7 @@ public class Teamplanning {
     @ProblemFactCollectionProperty
     private List<Monteur> monteurList;
     @PlanningEntityCollectionProperty
-    private List<Job> jobList;
+    private List<Opdracht> opdrachtList;
 
     @PlanningScore
     private HardMediumSoftLongScore score;
@@ -44,12 +44,12 @@ public class Teamplanning {
     }
 
     public Teamplanning(Agenda agenda, List<Beschikbaarheid> beschikbaarheidList,
-            List<Crew> crewList, List<Monteur> monteurList, List<Job> jobList) {
+            List<Crew> crewList, List<Monteur> monteurList, List<Opdracht> opdrachtList) {
         this.agenda = agenda;
         this.beschikbaarheidList = beschikbaarheidList;
         this.crewList = crewList;
         this.monteurList = monteurList;
-        this.jobList = jobList;
+        this.opdrachtList = opdrachtList;
     }
 
     @ValueRangeProvider
@@ -75,8 +75,8 @@ public class Teamplanning {
         return monteurList;
     }
 
-    public List<Job> getJobList() {
-        return jobList;
+    public List<Opdracht> getOpdrachtList() {
+        return opdrachtList;
     }
 
     public HardMediumSoftLongScore getScore() {

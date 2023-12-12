@@ -4,9 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import nl.heijmans.teamplanning.domain.Job;
+import nl.heijmans.teamplanning.domain.Opdracht;
 import nl.heijmans.teamplanning.domain.Teamplanning;
-// import nl.heijmans.teamplanning.rest.TeamplanningResource;
 
 import jakarta.inject.Inject;
 
@@ -34,10 +33,10 @@ public class TeamplanningResourceTest {
             Thread.sleep(20L);
             teamplanning = teamplanningResource.getSchedule();
         }
-        assertFalse(teamplanning.getJobList().isEmpty());
-        for (Job job : teamplanning.getJobList()) {
-            assertNotNull(job.getCrew());
-            assertNotNull(job.getStartDate());
+        assertFalse(teamplanning.getOpdrachtList().isEmpty());
+        for (Opdracht opdracht : teamplanning.getOpdrachtList()) {
+            assertNotNull(opdracht.getCrew());
+            assertNotNull(opdracht.getStartDate());
         }
         assertTrue(teamplanning.getScore().isFeasible());
     }
