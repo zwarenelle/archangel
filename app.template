@@ -33,9 +33,6 @@ quarkus.log.category."ai.timefold.solver".level=DEBUG
 %test.quarkus.log.category."ai.timefold.solver".level=INFO
 %prod.quarkus.log.category."ai.timefold.solver".level=INFO
 
-# XML file for power tweaking, defaults to solverConfig.xml (directly under src/main/resources)
-# quarkus.timefold.solver-config-xml=org/.../maintenanceScheduleSolverConfig.xml
-
 ########################
 # Database properties
 ########################
@@ -54,15 +51,15 @@ quarkus.hibernate-orm.database.generation = drop-and-create
 # Test overrides
 ########################
 
-%test.quarkus.datasource.jdbc.url=jdbc:h2:tcp://localhost/mem:maintenance-scheduling
+%test.quarkus.datasource.jdbc.url=jdbc:h2:tcp://localhost/mem:teamplanning
 
 # Effectively disable spent-time termination in favor of the best-score-limit
 %test.quarkus.timefold.solver.termination.spent-limit=1h
-%test.quarkus.timefold.solver.termination.best-score-limit=0hard/*soft
+%test.quarkus.timefold.solver.termination.best-score-limit=0hard/0medium/*soft
 
 ########################
 # Native overrides
 ########################
 
 # In pom.xml, the "native" maven profile triggers the "native" quarkus profile.
-%native.quarkus.datasource.jdbc.url=jdbc:h2:tcp://localhost/mem:maintenance-scheduling
+%native.quarkus.datasource.jdbc.url=jdbc:h2:tcp://localhost/mem:teamplanning

@@ -316,10 +316,8 @@ function refreshSchedule() {
             unassignedJobs.append($(`<p/>`).text(`There are no unassigned jobs.`));
         }
 
-        // byCrewTimeline.setWindow(schedule.workCalendar.fromDate, schedule.workCalendar.toDate);
-        byJobTimeline.setWindow(schedule.workCalendar.fromDate, schedule.workCalendar.toDate);
-        byCapacityTimeline.setWindow(schedule.workCalendar.fromDate, schedule.workCalendar.toDate);
-        
+        byJobTimeline.setWindow(schedule.agenda.fromDate, schedule.agenda.toDate);
+        byCapacityTimeline.setWindow(schedule.agenda.fromDate, schedule.agenda.toDate);
     });
 }
 
