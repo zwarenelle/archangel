@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import nl.heijmans.teamplanning.domain.Opdracht;
 import nl.heijmans.teamplanning.domain.Teamplanning;
@@ -79,7 +80,7 @@ public class TeamplanningResource {
 
     @GET
     @Path("opdracht/proposition")
-    // @Transactional
+    @Transactional
     public List<RecommendedFit<Pair, HardMediumSoftLongScore>> fetch(@QueryParam("id") Long id) {
         
         // Check if corresponding opdracht exists and get it
@@ -90,7 +91,18 @@ public class TeamplanningResource {
         
         Teamplanning solution = findById(SINGLETON_SCHEDULE_ID);
         List<RecommendedFit<Pair, HardMediumSoftLongScore>> recommendations =
-        solutionManager.recommendFit(solution, entity, opdracht -> new Pair(opdracht.getCrew(), opdracht.getStartDate()));
+        solutionManager.recommendFit(solution, entity,
+        opdracht -> new Pair(opdracht.getCrew(), opdracht.getStartDate()))
+        .stream().limit(5L).collect(Collectors.toList());
+
+        RecommendedFit<Pair, HardMediumSoftLongScore> bestRecommendation = recommendations.get(0);
+
+        // System.out.println(bestRecommendation.proposition().crew());
+        // System.out.println(bestRecommendation.proposition().startDate());
+
+        // entity.setCrew(bestRecommendation.proposition().crew());
+        // entity.setStartDate(bestRecommendation.proposition().startDate());
+        // entity.setEndDate();
         
         return recommendations;
     }

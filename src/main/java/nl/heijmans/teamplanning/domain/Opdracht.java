@@ -154,6 +154,10 @@ public class Opdracht {
         this.startDate = startDate;
     }
 
+    public void setEndDate() {
+        this.endDate = EndDateUpdatingVariableListener.calculateEndDate(startDate, durationInGrains);
+    }
+
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }

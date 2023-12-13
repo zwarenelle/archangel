@@ -1,3 +1,5 @@
+const { DateTime } = luxon;
+
 let loadedSchedule = null;
 
 var autoRefreshIntervalId = null;
@@ -29,7 +31,7 @@ var formattingOptions =
 
 const byCrewPanel = document.getElementById("byCrewPanel");
 const byCrewTimelineOptions = {
-    timeAxis: {scale: "hour", step: 6},
+    timeAxis: {scale: "hour", step: 1},
     orientation: {axis: "top"},
     stack: false,
     editable: {
@@ -324,8 +326,6 @@ function refreshSchedule() {
             unassignedOpdrachts.append($(`<p/>`).text(`Geen opdrachten in voorraad.`));
         }
 
-        // byOpdrachtTimeline.setWindow(schedule.agenda.fromDate, schedule.agenda.toDate);
-        // byCapacityTimeline.setWindow(schedule.agenda.fromDate, schedule.agenda.toDate);
     });
 }
 
@@ -361,10 +361,6 @@ function stopSolving() {
     }).fail(function (xhr, ajaxOptions, thrownError) {
         showError("Stop solving failed.", xhr);
     });
-}
-
-function addMinutes(date, minutes) {
-    return new Date(date.getTime() + minutes*60000);
 }
 
 function analyze() {
@@ -430,7 +426,36 @@ function plannen(opdrachtId) {
     $.getJSON("/schedule/opdracht/proposition", {id: opdrachtId}, function(data, statusText, xhr){
         if (xhr.status == 200) {
             console.log(data);
-            Swal.fire("Success", JSON.stringify(data), "success");
+            var proposition = `
+            <table>
+             <colgroup>
+              <col style="border: 2px solid black"><col span="2">
+             </colgroup>
+             <thead>
+              <tr>
+                <th scope="col">Ploeg</th>
+                <th scope="col">Begin</th>
+                <th scope="col">Eind</th>
+              </tr>
+             </thead>
+             <tbody>
+            `;
+            $.each(data, (index, element) => { 
+                proposition += `<tr>
+                <th scope="row">`+ element.proposition.crew.naam + `</th>
+                <td>`+ DateTime.fromISO(element.proposition.startDate).setLocale('nl').toLocaleString(DateTime.DATETIME_FULL) + `</td>
+                <td>`+ index + `</td>
+              </tr>`;
+            });
+            proposition += `</tbody>
+            </table>`;
+            Swal.fire({title: "Success",
+            width: "128em",
+            html: proposition, 
+            icon: "success"})
+            .then(function() {
+                refreshSchedule();
+            });
         }
     }).fail(function(data, textStatus, xhr) {
         Swal.fire("Systeemfout", "", "error");
