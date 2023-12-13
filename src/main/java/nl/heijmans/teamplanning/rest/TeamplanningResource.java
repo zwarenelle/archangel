@@ -15,6 +15,7 @@ import jakarta.ws.rs.core.MediaType;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 
 import nl.heijmans.teamplanning.domain.Opdracht;
 import nl.heijmans.teamplanning.domain.Teamplanning;
@@ -27,6 +28,7 @@ import org.json.JSONObject;
 
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import ai.timefold.solver.core.api.solver.RecommendedFit;
 import ai.timefold.solver.core.api.solver.ScoreAnalysisFetchPolicy;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolverManager;
@@ -73,6 +75,24 @@ public class TeamplanningResource {
     @Path("analyze")
     public ScoreAnalysis<HardMediumSoftLongScore> analyze(Teamplanning problem, @QueryParam("fetchPolicy") ScoreAnalysisFetchPolicy fetchPolicy) {
         return fetchPolicy == null ? solutionManager.analyze(problem) : solutionManager.analyze(problem, fetchPolicy);
+    }
+
+    @GET
+    @Path("opdracht/proposition")
+    // @Transactional
+    public List<RecommendedFit<Pair, HardMediumSoftLongScore>> fetch(@QueryParam("id") Long id) {
+        
+        // Check if corresponding opdracht exists and get it
+        Opdracht entity = opdrachtRepository.findById(id);
+        if(entity == null) {
+            throw new NotFoundException();
+        }
+        
+        Teamplanning solution = findById(SINGLETON_SCHEDULE_ID);
+        List<RecommendedFit<Pair, HardMediumSoftLongScore>> recommendations =
+        solutionManager.recommendFit(solution, entity, opdracht -> new Pair(opdracht.getCrew(), opdracht.getStartDate()));
+        
+        return recommendations;
     }
 
     @PUT

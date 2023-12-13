@@ -61,6 +61,7 @@ public class TeamplanningConstraintProvider implements ConstraintProvider {
                 .asConstraint("Dubbele boeking (ploeg)");
     }
 
+    // TODO: Incremental calculation
     public Constraint resourceCheck(ConstraintFactory constraintFactory) {
         // Match crewSkill and Availability to OpdrachtRequirements
         return constraintFactory

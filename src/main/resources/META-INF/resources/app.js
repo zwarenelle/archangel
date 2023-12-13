@@ -238,7 +238,7 @@ function refreshSchedule() {
                     .append($(`<div class="col-sm-8"/>`)
                     .append(unassignedOpdrachtElement))
                     .append($(`<div class="col-sm-4"/>`)
-                    .append($(`<button type="button" id="` + opdracht.id + `" class="btn btn-outline-info">Plannen</button>`).on("click", function() { plan(opdracht.id) })))
+                    .append($(`<button type="button" id="` + opdracht.id + `" class="btn btn-outline-info">Plannen</button>`).on("click", function() { plannen(opdracht.id) })))
                     ))));
             } else {
                 const byCrewOpdrachtElement = $(`<div/>`)
@@ -327,11 +327,6 @@ function refreshSchedule() {
         // byOpdrachtTimeline.setWindow(schedule.agenda.fromDate, schedule.agenda.toDate);
         // byCapacityTimeline.setWindow(schedule.agenda.fromDate, schedule.agenda.toDate);
     });
-}
-
-function plan(opdrachtId) {
-    console.log("Received plan");
-    console.log("opdrachtId: " + opdrachtId);
 }
 
 function solve() {
@@ -428,10 +423,22 @@ function analyze() {
     });
 }
 
+function plannen(opdrachtId) {
+    console.log("Received plan");
+    console.log("opdrachtId: " + opdrachtId);
+
+    $.getJSON("/schedule/opdracht/proposition", {id: opdrachtId}, function(data, statusText, xhr){
+        if (xhr.status == 200) {
+            console.log(data);
+            Swal.fire("Success", JSON.stringify(data), "success");
+        }
+    }).fail(function(data, textStatus, xhr) {
+        Swal.fire("Systeemfout", "", "error");
+   });
+}
+
 function updateOpdracht(item) {
-    $.put("/schedule/opdracht", JSON.stringify(item), function (result) {
-        console.log(result);
-    }).done(function(data, statusText, xhr){
+    $.put("/schedule/opdracht", JSON.stringify(item), function(data, statusText, xhr){
         if (xhr.status == 200) {
             Swal.fire("Wijziging opgeslagen!", "", "success")
             .then(function() {
@@ -448,9 +455,7 @@ function removeOpdracht(item) {
     clearedItem.start = null;
     clearedItem.end = null;
     clearedItem.group = null;
-    $.put("/schedule/opdracht", JSON.stringify(item), function (result) {
-        console.log(result);
-    }).done(function(data, statusText, xhr){
+    $.put("/schedule/opdracht", JSON.stringify(item), function(data, statusText, xhr){
         if (xhr.status == 200) {
             Swal.fire("Wijziging opgeslagen!", "", "success")
             .then(function() {
