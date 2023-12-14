@@ -36,8 +36,8 @@ public class Teamplanning {
     // Ignored by Timefold, used by the UI to display solve or stop solving button
     private SolverStatus solverStatus;
 
-    public static final int TIME_GRAIN_MINUTES = 60;
-    private static boolean overlapping = false;
+    public static final int TIME_GRAIN_MINUTES = 15;
+    private static boolean overlapping = true;
 
     // No-arg constructor required for Timefold
     public Teamplanning() {

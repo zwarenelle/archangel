@@ -26,7 +26,6 @@ public class TeamplanningConstraintProvider implements ConstraintProvider {
                 // Hard constraints
                 crewConflict(constraintFactory),
                 resourceCheck(constraintFactory),
-                // noWeekends(constraintFactory),
 
                 // Medium constraints
                 ReserveCrew(constraintFactory),
@@ -98,19 +97,6 @@ public class TeamplanningConstraintProvider implements ConstraintProvider {
                         )
                 .asConstraint("Beschikbaarheid");
     }
-
-//     public Constraint noWeekends(ConstraintFactory constraintFactory) {
-//         // A crew does not work on weekends
-//         return constraintFactory
-//                 .forEach(Opdracht.class)
-//                         .filter(opdracht -> 
-//                                    (opdracht.getStartDate().getDayOfWeek().getValue() > 5)
-//                                 || (opdracht.getEndDate().getDayOfWeek().getValue() > 5)
-//                                 )
-//                 .penalizeLong(HardMediumSoftLongScore.ONE_HARD,
-//                         opdracht -> Long.valueOf(Math.max((opdracht.getStartDate().getDayOfWeek().getValue() - 5), (opdracht.getEndDate().getDayOfWeek().getValue() - 5))))
-//                 .asConstraint("Overlaps weekend");
-//     }
 
     // ************************************************************************
     // Medium constraints
