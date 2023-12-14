@@ -200,72 +200,70 @@ function refreshSchedule() {
         });
 
         $.each(schedule.opdrachtList, (index, opdracht) => {
-            if (opdracht.crew.id != 1) {
-                const opdrachtGroupElement = $(`<div/>`)
-                .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
-                .append($(`<p class="card-text ms-2 mb-0"/>`).text("Bestekcode: " + opdracht.bestekcode))
-                .append($(`<p class="card-text ms-2 mb-0"/>`).text("Verwachte uitvoeringsduur: " + `${opdracht.durationInHours} uur`));
-                $.each(opdracht.requiredSkills, (index, req) => {
-                    opdrachtGroupElement.append(`</br>`)
-                    opdrachtGroupElement.append(req.aantal)
-                    opdrachtGroupElement.append(` `)
-                    opdrachtGroupElement.append(req.omschrijving)
-                });
-                byOpdrachtGroupDataSet.add({
-                    id : opdracht.id,
-                    content: opdrachtGroupElement.html()
-                });
+            const opdrachtGroupElement = $(`<div/>`)
+            .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
+            .append($(`<p class="card-text ms-2 mb-0"/>`).text("Bestekcode: " + opdracht.bestekcode))
+            .append($(`<p class="card-text ms-2 mb-0"/>`).text("Verwachte uitvoeringsduur: " + `${opdracht.durationInHours} uur`));
+            $.each(opdracht.requiredSkills, (index, req) => {
+                opdrachtGroupElement.append(`</br>`)
+                opdrachtGroupElement.append(req.aantal)
+                opdrachtGroupElement.append(` `)
+                opdrachtGroupElement.append(req.omschrijving)
+            });
+            byOpdrachtGroupDataSet.add({
+                id : opdracht.id,
+                content: opdrachtGroupElement.html()
+            });
 
-                if (opdracht.crew == null || opdracht.startDate == null) {
-                    unassignedOpdrachtsCount++;
-                    const unassignedOpdrachtElement = $(`<div class="card-body p-2"/>`)
-                        .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
-                        .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Bestekcode: ${opdracht.bestekcode}`))
-                        .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Verwachte uitvoeringsduur: ${opdracht.durationInHours} uur`));
-                    const byOpdrachtOpdrachtElement = $(`<div/>`)
-                    .append($(`<h5 class="card-title mb-1"/>`).text(`Unassigned`));
-                    $.each(opdracht.requiredSkills, (index, tag) => {
-                        if (tag.omschrijving.toString().startsWith("VIAG"))
-                        { color = "#FEB900"; }
-                        else if (tag.omschrijving.startsWith("BEI"))
-                        { color = "#ED5353"; }
-                        else { color = "#003366"; }
-                        unassignedOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
-                        byOpdrachtOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
-                    });
-                    unassignedOpdrachts.append($(`<div class="col"/>`)
-                        .append($(`<div class="card"/>`)
-                        .append($(`<div class="container"/>`)
-                        .append($(`<div class="row align-items-center"/>`)
-                        .append($(`<div class="col-sm-8"/>`)
-                        .append(unassignedOpdrachtElement))
-                        .append($(`<div class="col-sm-4"/>`)
-                        .append($(`<button type="button" id="` + opdracht.id + `" class="btn btn-outline-info">Plannen</button>`).on("click", function() { plannen(opdracht) })))
-                        ))));
-                            } else {
-                    const byCrewOpdrachtElement = $(`<div/>`)
-                        .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
-                        .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${opdracht.bestekcode}: ${opdracht.durationInHours} uur`));
-                    const byOpdrachtOpdrachtElement = $(`<div/>`)
-                        .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.crew.naam));
-                    $.each(opdracht.requiredSkills, (index, tag) => {
-                        if (tag.omschrijving.toString().startsWith("VIAG")) {color = "#FEB900";}
-                        else if (tag.omschrijving.toString().startsWith("BEI")) {color = "#ED5353";}
-                        else {color = "#003366";}
-                        byCrewOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
-                        byOpdrachtOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
-                    });
-                    byCrewItemDataSet.add({
-                        id : opdracht.id, group: opdracht.crew.id,
-                        content: byCrewOpdrachtElement.html(),
-                        start: opdracht.startDate, end: opdracht.endDate
-                    });
-                    byOpdrachtItemDataSet.add({
-                        id : opdracht.id, group: opdracht.id,
-                        content: byOpdrachtOpdrachtElement.html(),
-                        start: opdracht.startDate, end: opdracht.endDate
-                    });
-                }
+            if (opdracht.crew == null || opdracht.startDate == null) {
+                unassignedOpdrachtsCount++;
+                const unassignedOpdrachtElement = $(`<div class="card-body p-2"/>`)
+                    .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Bestekcode: ${opdracht.bestekcode}`))
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Verwachte uitvoeringsduur: ${opdracht.durationInHours} uur`));
+                const byOpdrachtOpdrachtElement = $(`<div/>`)
+                .append($(`<h5 class="card-title mb-1"/>`).text(`Unassigned`));
+                $.each(opdracht.requiredSkills, (index, tag) => {
+                    if (tag.omschrijving.toString().startsWith("VIAG"))
+                    { color = "#FEB900"; }
+                    else if (tag.omschrijving.startsWith("BEI"))
+                    { color = "#ED5353"; }
+                    else { color = "#003366"; }
+                    unassignedOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
+                    byOpdrachtOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
+                });
+                unassignedOpdrachts.append($(`<div class="col"/>`)
+                    .append($(`<div class="card"/>`)
+                    .append($(`<div class="container"/>`)
+                    .append($(`<div class="row align-items-center"/>`)
+                    .append($(`<div class="col-sm-8"/>`)
+                    .append(unassignedOpdrachtElement))
+                    .append($(`<div class="col-sm-4"/>`)
+                    .append($(`<button type="button" id="` + opdracht.id + `" class="btn btn-outline-info">Plannen</button>`).on("click", function() { plannen(opdracht) })))
+                    ))));
+                        } else if (opdracht.crew.id != 1) {
+                const byCrewOpdrachtElement = $(`<div/>`)
+                    .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
+                    .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${opdracht.bestekcode}: ${opdracht.durationInHours} uur`));
+                const byOpdrachtOpdrachtElement = $(`<div/>`)
+                    .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.crew.naam));
+                $.each(opdracht.requiredSkills, (index, tag) => {
+                    if (tag.omschrijving.toString().startsWith("VIAG")) {color = "#FEB900";}
+                    else if (tag.omschrijving.toString().startsWith("BEI")) {color = "#ED5353";}
+                    else {color = "#003366";}
+                    byCrewOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
+                    byOpdrachtOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
+                });
+                byCrewItemDataSet.add({
+                    id : opdracht.id, group: opdracht.crew.id,
+                    content: byCrewOpdrachtElement.html(),
+                    start: opdracht.startDate, end: opdracht.endDate
+                });
+                byOpdrachtItemDataSet.add({
+                    id : opdracht.id, group: opdracht.id,
+                    content: byOpdrachtOpdrachtElement.html(),
+                    start: opdracht.startDate, end: opdracht.endDate
+                });
             }
         });
 
