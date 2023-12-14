@@ -29,7 +29,7 @@ public class TeamplanningConstraintProvider implements ConstraintProvider {
                 // noWeekends(constraintFactory),
 
                 // Medium constraints
-                nullCrew(constraintFactory),
+                ReserveCrew(constraintFactory),
 
                 // Soft constraints
                 insideWorkHours(constraintFactory)
@@ -116,11 +116,10 @@ public class TeamplanningConstraintProvider implements ConstraintProvider {
     // Medium constraints
     // ************************************************************************
 
-    public Constraint nullCrew(ConstraintFactory constraintFactory) {
-               return constraintFactory.forEachIncludingNullVars(Opdracht.class)
-               .filter(opdracht -> opdracht.getCrew() == null)
-               .penalizeLong(HardMediumSoftLongScore.ONE_MEDIUM,
-                        opdracht -> 1L)
+    public Constraint ReserveCrew(ConstraintFactory constraintFactory) {
+               return constraintFactory.forEach(Opdracht.class)
+               .filter(opdracht -> opdracht.getCrew().getId() == 1)
+               .penalizeLong(HardMediumSoftLongScore.ONE_MEDIUM, opdracht -> 1L)
                 .asConstraint("Onplanbaar (geen passende ploeg)");
     }
 

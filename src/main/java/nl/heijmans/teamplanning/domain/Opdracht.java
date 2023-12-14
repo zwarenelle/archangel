@@ -42,7 +42,7 @@ public class Opdracht {
     @JoinColumn(name="JOB_ID")
     private List<OpdrachtRequirement> requiredSkills;
 
-    @PlanningVariable(nullable = true)
+    @PlanningVariable
     @ManyToOne
     private Crew crew;
     

@@ -77,7 +77,6 @@ const byCrewTimelineOptions = {
             confirmButtonText: "Save",
             denyButtonText: `Don't save`
         }).then( function(result) {
-            /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
                 callback(item);
                 updateOpdracht(item);
@@ -173,7 +172,7 @@ function refreshSchedule() {
         var MonteurToCrew = new Map();
 
         $.each(schedule.crewList, (index, crew) => {
-                const crewDescription = $(`<div/>`)
+                            const crewDescription = $(`<div/>`)
                 .append(crew.naam)
                 $.each(crew.monteurs, (index, monteur) => {
                     MonteurToCrew.set(monteur.id, crew.id);
@@ -190,8 +189,8 @@ function refreshSchedule() {
                     byCapacityGroupDataSet.add({id : monteur.id, content: capacityDescription.html()});
                 });
                 byCrewGroupDataSet.add({id : crew.id, content: crewDescription.html()
-            });
-        });
+            });   
+                    });
 
         $.each(schedule.opdrachtList, (index, opdracht) => {
             const opdrachtGroupElement = $(`<div/>`)
@@ -240,9 +239,9 @@ function refreshSchedule() {
                     .append($(`<div class="col-sm-8"/>`)
                     .append(unassignedOpdrachtElement))
                     .append($(`<div class="col-sm-4"/>`)
-                    .append($(`<button type="button" id="` + opdracht.id + `" class="btn btn-outline-info">Plannen</button>`).on("click", function() { plannen(opdracht.id) })))
+                    .append($(`<button type="button" id="` + opdracht.id + `" class="btn btn-outline-info">Plannen</button>`).on("click", function() { plannen(opdracht) })))
                     ))));
-            } else {
+                        } else {
                 const byCrewOpdrachtElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${opdracht.bestekcode}: ${opdracht.durationInHours} uur`));
@@ -260,15 +259,6 @@ function refreshSchedule() {
                     content: byCrewOpdrachtElement.html(),
                     start: opdracht.startDate, end: opdracht.endDate
                 });
-                // if (1 == true) {
-                //     byCrewItemDataSet.add({
-                //         id : opdracht.id, group: opdracht.crew.id,
-                //         content: "Boogzinker",
-                //         color: "#003366",
-                //         editable: false,
-                //         start: opdracht.startDate - 3, end: opdracht.endDate
-                //     });
-                // }
                 byOpdrachtItemDataSet.add({
                     id : opdracht.id, group: opdracht.id,
                     content: byOpdrachtOpdrachtElement.html(),
@@ -419,46 +409,73 @@ function analyze() {
     });
 }
 
-function plannen(opdrachtId) {
+function plannen(opdracht) {
     console.log("Received plan");
-    console.log("opdrachtId: " + opdrachtId);
+    console.log("opdrachtId: " + opdracht.id);
 
-    $.getJSON("/schedule/opdracht/proposition", {id: opdrachtId}, function(data, statusText, xhr){
+    var selected;
+
+    $(document).on('change','.optradio',function() { // Listen for change on radio CSS class
+        selected = $('input[name=optradio]:checked').val();
+        console.log(selected);
+    });
+
+    $.getJSON("/schedule/opdracht/proposition", {id: opdracht.id}, function(data, statusText, xhr){
         if (xhr.status == 200) {
             console.log(data);
             var proposition = `
+            <div class="d-flex justify-content-center">
             <table>
              <colgroup>
-              <col style="border: 2px solid black"><col span="2">
+              <col span="1">
+               <col style="border: 2px solid black">
+              <col span="1">
              </colgroup>
              <thead>
               <tr>
                 <th scope="col">Ploeg</th>
                 <th scope="col">Begin</th>
                 <th scope="col">Eind</th>
+                <th scope="col">Score</th>
+                <th scope="col">Keuze</th>
               </tr>
              </thead>
              <tbody>
             `;
-            $.each(data, (index, element) => { 
+            $.each(data, (index, element) => {
                 proposition += `<tr>
                 <th scope="row">`+ element.proposition.crew.naam + `</th>
                 <td>`+ DateTime.fromISO(element.proposition.startDate).setLocale('nl').toLocaleString(DateTime.DATETIME_FULL) + `</td>
-                <td>`+ index + `</td>
+                <td>`+ DateTime.fromISO(element.proposition.endDate).setLocale('nl').toLocaleString(DateTime.DATETIME_FULL) + `</td>
+                <td>`+ element.scoreDiff.score + `</td>
+                <td>
+                 <div class="radio">
+                  <input type="radio" value=` + index + ` name="optradio" class='optradio'>
+                 </div>
+                </td>
               </tr>`;
             });
             proposition += `</tbody>
-            </table>`;
-            Swal.fire({title: "Success",
-            width: "128em",
-            html: proposition, 
-            icon: "success"})
-            .then(function() {
-                refreshSchedule();
+            </table>
+            </div>`;
+            Swal.fire({
+                title: "Maak een keuze",
+                showCancelButton: true,
+                confirmButtonText: "Plannen",
+                width: "100em",
+                html: proposition, 
+                icon: "info"})
+            .then((result) => {
+                if (result.isConfirmed) {
+                    opdracht.group = data[selected].proposition.crew.id;
+                    opdracht.start = DateTime.fromISO(data[selected].proposition.startDate).setZone('UTC').toFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    opdracht.end = DateTime.fromISO(data[selected].proposition.endDate).setZone('UTC').toFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    updateOpdracht(opdracht);
+                }
             });
         }
     }).fail(function(data, textStatus, xhr) {
-        Swal.fire("Systeemfout", "", "error");
+        Swal.fire("Fout bij ophalen van plan-mogelijkheden", "", "error");
    });
 }
 

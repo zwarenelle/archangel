@@ -61,6 +61,16 @@ public class DemoDataGenerator {
         }
         
         List<Crew> crewList = new ArrayList<>();
+
+        // Reserve
+        crewList.add(new Crew("Reserve", List.of(
+            new Monteur("1", new Skill(1, "VIAG VP")),
+            new Monteur("2", new Skill(2, "VIAG VOP meters")),
+            new Monteur("3", new Skill(3, "VIAG VOP")),
+            new Monteur("4", new Skill(4, "BEI VP")),
+            new Monteur("5", new Skill(5, "BEI VOP meters")),
+            new Monteur("6", new Skill(6, "BEI VOP"))
+            )));
         
         // crewList.add(new Crew("Ploeg Combi", List.of(new Monteur("Paul", new Skill(1, "VIAG VP")), new Monteur("Robbert", new Skill(3, "VIAG VOP")), new Monteur("Marichelle", new Skill(4, "BEI VP")), new Monteur("Fons", new Skill(6, "BEI VOP")))));
         crewList.add(new Crew("Ploeg E1", List.of(new Monteur("Emiel", new Skill(4, "BEI VP")), new Monteur("Mark", new Skill(6, "BEI VOP")))));
@@ -71,10 +81,6 @@ public class DemoDataGenerator {
         // Extra Skill
         // crewList.add(new Crew("Ploeg G3", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")), new Monteur("Mike2", new Skill(2, "VIAG VOP meters")))));
         
-        // Regular
-        // crewList.add(new Crew("Ploeg G3", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")))));
-        
-
         crewRepository.persist(crewList);
 
         final String[] JOB_AREA_NAMES = {
@@ -113,7 +119,7 @@ public class DemoDataGenerator {
         }
 
         List<Opdracht> opdrachtList = new ArrayList<>();
-        int opdrachtListSize = crewList.size() * 16;
+        int opdrachtListSize = (crewList.size() - 1) * 16;
 
         Random random = new Random(17);
         for (int i = 0; i < opdrachtListSize; i++) {

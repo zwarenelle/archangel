@@ -4,4 +4,4 @@ import java.time.LocalDateTime;
 
 import nl.heijmans.teamplanning.domain.Crew;
 
-public record Pair(Crew crew, LocalDateTime startDate) { }
+public record Pair(Crew crew, LocalDateTime startDate, LocalDateTime endDate) { }

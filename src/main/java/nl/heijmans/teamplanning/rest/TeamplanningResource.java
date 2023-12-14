@@ -80,7 +80,6 @@ public class TeamplanningResource {
 
     @GET
     @Path("opdracht/proposition")
-    @Transactional
     public List<RecommendedFit<Pair, HardMediumSoftLongScore>> fetch(@QueryParam("id") Long id) {
         
         // Check if corresponding opdracht exists and get it
@@ -92,17 +91,8 @@ public class TeamplanningResource {
         Teamplanning solution = findById(SINGLETON_SCHEDULE_ID);
         List<RecommendedFit<Pair, HardMediumSoftLongScore>> recommendations =
         solutionManager.recommendFit(solution, entity,
-        opdracht -> new Pair(opdracht.getCrew(), opdracht.getStartDate()))
-        .stream().limit(5L).collect(Collectors.toList());
-
-        RecommendedFit<Pair, HardMediumSoftLongScore> bestRecommendation = recommendations.get(0);
-
-        // System.out.println(bestRecommendation.proposition().crew());
-        // System.out.println(bestRecommendation.proposition().startDate());
-
-        // entity.setCrew(bestRecommendation.proposition().crew());
-        // entity.setStartDate(bestRecommendation.proposition().startDate());
-        // entity.setEndDate();
+        opdracht -> new Pair(opdracht.getCrew(), opdracht.getStartDate(), opdracht.getEndDate()))
+        .stream().limit(10L).collect(Collectors.toList());
         
         return recommendations;
     }
@@ -124,7 +114,7 @@ public class TeamplanningResource {
             throw new NotFoundException();
         }
 
-        // Get values that need to be modified in opdracht from JSON Object
+        // Get values that need to be modified in Opdracht from JSON Object
         Long crewId = itemJackson.optLongObject("group");
         LocalDateTime start = itemJackson.optString("start") == "" || itemJackson.optString("start") == null ? null
         : LocalDateTime.ofInstant(Instant.parse(itemJackson.optString("start")), ZoneId.of("Europe/Amsterdam"));
