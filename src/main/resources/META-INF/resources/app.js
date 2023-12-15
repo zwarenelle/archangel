@@ -33,7 +33,7 @@ const byCrewPanel = document.getElementById("byCrewPanel");
 const byCrewTimelineOptions = {
     timeAxis: {scale: "hour", step: 1},
     orientation: {axis: "top"},
-    stack: false,
+    stack: true,
     editable: {
         add: false,         // add new items by double tapping
         updateTime: true,  // drag items horizontally
@@ -117,6 +117,7 @@ const byCapacityPanel = document.getElementById("byCapacityPanel");
 const byCapacityTimelineOptions = {
     timeAxis: {scale: "day", step: 1},
     orientation: {axis: "top"},
+    stack: false,
     xss: {disabled: true},
     zoomMin: 1000 * 60 * 60 * 24,
     locale: 'nl',

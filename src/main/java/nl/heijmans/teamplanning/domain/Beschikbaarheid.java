@@ -23,21 +23,21 @@ public class Beschikbaarheid {
     LocalDateTime start;
     LocalDateTime end;
 
-    BeschikbaarheidType availabilityType;
+    BeschikbaarheidType beschikbaarheidType;
 
     public Beschikbaarheid() {
     }
 
-    public Beschikbaarheid(Monteur monteur, LocalDateTime start, LocalDateTime end, BeschikbaarheidType availabilityType) {
+    public Beschikbaarheid(Monteur monteur, LocalDateTime start, LocalDateTime end, BeschikbaarheidType beschikbaarheidType) {
         this.monteur = monteur;
         this.start = start;
         this.end = end;
-        this.availabilityType = availabilityType;
+        this.beschikbaarheidType = beschikbaarheidType;
     }
 
     @Override
     public String toString() {
-        return availabilityType + "(" + monteur + ", " + start + ")";
+        return beschikbaarheidType + "(" + monteur + ", " + start + ")";
     }
 
     public Long getId() {
@@ -73,11 +73,11 @@ public class Beschikbaarheid {
     }
 
     public BeschikbaarheidType getBeschikbaarheidType() {
-        return availabilityType;
+        return beschikbaarheidType;
     }
 
-    public void setBeschikbaarheidType(BeschikbaarheidType availabilityType) {
-        this.availabilityType = availabilityType;
+    public void setBeschikbaarheidType(BeschikbaarheidType beschikbaarheidType) {
+        this.beschikbaarheidType = beschikbaarheidType;
     }
 
     public void setMonteur(Monteur monteur) {
