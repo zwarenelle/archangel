@@ -24,7 +24,7 @@ public class Teamplanning {
     private List<Beschikbaarheid> beschikbaarheidList;
     @ProblemFactCollectionProperty
     @ValueRangeProvider
-    private List<Crew> crewList;
+    private List<Ploeg> ploegList;
     @ProblemFactCollectionProperty
     private List<Monteur> monteurList;
     @PlanningEntityCollectionProperty
@@ -44,10 +44,10 @@ public class Teamplanning {
     }
 
     public Teamplanning(Agenda agenda, List<Beschikbaarheid> beschikbaarheidList,
-            List<Crew> crewList, List<Monteur> monteurList, List<Opdracht> opdrachtList) {
+            List<Ploeg> ploegList, List<Monteur> monteurList, List<Opdracht> opdrachtList) {
         this.agenda = agenda;
         this.beschikbaarheidList = beschikbaarheidList;
-        this.crewList = crewList;
+        this.ploegList = ploegList;
         this.monteurList = monteurList;
         this.opdrachtList = opdrachtList;
     }
@@ -67,8 +67,8 @@ public class Teamplanning {
         return agenda;
     }
 
-    public List<Crew> getCrewList() {
-        return crewList;
+    public List<Ploeg> getPloegList() {
+        return ploegList;
     }
 
     public List<Monteur> getMonteurList() {

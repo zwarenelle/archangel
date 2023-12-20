@@ -44,7 +44,7 @@ public class Opdracht {
 
     @PlanningVariable
     @ManyToOne
-    private Crew crew;
+    private Ploeg ploeg;
     
     @PlanningVariable
     private LocalDateTime startDate; // Inclusive
@@ -64,11 +64,11 @@ public class Opdracht {
         this.durationInGrains = max.getAsInt() * (60 / Teamplanning.TIME_GRAIN_MINUTES);
     }
 
-    public Opdracht(Long id, String adres, String bestekcode, Crew crew, LocalDateTime startDate) {
+    public Opdracht(Long id, String adres, String bestekcode, Ploeg ploeg, LocalDateTime startDate) {
         this.id = id;
         this.adres = adres;
         this.bestekcode = bestekcode;
-        this.crew = crew;
+        this.ploeg = ploeg;
         this.startDate = startDate;
         ReqsFromBestekcode();
         OptionalInt max = requiredSkills.stream()
@@ -111,8 +111,8 @@ public class Opdracht {
         return this.requiredSkills;
     }
 
-    public Crew getCrew() {
-        return crew;
+    public Ploeg getPloeg() {
+        return ploeg;
     }
 
     public LocalDateTime getStartDate() {
@@ -123,8 +123,8 @@ public class Opdracht {
         return endDate;
     }
 
-    public void setCrew(Crew crew) {
-        this.crew = crew;
+    public void setPloeg(Ploeg ploeg) {
+        this.ploeg = ploeg;
     }
 
     public void setRequiredSkills(List<OpdrachtRequirement> requiredSkills) {

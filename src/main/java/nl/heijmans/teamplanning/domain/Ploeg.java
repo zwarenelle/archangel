@@ -16,7 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class Crew {
+public class Ploeg {
 
     @PlanningId
     @Id
@@ -25,21 +25,21 @@ public class Crew {
     private String naam;
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
-    @JoinColumn(name="CREW_ID")
+    @JoinColumn(name="PLOEG_ID")
     private List<Monteur> monteurs;
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
-    @JoinColumn(name="CREW_ID")
-    private List<CrewSkill> crewSkill;
+    @JoinColumn(name="PLOEG_ID")
+    private List<PloegSkill> ploegSkill;
 
     // No-arg constructor required for Hibernate
-    public Crew() {
+    public Ploeg() {
     }
 
-    public Crew(String naam, List<Monteur> monteurs) {
+    public Ploeg(String naam, List<Monteur> monteurs) {
         this.naam = naam;
         this.monteurs = monteurs;
-        this.setCrewSkill();
+        this.setPloegSkill();
     }
 
     @Override
@@ -59,8 +59,8 @@ public class Crew {
         return monteurs;
     }
 
-    public List<CrewSkill> getCrewSkill() {
-        return this.crewSkill;
+    public List<PloegSkill> getPloegSkill() {
+        return this.ploegSkill;
     }
 
     public void setId(Long id) {
@@ -85,32 +85,32 @@ public class Crew {
         .collect(Collectors.toList());
     }
 
-    public Crew filter(List<Monteur> monteursToRemove) {
-        Crew newcrew = new Crew(this.naam, monteursToRemove);
-        return newcrew;
+    public Ploeg filter(List<Monteur> monteursToRemove) {
+        Ploeg newploeg = new Ploeg(this.naam, monteursToRemove);
+        return newploeg;
     }
 
-    public void setCrewSkill() {
-        // Update crewSkill with skills from monteurs
-        this.crewSkill = this.monteurs.stream()
-        .map((monteur) -> new CrewSkill(monteur.getVaardigheid().getTypenummer(), 1, monteur.getVaardigheid().getOmschrijving()))
+    public void setPloegSkill() {
+        // Update ploegSkill with skills from monteurs
+        this.ploegSkill = this.monteurs.stream()
+        .map((monteur) -> new PloegSkill(monteur.getVaardigheid().getTypenummer(), 1, monteur.getVaardigheid().getOmschrijving()))
         .collect(Collectors.toList());
 
         // Sort list by typenummer, just to be sure
-        this.crewSkill.sort(Comparator.comparing(CrewSkill::getTypenummer));
+        this.ploegSkill.sort(Comparator.comparing(PloegSkill::getTypenummer));
 
         // Group entry's with the same typenummer into a map
-        Map<Integer, List<CrewSkill>> skillMap = this.crewSkill.stream()
-        .collect(Collectors.groupingBy(crewskill -> crewskill.getTypenummer()));
+        Map<Integer, List<PloegSkill>> skillMap = this.ploegSkill.stream()
+        .collect(Collectors.groupingBy(ploegskill -> ploegskill.getTypenummer()));
 
         // Create new list including typenummmer count
-        List<CrewSkill> skillsummary = new ArrayList<CrewSkill>();
+        List<PloegSkill> skillsummary = new ArrayList<PloegSkill>();
 
-        for (Map.Entry<Integer, List<CrewSkill>> crewskill : skillMap.entrySet()) {
-            skillsummary.add(new CrewSkill(crewskill.getKey(), crewskill.getValue().size(), crewskill.getValue().iterator().next().getOmschrijving()));
+        for (Map.Entry<Integer, List<PloegSkill>> ploegskill : skillMap.entrySet()) {
+            skillsummary.add(new PloegSkill(ploegskill.getKey(), ploegskill.getValue().size(), ploegskill.getValue().iterator().next().getOmschrijving()));
         }
 
-        this.crewSkill = skillsummary;
+        this.ploegSkill = skillsummary;
     }
 
 }

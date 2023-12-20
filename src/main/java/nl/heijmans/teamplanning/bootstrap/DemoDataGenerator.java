@@ -19,13 +19,13 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import nl.heijmans.teamplanning.domain.Agenda;
 import nl.heijmans.teamplanning.domain.Beschikbaarheid;
 import nl.heijmans.teamplanning.domain.BeschikbaarheidType;
-import nl.heijmans.teamplanning.domain.Crew;
+import nl.heijmans.teamplanning.domain.Ploeg;
 import nl.heijmans.teamplanning.domain.Opdracht;
 import nl.heijmans.teamplanning.domain.Monteur;
 import nl.heijmans.teamplanning.domain.Skill;
 import nl.heijmans.teamplanning.persistence.AgendaRepository;
 import nl.heijmans.teamplanning.persistence.BeschikbaarheidRepository;
-import nl.heijmans.teamplanning.persistence.CrewRepository;
+import nl.heijmans.teamplanning.persistence.PloegRepository;
 import nl.heijmans.teamplanning.persistence.OpdrachtRepository;
 import nl.heijmans.teamplanning.persistence.OpdrachtRequirementRepository;
 import nl.heijmans.teamplanning.persistence.MonteurRepository;
@@ -44,7 +44,7 @@ public class DemoDataGenerator {
     @Inject
     AgendaRepository agendaRepository;
     @Inject
-    CrewRepository crewRepository;
+    PloegRepository ploegRepository;
     @Inject
     OpdrachtRepository opdrachtRepository;
     @Inject
@@ -60,10 +60,10 @@ public class DemoDataGenerator {
             return;
         }
         
-        List<Crew> crewList = new ArrayList<>();
+        List<Ploeg> ploegList = new ArrayList<>();
 
         // Reserve
-        crewList.add(new Crew("Reserve", List.of(
+        ploegList.add(new Ploeg("Reserve", List.of(
             new Monteur("1", new Skill(1, "VIAG VP")),
             new Monteur("2", new Skill(2, "VIAG VOP meters")),
             new Monteur("3", new Skill(3, "VIAG VOP")),
@@ -72,16 +72,16 @@ public class DemoDataGenerator {
             new Monteur("6", new Skill(6, "BEI VOP"))
             )));
         
-        // crewList.add(new Crew("Ploeg Combi", List.of(new Monteur("Paul", new Skill(1, "VIAG VP")), new Monteur("Robbert", new Skill(3, "VIAG VOP")), new Monteur("Marichelle", new Skill(4, "BEI VP")), new Monteur("Fons", new Skill(6, "BEI VOP")))));
-        crewList.add(new Crew("Ploeg E1", List.of(new Monteur("Emiel", new Skill(4, "BEI VP")), new Monteur("Mark", new Skill(6, "BEI VOP")))));
-        crewList.add(new Crew("Ploeg E2", List.of(new Monteur("Gijs", new Skill(4, "BEI VP")), new Monteur("Dave", new Skill(6, "BEI VOP")))));
-        crewList.add(new Crew("Ploeg G1", List.of(new Monteur("Tom", new Skill(1, "VIAG VP")), new Monteur("Bas", new Skill(3, "VIAG VOP")))));
-        crewList.add(new Crew("Ploeg G2", List.of(new Monteur("Raymon", new Skill(1, "VIAG VP")), new Monteur("Albert", new Skill(3, "VIAG VOP")))));
+        // ploegList.add(new Ploeg("Ploeg Combi", List.of(new Monteur("Paul", new Skill(1, "VIAG VP")), new Monteur("Robbert", new Skill(3, "VIAG VOP")), new Monteur("Marichelle", new Skill(4, "BEI VP")), new Monteur("Fons", new Skill(6, "BEI VOP")))));
+        ploegList.add(new Ploeg("Ploeg E1", List.of(new Monteur("Emiel", new Skill(4, "BEI VP")), new Monteur("Mark", new Skill(6, "BEI VOP")))));
+        ploegList.add(new Ploeg("Ploeg E2", List.of(new Monteur("Gijs", new Skill(4, "BEI VP")), new Monteur("Dave", new Skill(6, "BEI VOP")))));
+        ploegList.add(new Ploeg("Ploeg G1", List.of(new Monteur("Tom", new Skill(1, "VIAG VP")), new Monteur("Bas", new Skill(3, "VIAG VOP")))));
+        ploegList.add(new Ploeg("Ploeg G2", List.of(new Monteur("Raymon", new Skill(1, "VIAG VP")), new Monteur("Albert", new Skill(3, "VIAG VOP")))));
 
         // Extra Skill
-        // crewList.add(new Crew("Ploeg G3", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")), new Monteur("Mike2", new Skill(2, "VIAG VOP meters")))));
+        // ploegList.add(new Ploeg("Ploeg G3", List.of(new Monteur("John", new Skill(1, "VIAG VP")), new Monteur("Mike", new Skill(3, "VIAG VOP")), new Monteur("Mike2", new Skill(2, "VIAG VOP meters")))));
         
-        crewRepository.persist(crewList);
+        ploegRepository.persist(ploegList);
 
         final String[] JOB_AREA_NAMES = {
                 "Spui", "Raamsteeg", "Rokin", "Damrak", "Kalverstraat", "Nieuwmarkt", "Nieuwmarkt", "Spooksteeg", "Oudezijds Voorburgwal",
@@ -105,8 +105,8 @@ public class DemoDataGenerator {
         LocalDateTime toDate = fromDate.plusWeeks(weekListSize);
         agendaRepository.persist(new Agenda(fromDate, toDate));
 
-        for (Crew crew : crewList) {
-            for (Monteur monteur : crew.getMonteurs()) {
+        for (Ploeg ploeg : ploegList) {
+            for (Monteur monteur : ploeg.getMonteurs()) {
                 for (LocalDate date = fromDate.toLocalDate(); date.isBefore(toDate.toLocalDate()); date = date.plusDays(1)) {
                     if (date.getDayOfWeek().getValue() < 6) {
                         beschikbaarheidRepository.persist(new Beschikbaarheid(monteur, date.atStartOfDay(), date.atTime(LocalTime.MAX), BeschikbaarheidType.BESCHIKBAAR));
@@ -119,7 +119,7 @@ public class DemoDataGenerator {
         }
 
         List<Opdracht> opdrachtList = new ArrayList<>();
-        int opdrachtListSize = (crewList.size() - 1) * 16;
+        int opdrachtListSize = (ploegList.size() - 1) * 16;
 
         Random random = new Random(17);
         for (int i = 0; i < opdrachtListSize; i++) {

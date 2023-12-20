@@ -35,7 +35,7 @@ public class TeamplanningResourceTest {
         }
         assertFalse(teamplanning.getOpdrachtList().isEmpty());
         for (Opdracht opdracht : teamplanning.getOpdrachtList()) {
-            assertNotNull(opdracht.getCrew());
+            assertNotNull(opdracht.getPloeg());
             assertNotNull(opdracht.getStartDate());
         }
         assertTrue(teamplanning.getScore().isFeasible());

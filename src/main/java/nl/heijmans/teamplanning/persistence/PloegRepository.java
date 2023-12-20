@@ -2,11 +2,11 @@ package nl.heijmans.teamplanning.persistence;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
-import nl.heijmans.teamplanning.domain.Crew;
+import nl.heijmans.teamplanning.domain.Ploeg;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 @ApplicationScoped
-public class CrewRepository implements PanacheRepository<Crew> {
+public class PloegRepository implements PanacheRepository<Ploeg> {
 
 }

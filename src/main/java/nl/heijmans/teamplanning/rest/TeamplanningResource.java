@@ -22,7 +22,7 @@ import nl.heijmans.teamplanning.domain.Opdracht;
 import nl.heijmans.teamplanning.domain.Teamplanning;
 import nl.heijmans.teamplanning.persistence.AgendaRepository;
 import nl.heijmans.teamplanning.persistence.BeschikbaarheidRepository;
-import nl.heijmans.teamplanning.persistence.CrewRepository;
+import nl.heijmans.teamplanning.persistence.PloegRepository;
 import nl.heijmans.teamplanning.persistence.OpdrachtRepository;
 import nl.heijmans.teamplanning.persistence.MonteurRepository;
 import org.json.JSONObject;
@@ -47,7 +47,7 @@ public class TeamplanningResource {
     @Inject
     AgendaRepository agendaRepository;
     @Inject
-    CrewRepository crewRepository;
+    PloegRepository ploegRepository;
     @Inject
     MonteurRepository monteurRepository;
     @Inject
@@ -91,7 +91,7 @@ public class TeamplanningResource {
         Teamplanning solution = findById(SINGLETON_SCHEDULE_ID);
         List<RecommendedFit<Pair, HardMediumSoftLongScore>> recommendations =
         solutionManager.recommendFit(solution, entity,
-        opdracht -> new Pair(opdracht.getCrew(), opdracht.getStartDate(), opdracht.getEndDate()))
+        opdracht -> new Pair(opdracht.getPloeg(), opdracht.getStartDate(), opdracht.getEndDate()))
         .stream().limit(10L).collect(Collectors.toList());
         
         return recommendations;
@@ -115,7 +115,7 @@ public class TeamplanningResource {
         }
 
         // Get values that need to be modified in Opdracht from JSON Object
-        Long crewId = itemJackson.optLongObject("group");
+        Long ploegId = itemJackson.optLongObject("group");
         LocalDateTime start = itemJackson.optString("start") == "" || itemJackson.optString("start") == null ? null
         : LocalDateTime.ofInstant(Instant.parse(itemJackson.optString("start")), ZoneId.of("Europe/Amsterdam"));
         LocalDateTime end = itemJackson.optString("end") == "" || itemJackson.optString("start") == null ? null
@@ -124,7 +124,7 @@ public class TeamplanningResource {
         // Modify opdracht accordingly
         entity.setStartDate(start);
         entity.setEndDate(end);
-        entity.setCrew((crewId == 0 || crewId == null ? null : crewRepository.findById(crewId)));
+        entity.setPloeg((ploegId == 0 || ploegId == null ? null : ploegRepository.findById(ploegId)));
         
         return entity;
     }
@@ -164,7 +164,7 @@ public class TeamplanningResource {
         return new Teamplanning(
                 agendaRepository.listAll().get(0),
                 beschikbaarheidRepository.listAll(Sort.by("id")),
-                crewRepository.listAll(Sort.by("naam").and("id")),
+                ploegRepository.listAll(Sort.by("naam").and("id")),
                 monteurRepository.listAll(Sort.by("id")),
                 opdrachtRepository.listAll(Sort.by("adres").and("id"))
                 );
@@ -175,7 +175,7 @@ public class TeamplanningResource {
         for (Opdracht opdracht : schedule.getOpdrachtList()) {
             // TODO: This is awfully naive: optimistic locking causes issues if called by the SolverManager
             Opdracht attachedOpdracht = opdrachtRepository.findById(opdracht.getId());
-            attachedOpdracht.setCrew(opdracht.getCrew());
+            attachedOpdracht.setPloeg(opdracht.getPloeg());
             attachedOpdracht.setStartDate(opdracht.getStartDate());
             attachedOpdracht.setEndDate(opdracht.getEndDate());
         }

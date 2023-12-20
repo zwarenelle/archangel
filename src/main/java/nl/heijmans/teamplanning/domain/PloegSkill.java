@@ -3,16 +3,16 @@ package nl.heijmans.teamplanning.domain;
 import jakarta.persistence.Entity;
 
 @Entity
-public class CrewSkill extends Skill{
+public class PloegSkill extends Skill{
 
     private int aantal;
 
-    public CrewSkill()
+    public PloegSkill()
     {
 
     }
 
-    public CrewSkill(int typenummer, int aantal, String omschrijving)
+    public PloegSkill(int typenummer, int aantal, String omschrijving)
     {
         super(typenummer, omschrijving);
         this.aantal = aantal;

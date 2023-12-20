@@ -29,8 +29,8 @@ var formattingOptions =
     }
   };
 
-const byCrewPanel = document.getElementById("byCrewPanel");
-const byCrewTimelineOptions = {
+const byPloegPanel = document.getElementById("byPloegPanel");
+const byPloegTimelineOptions = {
     timeAxis: {scale: "hour", step: 1},
     orientation: {axis: "top"},
     stack: true,
@@ -95,9 +95,9 @@ const byCrewTimelineOptions = {
 
 };
 
-var byCrewGroupDataSet = new vis.DataSet();
-var byCrewItemDataSet = new vis.DataSet();
-var byCrewTimeline = new vis.Timeline(byCrewPanel, byCrewItemDataSet, byCrewGroupDataSet, byCrewTimelineOptions);
+var byPloegGroupDataSet = new vis.DataSet();
+var byPloegItemDataSet = new vis.DataSet();
+var byPloegTimeline = new vis.Timeline(byPloegPanel, byPloegItemDataSet, byPloegGroupDataSet, byPloegTimelineOptions);
 
 const byOpdrachtPanel = document.getElementById("byOpdrachtPanel");
 const byOpdrachtTimelineOptions = {
@@ -145,8 +145,8 @@ $(document).ready(function () {
         analyze();
     });
     // HACK to allow vis-timeline to work within Bootstrap tabs
-    $("#byCrewTab").on('shown.bs.tab', function (event) {
-        byCrewTimeline.redraw();
+    $("#byPloegTab").on('shown.bs.tab', function (event) {
+        byPloegTimeline.redraw();
     })
     $("#byOpdrachtTab").on('shown.bs.tab', function (event) {
         byOpdrachtTimeline.redraw();
@@ -168,35 +168,35 @@ function refreshSchedule() {
         const unassignedOpdrachts = $("#unassignedOpdrachts");
         unassignedOpdrachts.children().remove();
         var unassignedOpdrachtsCount = 0;
-        byCrewGroupDataSet.clear();
+        byPloegGroupDataSet.clear();
         byOpdrachtGroupDataSet.clear();
         byCapacityGroupDataSet.clear();
-        byCrewItemDataSet.clear();
+        byPloegItemDataSet.clear();
         byOpdrachtItemDataSet.clear();
         byCapacityItemDataSet.clear();
 
-        // Map Monteur ID's to Crew ID's for later usage in availabilty background
-        var MonteurToCrew = new Map();
+        // Map Monteur ID's to Ploeg ID's for later usage in availabilty background
+        var MonteurToPloeg = new Map();
 
-        $.each(schedule.crewList, (index, crew) => {
-            if (crew.id != 1) {
-                const crewDescription = $(`<div/>`)
-                .append(crew.naam)
-                $.each(crew.monteurs, (index, monteur) => {
-                    MonteurToCrew.set(monteur.id, crew.id);
+        $.each(schedule.ploegList, (index, ploeg) => {
+            if (ploeg.id != 1) {
+                const ploegDescription = $(`<div/>`)
+                .append(ploeg.naam)
+                $.each(ploeg.monteurs, (index, monteur) => {
+                    MonteurToPloeg.set(monteur.id, ploeg.id);
 
                     const capacityDescription = $(`<div/>`)
-                    crewDescription.append(`</br>`)
-                    crewDescription.append(monteur.naam)
-                    crewDescription.append(` `)
-                    crewDescription.append(monteur.vaardigheid.omschrijving)
+                    ploegDescription.append(`</br>`)
+                    ploegDescription.append(monteur.naam)
+                    ploegDescription.append(` `)
+                    ploegDescription.append(monteur.vaardigheid.omschrijving)
 
                     capacityDescription.append(monteur.naam)
                     capacityDescription.append(`</br>`)
                     capacityDescription.append(monteur.vaardigheid.omschrijving)
                     byCapacityGroupDataSet.add({id : monteur.id, content: capacityDescription.html()});
                 });
-                byCrewGroupDataSet.add({id : crew.id, content: crewDescription.html()});
+                byPloegGroupDataSet.add({id : ploeg.id, content: ploegDescription.html()});
             }
         });
 
@@ -216,7 +216,7 @@ function refreshSchedule() {
                 content: opdrachtGroupElement.html()
             });
 
-            if (opdracht.crew == null || opdracht.startDate == null) {
+            if (opdracht.ploeg == null || opdracht.startDate == null) {
                 unassignedOpdrachtsCount++;
                 const unassignedOpdrachtElement = $(`<div class="card-body p-2"/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
@@ -242,22 +242,22 @@ function refreshSchedule() {
                     .append($(`<div class="col-sm-4"/>`)
                     .append($(`<button type="button" id="` + opdracht.id + `" class="btn btn-outline-info">Plannen</button>`).on("click", function() { plannen(opdracht) })))
                     ))));
-                        } else if (opdracht.crew.id != 1) {
-                const byCrewOpdrachtElement = $(`<div/>`)
+                        } else if (opdracht.ploeg.id != 1) {
+                const byPloegOpdrachtElement = $(`<div/>`)
                     .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.adres))
                     .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${opdracht.bestekcode}: ${opdracht.durationInHours} uur`));
                 const byOpdrachtOpdrachtElement = $(`<div/>`)
-                    .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.crew.naam));
+                    .append($(`<h5 class="card-title mb-1"/>`).text(opdracht.ploeg.naam));
                 $.each(opdracht.requiredSkills, (index, tag) => {
                     if (tag.omschrijving.toString().startsWith("VIAG")) {color = "#FEB900";}
                     else if (tag.omschrijving.toString().startsWith("BEI")) {color = "#ED5353";}
                     else {color = "#003366";}
-                    byCrewOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
+                    byPloegOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
                     byOpdrachtOpdrachtElement.append($(`<span class="badge me-1" style="background-color: ${color}"/>`).text(tag.aantal + "x " + tag.omschrijving));
                 });
-                byCrewItemDataSet.add({
-                    id : opdracht.id, group: opdracht.crew.id,
-                    content: byCrewOpdrachtElement.html(),
+                byPloegItemDataSet.add({
+                    id : opdracht.id, group: opdracht.ploeg.id,
+                    content: byPloegOpdrachtElement.html(),
                     start: opdracht.startDate, end: opdracht.endDate
                 });
                 byOpdrachtItemDataSet.add({
@@ -268,18 +268,18 @@ function refreshSchedule() {
             }
         });
 
-        var MonteurInCrewCount = {};
-        MonteurToCrew.forEach(function (x) {
-            MonteurInCrewCount[x] = (MonteurInCrewCount[x] || 0) + 1
+        var MonteurInPloegCount = {};
+        MonteurToPloeg.forEach(function (x) {
+            MonteurInPloegCount[x] = (MonteurInPloegCount[x] || 0) + 1
         });
 
-        var CrewMemberCount = 1;
+        var PloegMemberCount = 1;
         var PreviousMonteurID;
 
         $.each(schedule.beschikbaarheidList, (index, beschikbaarheid) => {
             if (beschikbaarheid.monteur.id == PreviousMonteurID) {}
-            else if (MonteurToCrew.get(beschikbaarheid.monteur.id) == MonteurToCrew.get(beschikbaarheid.monteur.id - 1)) {CrewMemberCount++;}
-            else {CrewMemberCount = 1;}
+            else if (MonteurToPloeg.get(beschikbaarheid.monteur.id) == MonteurToPloeg.get(beschikbaarheid.monteur.id - 1)) {PloegMemberCount++;}
+            else {PloegMemberCount = 1;}
 
             PreviousMonteurID = beschikbaarheid.monteur.id;
 
@@ -291,19 +291,19 @@ function refreshSchedule() {
                 start: beschikbaarheid.start, end: beschikbaarheid.end
             });
 
-            // Add background color to Crew planning if there's an unavailable or sick employee
-            if (MonteurToCrew.has(beschikbaarheid.monteur.id)) {
+            // Add background color to Ploeg planning if there's an unavailable or sick employee
+            if (MonteurToPloeg.has(beschikbaarheid.monteur.id)) {
                 if (beschikbaarheid.beschikbaarheidType.toString() == "ONBESCHIKBAAR" || beschikbaarheid.beschikbaarheidType.toString() == "ZIEK") {
                     var nameElement = $(`<div/>`);
                     nameElement.append("Onbeschikbaar:</br>");
-                    if (CrewMemberCount > 1) {
-                        for (let index = 1; index < CrewMemberCount; index++) {
+                    if (PloegMemberCount > 1) {
+                        for (let index = 1; index < PloegMemberCount; index++) {
                             nameElement.append("</br>");
                         }
                     }
                     nameElement.append(beschikbaarheid.monteur.naam);
-                    byCrewItemDataSet.add({
-                        group: MonteurToCrew.get(beschikbaarheid.monteur.id),
+                    byPloegItemDataSet.add({
+                        group: MonteurToPloeg.get(beschikbaarheid.monteur.id),
                         start: beschikbaarheid.start, end: beschikbaarheid.end,
                         content: nameElement.html(),
                         type: "background",
@@ -444,7 +444,7 @@ function plannen(opdracht) {
             `;
             $.each(data, (index, element) => {
                 proposition += `<tr>
-                <th scope="row">`+ element.proposition.crew.naam + `</th>
+                <th scope="row">`+ element.proposition.ploeg.naam + `</th>
                 <td>`+ DateTime.fromISO(element.proposition.startDate).setLocale('nl').toLocaleString(DateTime.DATETIME_FULL) + `</td>
                 <td>`+ DateTime.fromISO(element.proposition.endDate).setLocale('nl').toLocaleString(DateTime.DATETIME_FULL) + `</td>
                 <td>`+ element.scoreDiff.score + `</td>
@@ -467,7 +467,7 @@ function plannen(opdracht) {
                 icon: "info"})
             .then((result) => {
                 if (result.isConfirmed) {
-                    opdracht.group = data[selected].proposition.crew.id;
+                    opdracht.group = data[selected].proposition.ploeg.id;
                     opdracht.start = DateTime.fromISO(data[selected].proposition.startDate).setZone('UTC').toFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                     opdracht.end = DateTime.fromISO(data[selected].proposition.endDate).setZone('UTC').toFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                     updateOpdracht(opdracht);

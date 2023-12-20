@@ -2,6 +2,6 @@ package nl.heijmans.teamplanning.rest;
 
 import java.time.LocalDateTime;
 
-import nl.heijmans.teamplanning.domain.Crew;
+import nl.heijmans.teamplanning.domain.Ploeg;
 
-public record Pair(Crew crew, LocalDateTime startDate, LocalDateTime endDate) { }
+public record Pair(Ploeg ploeg, LocalDateTime startDate, LocalDateTime endDate) { }

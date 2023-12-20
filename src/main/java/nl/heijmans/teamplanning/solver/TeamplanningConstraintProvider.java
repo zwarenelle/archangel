@@ -24,11 +24,11 @@ public class TeamplanningConstraintProvider implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
                 // Hard constraints
-                crewConflict(constraintFactory),
+                ploegConflict(constraintFactory),
                 resourceCheck(constraintFactory),
 
                 // Medium constraints
-                ReserveCrew(constraintFactory),
+                ReservePloeg(constraintFactory),
 
                 // Soft constraints
                 insideWorkHours(constraintFactory)
@@ -39,11 +39,11 @@ public class TeamplanningConstraintProvider implements ConstraintProvider {
     // Hard constraints
     // ************************************************************************
 
-    public Constraint crewConflict(ConstraintFactory constraintFactory) {
-        // A crew can do at most one opdracht at the same time.
+    public Constraint ploegConflict(ConstraintFactory constraintFactory) {
+        // A ploeg can do at most one opdracht at the same time.
         return constraintFactory
                 .forEachUniquePair(Opdracht.class,
-                        equal(Opdracht::getCrew),
+                        equal(Opdracht::getPloeg),
                         overlapping(Opdracht::getStartDate, Opdracht::getEndDate))
                 .filter((opdracht1, opdracht2) -> ChronoUnit.MINUTES.between(
                                 opdracht1.getStartDate().isAfter(opdracht2.getStartDate())
@@ -62,35 +62,35 @@ public class TeamplanningConstraintProvider implements ConstraintProvider {
 
     // TODO: Incremental calculation
     public Constraint resourceCheck(ConstraintFactory constraintFactory) {
-        // Match crewSkill and Availability to OpdrachtRequirements
+        // Match ploegSkill and Availability to OpdrachtRequirements
         return constraintFactory
                 .forEach(Opdracht.class)
                 // Join beschikbaarheid's on the same date as the startdate of opdracht
                 .join(Beschikbaarheid.class, 
                         Joiners.overlapping(Opdracht::getStartDate, Opdracht::getEndDate, Beschikbaarheid::getStart, Beschikbaarheid::getEnd),
-                        //Filter monteurs that are actually in the crew that's assigned this opdracht
-                        Joiners.filtering((opdracht, beschikbaarheid) -> opdracht.getCrew().getMonteurs().contains(beschikbaarheid.getMonteur())))
+                        //Filter monteurs that are actually in the ploeg that's assigned this opdracht
+                        Joiners.filtering((opdracht, beschikbaarheid) -> opdracht.getPloeg().getMonteurs().contains(beschikbaarheid.getMonteur())))
                 // Summarize the availabilties into a list per opdracht
                 .groupBy((opdracht, beschikbaarheid) -> opdracht, ConstraintCollectors.toList((opdracht, beschikbaarheid) -> beschikbaarheid))
-                // Filter out if the opdracht needs more monteurs than there are in the crew, cause then all skills will never match
+                // Filter out if the opdracht needs more monteurs than there are in the ploeg, cause then all skills will never match
                         .filter((opdracht, beschikbaarheid) ->
-                                // Filter crew with monteurs that are available for that day and compare the list size with the opdracht requirements list
-                                opdracht.getrequiredSkills().size() > opdracht.getCrew().filter(beschikbaarheid.stream()
+                                // Filter ploeg with monteurs that are available for that day and compare the list size with the opdracht requirements list
+                                opdracht.getrequiredSkills().size() > opdracht.getPloeg().filter(beschikbaarheid.stream()
                                         .filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.BESCHIKBAAR).map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
-                                        .getCrewSkill().size() ||
-                                        // If above is not false, it could still be that the skills do not match between (again, filtered) crew and opdracht
+                                        .getPloegSkill().size() ||
+                                        // If above is not false, it could still be that the skills do not match between (again, filtered) ploeg and opdracht
                                         !(opdracht.getrequiredSkills().stream()
-                                        // For every requirement, search for a suitable monteur in crew and make sure there are enough!
-                                        .allMatch(opdrachtreq -> opdracht.getCrew()
+                                        // For every requirement, search for a suitable monteur in ploeg and make sure there are enough!
+                                        .allMatch(opdrachtreq -> opdracht.getPloeg()
                                                 .filter(beschikbaarheid.stream()
                                                         .filter(a -> a.getBeschikbaarheidType() == BeschikbaarheidType.BESCHIKBAAR)
                                                         .map(Beschikbaarheid::getMonteur).collect(Collectors.toList()))
-                                                .getCrewSkill().stream()
-                                .anyMatch(crewskill -> 
-                                        (crewskill.getTypenummer() <= 3 ? 
-                                                opdrachtreq.getTypenummer() <= crewskill.getTypenummer() : 
-                                                opdrachtreq.getTypenummer() > 3 && opdrachtreq.getTypenummer() <= crewskill.getTypenummer())
-                                        && opdrachtreq.getAantal() <= crewskill.getAantal())))
+                                                .getPloegSkill().stream()
+                                .anyMatch(ploegskill -> 
+                                        (ploegskill.getTypenummer() <= 3 ? 
+                                                opdrachtreq.getTypenummer() <= ploegskill.getTypenummer() : 
+                                                opdrachtreq.getTypenummer() > 3 && opdrachtreq.getTypenummer() <= ploegskill.getTypenummer())
+                                        && opdrachtreq.getAantal() <= ploegskill.getAantal())))
                         )
                 .penalizeLong(HardMediumSoftLongScore.ONE_HARD,
                         (opdracht, beschikbaarheid) -> opdracht.getrequiredSkills().isEmpty() ? 1L : Long.valueOf(opdracht.getrequiredSkills().size())
@@ -102,9 +102,9 @@ public class TeamplanningConstraintProvider implements ConstraintProvider {
     // Medium constraints
     // ************************************************************************
 
-    public Constraint ReserveCrew(ConstraintFactory constraintFactory) {
+    public Constraint ReservePloeg(ConstraintFactory constraintFactory) {
                return constraintFactory.forEach(Opdracht.class)
-               .filter(opdracht -> opdracht.getCrew().getId() == 1)
+               .filter(opdracht -> opdracht.getPloeg().getId() == 1)
                .penalizeLong(HardMediumSoftLongScore.ONE_MEDIUM, opdracht -> 1L)
                 .asConstraint("Onplanbaar (geen passende ploeg)");
     }
