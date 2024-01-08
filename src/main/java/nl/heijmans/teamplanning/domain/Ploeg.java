@@ -85,13 +85,14 @@ public class Ploeg {
         .collect(Collectors.toList());
     }
 
-    public Ploeg filter(List<Monteur> monteursToRemove) {
-        Ploeg newploeg = new Ploeg(this.naam, monteursToRemove);
+    public Ploeg filter(List<Monteur> monteursToKeep) {
+        Ploeg newploeg = new Ploeg(this.naam, monteursToKeep);
         return newploeg;
     }
 
     public void setPloegSkill() {
-        // Update ploegSkill with skills from monteurs
+        // Werk PloegSkill bij met de skills van de monteurs, 
+        // het doel is om de skills bij elkaar op te tellen indien de typenummers hetzelfde zijn en de lijst te sorteren.
         this.ploegSkill = this.monteurs.stream()
         .map((monteur) -> new PloegSkill(monteur.getVaardigheid().getTypenummer(), 1, monteur.getVaardigheid().getOmschrijving()))
         .collect(Collectors.toList());
