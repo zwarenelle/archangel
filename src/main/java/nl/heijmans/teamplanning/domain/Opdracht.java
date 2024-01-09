@@ -131,6 +131,12 @@ public class Opdracht {
         this.requiredSkills = requiredSkills;
     }
 
+    public void setDuurFromSkills() {
+        OptionalInt max = requiredSkills.stream()
+        .mapToInt(skill -> skill.getDuur()).max();
+        this.durationInGrains = max.getAsInt() * (60 / Teamplanning.TIME_GRAIN_MINUTES);
+    }
+
     public void ReqsFromBestekcode() {
         // Sort list by typenummer
         List<OpdrachtRequirement> requiredSkills = new ArrayList<OpdrachtRequirement>(RequirementTranslator.getDefinition(this.bestekcode));
