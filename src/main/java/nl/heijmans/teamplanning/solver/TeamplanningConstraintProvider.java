@@ -40,7 +40,7 @@ public class TeamplanningConstraintProvider implements ConstraintProvider {
     // ************************************************************************
 
     public Constraint ploegConflict(ConstraintFactory constraintFactory) {
-        // A ploeg can do at most one opdracht at the same time.
+        // Een ploeg mag maximaal één opdracht tegelijkertijd uitvoeren.
         return constraintFactory
                 .forEachUniquePair(Opdracht.class,
                         equal(Opdracht::getPloeg),
